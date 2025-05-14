@@ -60,10 +60,17 @@
 
 <!-- HERO SECTION with 3 trailers + mute toggle -->
 <section id="hero" class="hero-section">
-     <video id="hero-video" autoplay muted loop playsinline>
-       <source id="video-source" src="videos/trailer1.mp4" type="video/mp4">
-       Your browser does not support the video tag.
-     </video>
+  <iframe 
+  width="100%" 
+  height="100%" 
+  src="https://www.youtube.com/embed/iI7yLprZheA?rel=0&modestbranding=1&controls=1&autoplay=1&mute=1&loop=1&playlist=iI7yLprZheA" 
+  title="Open 24 Hours Trailer"
+  frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+  allowfullscreen
+  style="position:absolute; top:0; left:0; width:100%; height:100%;">
+</iframe>
+
    
      <div class="hero-overlay">
        <div class="container text-left">
@@ -252,9 +259,11 @@
    <div id="trailerModal" class="trailer-modal" style="display: none;">
      <div class="modal-content">
        <span class="close-btn" onclick="closeTrailer()">&times;</span>
-       <video id="modalVideo" controls autoplay>
-         <source id="videoSource" src="" type="video/mp4">
-         Your browser does not support the video tag.
+       <iframe id="modalIframe" width="100%" height="500" src="" frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen>
+</iframe>
+
        </video>
        <div class="film-description">
          <h3 id="filmTitle"></h3>
@@ -264,6 +273,9 @@
      </div>
    </div>
       
+
+
+   
    
    
    <!-- COMING SOON SECTION -->
@@ -491,51 +503,53 @@ function playTrailer(button, videoSrc) {
 }
 </script>
 <script>
-     function openTrailer(title) {
-       const trailerMap = {
-         'Open 24 Hours': {
-           src: 'videos/trailer1.mp4',
-           desc: "A psychological thriller about a woman who takes a job at a 24-hour convenience store after being released from prison.",
-           year: "2018",
-           director: "Padraig Reynolds",
-           duration: "102 min",
-           accolades: "Official Selection - Frightfest" 
-         },
-         'Dark Light': {
-           src: 'videos/trailer2.mp4',
-           desc: "A mother fights to protect her daughter from a terrifying presence she believes is in her house.",
-           year: "2019",
-           director: "Padraig Reynolds",
-           duration: "90 min",
-           accolades: "Premiered at Sitges"
-         },
-         "Daddy's Girl": {
-           src: 'videos/trailer3.mp4',
-           desc: "A young woman held captive by her father must uncover a dark family secret.",
-           year: "2018",
-           director: "Julian Richards",
-           duration: "89 min",
-           accolades: "Official Selection - Fantasporto" 
-         }
-       };
-     
-       const film = trailerMap[title];
-       if (!film) return;
-     
-       document.getElementById('videoSource').src = film.src;
-       document.getElementById('modalVideo').load();
-       document.getElementById('filmTitle').textContent = `${title} (${film.year})`;
-       document.getElementById('filmDetails').innerHTML = `
-         <strong>${film.director}</strong> · ${film.duration}<br>
-         ${film.desc}<br><br>
-         <strong>ACCOLADES</strong><br>${film.accolades}`;
-       document.getElementById('trailerModal').style.display = 'flex';
-     }
-     
-     function closeTrailer() {
-       const video = document.getElementById('modalVideo');
-       video.pause();
-       document.getElementById('trailerModal').style.display = 'none';
+  function openTrailer(title) {
+    const trailerMap = {
+      'Open 24 Hours': {
+        id: 'iI7yLprZheA',
+        desc: "A psychological thriller about a woman who takes a job at a 24-hour convenience store after being released from prison.",
+        year: "2018",
+        director: "Padraig Reynolds",
+        duration: "102 min",
+        accolades: "Official Selection - Frightfest"
+      },
+      'Dark Light': {
+        id: 'Isls30Tok3E',
+        desc: "A mother fights to protect her daughter from a terrifying presence she believes is in her house.",
+        year: "2019",
+        director: "Padraig Reynolds",
+        duration: "90 min",
+        accolades: "Premiered at Sitges"
+      },
+      "Daddy's Girl": {
+        id: 'PkVRva3AiOE',
+        desc: "A young woman held captive by her father must uncover a dark family secret.",
+        year: "2018",
+        director: "Julian Richards",
+        duration: "89 min",
+        accolades: "Official Selection - Fantasporto"
+      }
+    };
+  
+    const film = trailerMap[title];
+    if (!film) return;
+  
+    document.getElementById('modalIframe').src = `https://www.youtube.com/embed/${film.id}?autoplay=1&mute=0&rel=0`;
+    document.getElementById('filmTitle').textContent = `${title} (${film.year})`;
+    document.getElementById('filmDetails').innerHTML = `
+      <strong>${film.director}</strong> · ${film.duration}<br>
+      ${film.desc}<br><br>
+      <strong>ACCOLADES</strong><br>${film.accolades}`;
+    document.getElementById('trailerModal').style.display = 'flex';
+  }
+  
+  function closeTrailer() {
+    const iframe = document.getElementById('modalIframe');
+    iframe.src = '';
+    document.getElementById('trailerModal').style.display = 'none';
+  }
+  </script>
+  
      }
      </script>
      
