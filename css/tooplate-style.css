@@ -1,0 +1,1252 @@
+/*
+
+Template 2099 Scenic
+
+http://www.tooplate.com/view/2099-scenic
+
+*/
+
+
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,700');
+:root {
+  --vh: 1vh;
+}
+body {
+  background: rgb(0, 0, 0);
+  font-family: 'Source Sans Pro', sans-serif bold;
+  overflow-x: hidden;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+/*---------------------------------------
+  TYPOGRAPHY              
+-----------------------------------------*/
+
+h1,h2,h3,h4,h5,h6 {
+  font-weight: 300;
+}
+
+h1 {
+  font-size: 30px;
+  font-weight: 100bold;
+  line-height: 50px;
+}
+
+h2 {
+  font-size: 40px;
+  line-height: 40px;
+  margin-top: 0;
+}
+
+h3 {
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 32px;
+}
+
+h4 {
+  color: hsla(0, 0%, 0%, 0);
+  font-size: 16px;
+  line-height: 28px;
+}
+
+p {
+  color: #bb3cff;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 29px;
+  letter-spacing: 0.5px;
+}
+
+
+/*---------------------------------------
+  BUTTONS               
+-----------------------------------------*/
+
+.section-btn {
+  margin: 32px 0 0 0;
+  padding: 0;
+}
+
+.section-btn a,
+.section-btn button {
+  line-height: 35px;
+  -webkit-perspective: 1000px;
+  -moz-perspective: 1000px;
+  perspective: 1000px;
+  color: #000000;
+  font-weight: normal;
+}
+
+.section-btn a span,
+.section-btn button span {
+  position: relative;
+  display: inline-block;
+  font-size: 18px;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  padding: 0 25px;
+  background: #997dff;
+  border-radius: 1px;
+  -webkit-transition: -webkit-transform 0.3s;
+  -moz-transition: -moz-transform 0.3s;
+  transition: transform 0.3s;
+  -webkit-transform-origin: 100% 0;
+  -moz-transform-origin: 100% 0;
+  transform-origin: 100% 0;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+.csstransforms3d .section-btn a span::before,
+.csstransforms3d .section-btn button span::before {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #9a4cff;
+  border-radius: 1px;
+  color: #000000;
+  padding: 0 20px;
+  content: attr(data-hover);
+  -webkit-transition: background 0.3s;
+  -moz-transition: background 0.3s;
+  transition: background 0.3s;
+  -webkit-transform: rotateX(-90deg);
+  -moz-transform: rotateX(-90deg);
+  transform: rotateX(-90deg);
+  -webkit-transform-origin: 50% 0;
+  -moz-transform-origin: 50% 0;
+  transform-origin: 50% 0;
+}
+
+.section-btn a:hover span,
+.section-btn a:focus span,
+
+.section-btn button:hover span,
+.section-btn button:focus span {
+  -webkit-transform: rotateX(90deg) translateY(-22px);
+  -moz-transform: rotateX(90deg) translateY(-22px);
+  transform: rotateX(90deg) translateY(-22px);
+}
+
+.csstransforms3d .section-btn a:hover span::before,
+.csstransforms3d .section-btn a:focus span::before,
+
+.csstransforms3d .section-btn button:hover span::before,
+.csstransforms3d .section-btn button:hover span::before {
+  background: #954fff;  
+}
+
+
+/*---------------------------------------
+  GENERAL               
+-----------------------------------------*/
+
+html{
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: #9c50ec;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+
+a:hover, a:active, a:focus {
+  color: #ffffff;
+  outline: none;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar{
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  cursor: pointer;
+  background: #ffffff;
+}
+
+.section-title {
+  position: relative;
+  padding-bottom: 22px;
+}
+
+@media (max-width: 768px) {
+  .parallax-section {
+    background-attachment: scroll !important;
+  }
+}
+
+#about, #project,
+#team, #contact, footer {
+  background: #ffffff;
+}
+
+#about,
+#team, #contact {
+  padding-top: 100px;
+  padding-bottom: 100px;
+  text-align: center;
+}
+
+
+/*---------------------------------------
+  PRE LOADER              
+-----------------------------------------*/
+
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  background: none repeat scroll 0 0 #00000000;
+}
+
+.spinner {
+  border: 1px solid transparent;
+  border-radius: 5px;
+  position: fixed;
+}
+
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 1px solid #000000;
+  border-top-color: #000000;
+  animation: spinner .9s linear infinite;
+}
+
+@-webkit-@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+
+@keyframes spinner {
+  to {transform: rotate(360deg);}
+}
+
+
+/*---------------------------------------
+  MENU             
+-----------------------------------------*/
+
+.custom-navbar {
+  margin-bottom: 0;
+  background-color: #ffffff;
+  padding: 20px 0;
+}
+
+.custom-navbar .navbar-brand {
+  color: #ffffff;
+  font-weight: semi-bold;
+  font-size: 30px;
+}
+
+.custom-navbar .nav li a {
+  font-size: 18px;
+  font-weight: semi-bold;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  -webkit-transition: all ease-in-out 0.4s;
+  transition: all ease-in-out 0.4s;
+  padding: 0;
+  margin: 20px 20px;
+  text-transform: uppercase;
+}
+
+.custom-navbar .navbar-nav > li > a:hover,
+.custom-navbar .navbar-nav > li > a:focus {
+  background-color: transparent;
+  color: #7041e7;
+}
+
+.custom-navbar .navbar-nav li a:after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 0px;
+  height: 1px;
+  margin: auto;
+  background: transparent;
+  transition: width .3s ease, background-color .3s ease;
+}
+
+.custom-navbar .navbar-nav li a:hover:after,
+.custom-navbar .nav li.active > a:after {
+  background: #ffffff;
+  color: #ffffff;
+  width: 100%;
+}
+
+.custom-navbar .nav li.active > a {
+  background-color: rgb(255, 255, 255);
+  color: #ffffff;
+}
+
+.custom-navbar .navbar-toggle {
+  border: none;
+  padding-top: 10px;
+}
+
+.custom-navbar .navbar-toggle {
+  background-color: transparent;
+}
+
+.custom-navbar .navbar-toggle .icon-bar {
+  background: #000000;
+  border-color: transparent;
+}
+
+@media(min-width:1000px) {
+  .custom-navbar {
+    background: 0 0; 
+  }
+  .custom-navbar.top-nav-collapse {
+    background: #c869ff;
+    padding: 10px 0;
+  }
+}
+
+
+/*---------------------------------------
+  HOME             
+-----------------------------------------*/
+
+#home {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+   align-items: center;
+  height: 100vh;
+  position: relative;
+  padding-top: 20em;
+}
+
+#home h1 {
+    background: #c562ff;
+  color: #    background: #05d384;  ;
+  font-size: 6em;
+  line-height: 1.0em;
+}
+
+#home p {
+    background: #05d384;
+    color: rgb(141, 67, 245);
+}
+
+#home .overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  height: 50%;
+    background: #c262fe;
+    background-color: rgba(0, 0, 0, 0.538);
+}
+
+#home video {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width: 70%;
+  min-height: 75%;
+  width: auto;
+  height: auto;
+  z-index: -100;
+  transform: translateX(-50%) translateY(-50%);
+  background-size: cover;
+  transition: 1s opacity;
+}
+
+
+/*---------------------------------------
+  ABOUT              
+-----------------------------------------*/
+
+#about {
+  padding-top: 200px;
+  padding-bottom: 150px;
+}
+
+.about-info h3 {
+  font-size: 14px;
+  letter-spacing: 12px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+#films h2 {
+  color: #ffffff;
+}
+.film-year {
+  color: #9a7dff;
+}
+
+
+
+/*---------------------------------------
+   TEAM             
+-----------------------------------------*/
+
+
+#team h3,
+#team p {
+  margin: 10;
+}
+
+.team-item {
+  overflow: hidden;
+  position: relative;
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+.team-item img {
+  -webkit-transition: all ease-in-out 0.4s;
+  transition: all ease-in-out 0.4s;
+}
+.team-item:hover img {
+  transform: scale(1.1);
+}
+
+.team-overlay {
+  background: rgba(0, 0, 0, 0);
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-transition: all ease-in-out 0.4s;
+  transition: all ease-in-out 0.4s;
+}
+
+.team-overlay .social-icon {
+  position: relative;
+  top: 45%;
+}
+.team-overlay .social-icon li a {
+  background: #ffffff;
+  color: #ffffff;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.team-item:hover .team-overlay {
+  opacity: 1;
+}
+
+
+/*---------------------------------------
+  CONTACT             
+-----------------------------------------*/
+
+#contact {
+  background: url('../images/contact-bg.jpg') 50% 0 repeat-y fixed;
+  background-size: cover;
+  background-position: center center;
+}
+
+#contact-form {
+  padding-top: 22px;
+}
+
+#contact .text-success,
+#contact .text-danger {
+  display: none;
+  padding: 0 0 5px 20px;
+}
+
+#contact .form-control {
+  border: none;
+  box-shadow: none;
+  font-size: 18px;
+  font-weight: normal;
+  margin-bottom: 22px;
+  -webkit-transition: all ease-in-out 0.4s;
+  transition: all ease-in-out 0.4s;
+}
+
+#contact .form-control:focus {
+  border-color: #ffffff;
+}
+
+#contact input {
+  height: 55px;
+  line-height: 45px;
+}
+
+#contact .section-btn {
+  margin: 5px 0 0 0;
+}
+
+#contact button#cf-submit {
+  background: transparent;
+  border: none;
+  padding: 0;
+  line-height: 50px;
+}
+
+
+/*---------------------------------------
+  FOOTER              
+-----------------------------------------*/
+
+footer {
+  padding-top: 120px;
+  padding-bottom: 120px;
+}
+
+footer h4 {
+  padding-top: 12px;
+}
+
+footer a {
+  color: #ffffff;
+}
+
+footer .copyright-text {
+  padding-top: 20px;
+}
+
+
+/*---------------------------------------
+  SOCIAL ICON             
+-----------------------------------------*/
+
+.social-icon {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.social-icon li {
+  display: inline-block;
+  list-style: none;
+}
+
+.social-icon li a {
+  border-radius: 100%;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 18px;
+  text-decoration: none;
+  -webkit-transition: all ease-in-out 0.3s;
+  transition: all ease-in-out 0.3s;
+  text-align: center;
+  position: relative;
+  margin: 4px 8px 0 8px;
+}
+
+.social-icon li a:hover {
+  -webkit-transform: scale(1.2);
+  transform: scale(1.2);
+}
+
+
+/*---------------------------------------
+  MOBILE RESPONSIVE              
+-----------------------------------------*/
+@media only screen and (max-width: 580px) {
+  .hero-section {
+    height: calc(var(--vh, 1vh) * 80);
+  }
+}
+@media (max-width: 992px) {
+  #home h1 {
+    font-size: 4em;
+    line-height: normal;
+  }
+}
+
+@media (max-width: 980px) {
+  h1 {
+    font-size: 30px;
+    line-height: normal;
+  }
+
+  #home {
+    padding-top: 0em;
+  }
+
+  #about {
+    padding-top: 120px;
+    padding-bottom: 100px;
+  }
+
+  .project-info {
+    padding: 4em 0;
+  }
+
+  footer {
+    text-align: center;
+  }
+  footer .social-icon {
+    margin-top: 32px;
+  }
+}
+
+@media (max-width: 770px) {
+  #home h1 {
+    font-size: 3.5em;
+  }
+}
+
+@media (max-width: 770px) {
+  .custom-navbar {
+    padding: 10px 0;
+  }
+  .custom-navbar .nav li a {
+    display: inline-block;
+    line-height: 15px;
+    margin-bottom: 0;
+  }
+  .custom-navbar .nav li:last-child a {
+    margin-bottom: 5px;
+  }
+
+  .project-info {
+    padding: 10em 0;
+  }
+
+  .footer-info {
+    padding: 22px 0 22px 0;
+  }
+}
+
+
+@media (max-width: 580px) {
+  h1 {
+    font-size: 26px;
+  }
+
+  #home {
+    height: 90vh;
+  }
+
+  .about-info h3 {
+    font-size: 12px;
+    letter-spacing: 6px;
+  }
+
+  .project-info {
+    padding: 5em 0;
+  }
+  
+}
+
+.film-poster {
+  position: relative;
+  max-width: 500px;
+  margin: 10px fixed;
+}
+
+.videos-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgb(255, 255, 255);
+}
+
+.poster-image1 {
+  width: 100%;
+  display: block;
+  border-radius: 10px;
+}
+.play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(255, 255, 255);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 30px;
+  cursor: pointer;
+  z-index: 9999;
+  transition: background 0.3s ease;
+}
+
+.play-btn:hover {
+  background-color: rgba(167, 17, 17, 0.85);
+}
+
+.trailer1-video.mp4 {
+  width:100%;
+  border-radius: 8px;
+}
+
+
+.section-films, .section-coming, .section-contact {
+  padding: 100px 0;
+  color: rgb(255, 255, 255);
+  background: #ffffff;
+}
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 20px;
+  > h2 {
+    text-align: left;
+    margin: 0 auto 2rem;      /* spacing below the title */
+    font-size: 2rem;        /* bump it up if you like */
+    font-weight: 200;
+  }
+  > h3{
+    text-align: left;
+    margin: 0 auto 2rem;      /* spacing below the title */
+    font-size: 2rem;        /* bump it up if you like */
+    font-weight: 200;
+  }
+}
+.film-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+#films .film-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;  /* center‐align the cards */
+  gap: 2rem;                /* space between cards */
+}
+.film-card {
+  flex: 1 1 calc(33.333% - 2rem);
+  background: #5a5a5a;
+  border-radius: 12px;
+  overflow: hidden;
+  text-align: left;
+}
+.coming-poster {
+  width: 100%;
+  overflow: overflow;
+  border-radius: 8px;
+}
+.film-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+}
+.film-card img {
+  width: 100%;
+  height: auto;
+  max-height: 1200px;
+  object-fit: cover;
+  display: block;
+}
+
+
+
+.film-info h3 {
+  font-weight: 600;
+  margin: 0.5rem 0 0;
+}
+
+.film-card:hover {
+  transform: scale(1.01);
+  transition: transform 0.3s ease;
+}
+
+.film-info {
+  padding: 1rem;
+}
+.film-year {
+  color: #9a7dff;
+  font-size: 18px;
+  margin: 0 0 0.3rem;
+}
+.film-card h3 {
+  font-weight: bold;
+  margin: 0;
+}
+
+.contact-flex {
+  display: flex;
+  gap: 4rem;
+}
+.contact-info ul.social {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+.contact-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  padding: 0.8rem;
+  border: none;
+  background: #706e6eb4;
+  color: rgb(0, 0, 0);
+}
+.contact-form button {
+  padding: 0.8rem;
+  background: #9a7dff;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+.trailer-modal {
+  position: fixed;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.682);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 900px;
+  background: #000000;
+  border-radius: 12px;
+  padding: 24px;
+  color: rgb(255, 255, 255);
+  position: relative;
+}
+
+.modal-content video {
+  width: 100%;
+  max-height: 500px;
+  border-radius: 8px;
+}
+@media (max-width: 768px) {
+  .film-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  .film-card {
+    width: 90%;
+  }
+}
+@media (max-width: 768px) {
+  .film-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  .film-card {
+    width: 90%;
+  }
+}
+#films h2 {
+  color: #ffffff;
+  font-size: 40px;
+    letter-spacing: px;
+    justify-content: center
+
+
+}
+
+.film-poster-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.film-poster-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+
+.film-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.film-info h3 {
+  color: #ffffff !important;
+}
+
+#play-button {
+  color: #000000 !important;
+  font-size: 16px;
+  opacity: 1;
+}
+
+#play-button:hover {
+  color: #ffffff;
+  cursor: pointer;
+  text-shadow: 0 0 4px rgb(255, 255, 255);
+}
+
+#play-button {
+  color: #000000 !important;
+}
+
+.film-card {
+  background: #1f1f1f;
+  border-radius: 12px;
+  color: #000000;
+}
+
+.film-info h3 {
+  color: #ffffff !important;
+}
+#coming-soon {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+
+.film-card {
+  background: #1f1f1f;
+  color: #ffffff;
+}
+/* Contact section layout fix */
+.contact-flex {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 20px;
+}
+
+/* Left info */
+.contact-info {
+  flex: 1 1 40%;
+  text-align: left;
+  color: #fff;
+}
+
+.contact-info h2 {
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.contact-info p {
+  color: #999;
+  font-size: 18px;
+  margin-bottom: 10px;
+  max-width: 90%;
+}
+
+.contact-info address {
+  font-style: normal;
+  color: #bbb;
+  font-size: 16px;
+  line-height: 1.4;
+  margin-top: 20px;
+}
+
+.contact-info ul.social-icon {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding: 0;
+  margin-top: 24px;
+  list-style: none;
+}
+
+
+.contact-info .social-icon li a:hover {
+  color: #9a7dff;
+}
+
+/* Right form */
+.contact-form {
+  flex: 1 1 45%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.0rem;
+}
+
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  background: #1c1c1c;
+  color: #e0e0e0;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 16px;
+  width: 100%;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: #888;
+}
+
+.contact-form button {
+  background-color: #9a7dff;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 14px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  width: 100%;
+}
+
+.contact-form button:hover {
+  background-color: #b39dff;
+}
+@media (max-width: 768px) {
+  .contact-flex {
+    flex-direction: column;
+  }
+
+  .contact-info, .contact-form {
+    width: 100%;
+  }
+}
+.film-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.film-title-row h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+}
+
+.play-icon-text {
+  font-size: 14px;
+  color: #ffffff;
+  opacity: 0.85;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.film-title-row h3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+footer {
+  background-color: #ffffff;
+  color: #ffffff;
+  padding: 80px 0;
+  text-align: center;
+}
+#films {
+  padding-top: 40px;  /* increase this value for more space */
+  background-color: #000000; /* ensures the black background */
+}
+.copyright-text {
+  text-align: center;
+  color: #ffffff;
+  font-size: 16px;
+  padding: 40px 0;important
+  
+
+}
+/* Force green navbar */
+#mainNavbar {
+  background-color: #00d283 !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Default transparent style */
+#mainNavbar {
+  background-color: transparent;
+  transition: background-color 0.3s ease, padding 0.3s ease;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+/* Green bar after scroll */
+#mainNavbar.scrolled {
+  background-color: #00ff6a; /* your purple */
+  padding: 15px 0;
+}
+#mainNavbar.scrolled {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+@media only screen and (max-width: 580px) {
+  .HOME-section {
+    height: calc(var(--vh, 1vh) * 80);
+  }
+}
+/*---------------------------------------
+  UNIFORM TEAM CARDS IN OWL CAROUSEL
+-----------------------------------------*/
+
+/* 1) Make each .owl-item center its content */
+#owl-team .owl-stage-outer {
+  overflow: hidden;
+}
+#owl-team .owl-item {
+  display: flex !important;
+  justify-content: center;
+}
+
+/* 2) Fix each “item” to a uniform column */
+#owl-team .item {
+  flex: 0 0 auto;              /* disable flex-grow/shrink */
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  width: 250px;                /* same width for all cards */
+  margin: 0 0.5rem;            /* horizontal gutter */
+}
+
+/* 3) Force the photo box to exact size */
+#owl-team .item .team-item {
+  width: 100%;
+  height: 250px;               /* same height for all images */
+  position: relative;
+}
+#owl-team .item .team-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;           /* crop/scale uniformly */
+}
+
+/* 4) Stack name & title neatly under the image */
+#owl-team .item p {
+  margin: 0.75rem 0 0.25rem;
+  color: #bb3cff;
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: left;
+}
+#owl-team .item h3 {
+  margin: 0 0 0.5rem;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* 5) Ensure your IMDb circle sits at the bottom */
+
+
+/* 6) (Optional) tighten on very small screens */
+@media (max-width: 480px) {
+  #owl-team .item { width: 200px; margin: 0 0.25rem; }
+  #owl-team .item .team-item { height: 200px; }
+}
+/*---------------------------------------
+  SHOW MEMBER NAME & ROLE UNDER PHOTO
+-----------------------------------------*/
+#owl-team .item {
+  /* ensure flex-column */
+  display: flex !important;
+  flex-direction: column;
+  align-items: left;
+}
+
+/* Name (formerly the <p>) */
+#owl-team .item > p {
+  margin: 0.75rem 0 0.25rem;
+  color: #bb3cff;        /* purple name */
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: left;
+  display: block;
+}
+
+/* Role (formerly the <h3>) */
+#owl-team .item > h3 {
+  margin: 0 0 1rem;
+  color: #333333;        /* dark grey for readability */
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: left;
+  display: block;
+}
+.imdb-circle {
+  margin-top: auto;            /* pushes it beneath the h3 */
+  margin-bottom: 0.5rem;
+}
+/*————————————————————————————————————
+  Make “Films” & “Coming Soon” identical
+————————————————————————————————————*/
+section#films > .container > h2,
+section#coming-soon > .container > h2 {
+  font-size: 3.5rem !important;     /* same for both */
+  font-weight: 300 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+  margin-bottom: 1.5rem !important;
+}

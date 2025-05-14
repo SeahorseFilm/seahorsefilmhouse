@@ -1,0 +1,581 @@
+// index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="author" content="">
+  <title>Seahorse Filmhouse</title>
+
+  <!-- Bootstrap and Custom CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/magnific-popup.css">
+  <link rel="stylesheet" href="css/owl.theme.css">
+  <link rel="stylesheet" href="css/owl.carousel.css">
+  <link rel="stylesheet" href="css/tooplate-style.css">
+  
+  <!-- Dynamic viewport height for mobile Safari -->
+  <script>
+    function updateVh() {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    window.addEventListener('resize', updateVh);
+    window.addEventListener('orientationchange', updateVh);
+    updateVh();
+  </script>
+</head>
+<body>
+  <!-- PRE LOADER -->
+  <div class="preloader">
+    <div class="spinner">
+      <span class="sk-inner-circle"></span>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <nav id="mainNavbar" class="navbar custom-navbar navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon icon-bar"></span>
+          <span class="icon icon-bar"></span>
+          <span class="icon icon-bar"></span>
+        </button>
+        <a href="#about" class="navbar-brand smoothScroll">SEAHORSE FILMHOUSE</a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#films" class="smoothScroll">FILMS</a></li>
+          <li><a href="#coming-soon" class="smoothScroll">COMING SOON</a></li>
+          <li><a href="#contact" class="smoothScroll">CONTACT</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<!-- HERO SECTION with 3 trailers + mute toggle -->
+<section id="hero" class="hero-section">
+     <video id="hero-video" autoplay muted loop playsinline>
+       <source id="video-source" src="videos/trailer1.mp4" type="video/mp4">
+       Your browser does not support the video tag.
+     </video>
+   
+     <div class="hero-overlay">
+       <div class="container text-left">
+         <h1 id="film-title">Open 24 Hours</h1>
+         <p id="film-tagline">Some doors should stay closed</p>
+   
+         <div class="hero-buttons">
+           <button id="prev-btn">⏮ Prev</button>
+           <button id="next-btn">Next ⏭</button>
+           <button id="mute-btn">🔇</button>
+         </div>
+       </div>
+     </div>
+   </section>
+   
+   <style>
+   .hero-section {
+     position: relative;
+     height: 100vh;
+     overflow: hidden;
+     font-family: sans-serif;
+   }
+   #hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+   }
+
+/* Optional media query for small devices */
+@media (max-width: 768px) {
+  .hero-section {
+    height: calc(var(--vh, 1vh) * 100);
+    min-height: 300px;
+  }
+}
+
+   .hero-overlay {
+     position: relative;
+     height: 100%;
+     display: flex;
+     align-items: center;
+     justify-content: flex-start;
+     padding-left: 10%;
+     background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0,0,0,0.8));
+     color: white;
+   }
+   .hero-buttons button {
+     margin: 10px 10px 0 0;
+     padding: 10px 20px;
+     background: rgba(255,255,255,0.1);
+     border: 1px solid rgba(255,255,255,0.4);
+     color: white;
+     font-size: 14px;
+     border-radius: 4px;
+     cursor: pointer;
+     transition: background 0.3s;
+   }
+   .hero-buttons button:hover {
+     background: rgba(255,255,255,0.2);
+   }
+   </style>
+   <script>
+    function updateVh() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    window.addEventListener('resize', updateVh);
+    updateVh();
+  </script>
+  
+   <script>
+   const films = [
+     {
+       title: "Open 24 Hours",
+       tagline: "Some doors should stay closed",
+       video: "videos/trailer1.mp4"
+     },
+     {
+       title: "Dark Light",
+       tagline: "What hides in the shadows",
+       video: "videos/trailer2.mp4"
+     },
+     {
+       title: "Daddy's Girl",
+       tagline: "Family ties that bind too tight",
+       video: "videos/trailer3.mp4"
+     }
+   ];
+   
+   let currentIndex = 0;
+   const video = document.getElementById('hero-video');
+   const videoSource = document.getElementById('video-source');
+   const title = document.getElementById('film-title');
+   const tagline = document.getElementById('film-tagline');
+   const muteBtn = document.getElementById('mute-btn');
+   const nextBtn = document.getElementById('next-btn');
+   const prevBtn = document.getElementById('prev-btn');
+   
+   function updateHero(index) {
+     const film = films[index];
+     video.pause();
+     videoSource.src = film.video;
+     video.load();
+     video.play();
+     title.textContent = film.title;
+     tagline.textContent = film.tagline;
+   }
+   
+   muteBtn.addEventListener('click', () => {
+     video.muted = !video.muted;
+     muteBtn.textContent = video.muted ? '🔇' : '🔊';
+   });
+   
+   nextBtn.addEventListener('click', () => {
+     currentIndex = (currentIndex + 1) % films.length;
+     updateHero(currentIndex);
+   });
+   
+   prevBtn.addEventListener('click', () => {
+     currentIndex = (currentIndex - 1 + films.length) % films.length;
+     updateHero(currentIndex);
+   });
+   </script>
+<!-- ABOUT SECTION -->
+
+<section id="about" class="parallax-section" style="padding: 80px 0; background: #fff; color: #333; text-align: center;">
+  <div class="container">
+    <div class="about-info">
+      <h3 style="letter-spacing: 8px; text-transform: uppercase; margin-bottom: 20px;">Introducing SEAHORSE FILMHOUSE</h3>
+      <h1>Seahorse Filmhouse is an independent production company crafting bold, evocative cinema that lingers in the mind and stirs the soul. 
+      We specialize in intimate dramas and socially conscious stories, narratives that challenge perception and invite reflection.</p>
+      Our films, recognized at international festivals and on global platforms, balance narrative depth with striking visual precision.</p>
+      At our core, we are a studio of ideas. We champion the strange, the beautiful, and the poetic, shaping them into films that leave a lasting mark.</h1>
+       
+    </div>
+  </div>
+</section>
+
+<!-- FILMS Section -->
+<section id="films" class="parallax-section">
+     <div class="container">
+       <h2>Films</h2>
+       <div class="film-grid">
+         <!-- Film Card -->
+         <div class="film-card" onclick="openTrailer('Open 24 Hours')">
+           <img src="images/project-image2.jpg" alt="Open 24 Hours" />
+           <div class="film-info">
+             <span class="film-year">2019</span>
+             <div class="film-title-row">
+              <h3>Open 24 Hours</h3>
+              <span class="inline-play-icon">▶Play Trailer</span>
+            </div>
+                       </div>
+         </div>
+         <div class="film-card" onclick="openTrailer('Dark Light')">
+           <img src="images/project-image3.jpg" alt="Dark Light" />
+           <div class="film-info">
+             <span class="film-year">2020</span>
+             <div class="film-title-row">
+             <h3>Dark Light</h3>
+             <span class="inline-play-icon">▶Play Trailer</span>
+</div>
+           </div>
+         </div>
+         <div class="film-card" onclick="openTrailer('Daddy\'s Girl')">
+           <img src="images/project-image1.jpg" alt="Daddy's Girl" />
+           <div class="film-info">
+            <span class="film-year">2018</span>
+            <div class="film-title-row">
+              <h3>Daddy's Girl</h3>
+              <span class="play-icon-text">▶ Play Trailer</span>
+            </div>
+          </div>
+          
+           </div>
+         </div>
+       </div>
+     </div>
+   </section>
+   
+   <!-- Trailer Modal Popup -->
+   <div id="trailerModal" class="trailer-modal" style="display: none;">
+     <div class="modal-content">
+       <span class="close-btn" onclick="closeTrailer()">&times;</span>
+       <video id="modalVideo" controls autoplay>
+         <source id="videoSource" src="" type="video/mp4">
+         Your browser does not support the video tag.
+       </video>
+       <div class="film-description">
+         <h3 id="filmTitle"></h3>
+         <p id="filmDetails"></p>
+         <p id="play-button"></p>
+       </div>
+     </div>
+   </div>
+      
+   
+   
+   <!-- COMING SOON SECTION -->
+   <section id="coming-soon" class="section-coming">
+     <div class="container">
+       <h2>Coming Soon</h2>
+       <div class="film-grid">
+        <div class="film-card">
+          <div class="coming-poster">
+            <img src="images/project-image4.jpg" alt="CHASM Poster" />
+          </div>
+          <div class="film-info">
+            <h3>Chasm</h3>
+            <p class="film-year">Fall 2025</p>
+          </div>
+        </div>
+        
+        
+        <div class="film-card">
+          <div class="coming-poster">
+            <img src="images/project-image5.jpg" alt="winter Dreams" />
+          </div>
+          <div class="film-info">
+            <h3>Winter Dreams</h3>
+            <p class="film-year">In Development</p>
+          </div>
+        </div>
+        
+   </section>
+  
+
+   <!-- TEAM -->
+<section id="team" class="parallax-section">
+     <div class="container">
+          <div class="row">
+
+               <div class="col-md-offset-2 col-md-8 col-sm-12">
+                    <!-- SECTION TITLE -->
+                    <div class="section-title">
+                         <h2>The Creative Collective </h2>
+                    </div>
+               </div>
+
+               <div class="clearfix"></div>
+
+               <div id="owl-team" class="owl-carousel">
+                    <div class="col-md-4 col-sm-4 item">
+                         <div class="team-item">
+                              <img src="images/team-image1.jpg" class="img-responsive" alt="">
+                              <div class="team-overlay">
+                                <ul class="social-icon">
+                                  <li>
+                                    <a 
+                                      href="https://www.imdb.com/name/nm11359091/?ref_=ext_shr_lnk" 
+                                      class="fa fa-imdb" 
+                                      target="_blank" 
+                                      rel="noopener"
+                                    ><img src="images/imdb-icon.png" alt="IMDB" width="24" height="24">
+                                  </a>
+                                  </li>
+                                </ul>
+                                
+                              </div>
+                         </div>
+                         <p>R P Khemanand</p>
+                         <h3>Producer/Director/Screenwriter</h3>
+                    </div>
+
+                    <div class="col-md-4 col-sm-4 item">
+                         <div class="team-item">
+                              <img src="images/team-image2.jpg" class="img-responsive" alt="">
+                              <div class="team-overlay">
+                                   <ul class="social-icon">
+                                        <li><a href="https://www.imdb.com/name/nm1754478/?ref_=ext_shr_lnk" 
+                                          class="fa fa-imdb" 
+                                      target="_blank" 
+                                      rel="noopener"
+                                    ><img src="images/imdb-icon.png" alt="IMDB" width="24" height="24">
+                                  </a>
+                                  </li>
+                                </ul>
+                              </div>
+                         </div>
+                         <p>Padraig Reynolds</p>
+                         <h3>Director/Screenwriter</h3>
+                    </div>
+
+                    <div class="col-md-4 col-sm-4 item">
+                         <div class="team-item">
+                              <img src="images/team-image3.jpg" class="img-responsive" alt="">
+                              <div class="team-overlay">
+                                   <ul class="social-icon">
+                                        <li><a href="https://www.imdb.com/name/nm0003759/?ref_=ext_shr_lnk" 
+                                          class="fa fa-imdb" 
+                                          target="_blank" 
+                                          rel="noopener"
+                                        ><img src="images/imdb-icon.png" alt="IMDB" width="24" height="24">
+                                      </a>
+                                      </li>
+                                    </ul>
+                              </div>
+                         </div>
+                         <p>Ed Marx</p>
+                         <h3>Film Editor</h3>
+                    </div>
+
+                    <div class="col-md-4 col-sm-4 item">
+                         <div class="team-item">
+                              <img src="images/team-image5.jpg" class="img-responsive" alt="">
+                              <div class="team-overlay">
+                                   <ul class="social-icon">
+                                        <li><a href="https://www.imdb.com/name/nm1498772/?ref_=ext_shr_lnk" 
+                                          class="fa fa-imdb" 
+                                      target="_blank" 
+                                      rel="noopener"
+                                    ><img src="images/imdb-icon.png" alt="IMDB" width="24" height="24">
+                                  </a>
+                                  </li>
+                                </ul>
+                              </div>
+                         </div>
+                         <p>Holly Amber Church</p>
+                         <h3>Music Composer</h3>
+                         
+                    </div>
+          </div>
+     </div>
+</section>
+
+      <!-- Contact Section Replaced -->
+      <section id="contact" class="section-contact">
+          <div class="container contact-flex">
+            <div class="contact-info">
+              <h2>Contact</h2>
+              <p>Have a question, project idea, or just want to say hello?<br>We’d love to hear from you.</p>
+             
+            
+              <address>
+                SEAHORSE FILMHOUSE<br />
+                Burbank, Los Angeles, California<br />
+                With operations in London, Mumbai & UAE
+              </address>
+              <ul class="social-icon">
+                <li><a href="#" class="fa fa-twitter"></a></li>
+                <li><a href="#" class="fa fa-facebook"></a></li>
+                <li><a href="#" class="fa fa-instagram"></a></li>
+                <li><a href="#" class="fa fa-linkedin"></a></li>
+           </ul>
+            </div>
+            <form class="contact-form" action="https://formspree.io/f/movdyjgr" method="POST">
+              <input name="name" type="text" placeholder="Your Name" required />
+              <input name="email" type="email" placeholder="Your Email" required />
+              
+              <select name="subject">
+                <option>General Inquiry</option>
+                <option>Collaboration</option>
+                <option>Distribution</option>
+              </select>
+            
+              <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
+            
+              <button type="submit">Send Message</button>
+            </form>          
+          </div>
+        </section>
+</section>
+
+<!-- FOOTER -->
+<footer>
+               </div>
+
+              
+             </div>
+               </div>
+                    
+               </div>
+
+               <div class="clearfix"></div>
+
+               <div class="col-md-12 col-sm-12">
+                    <div class="copyright-text">
+                          <p>Copyright © 2025 Seahorse Filmhouse 
+                         
+                    </div>
+               </div>
+               
+          </div>
+     </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="js/jquery.js"></script>
+ <script>
+    $(function(){
+      $('a.smoothScroll[href^="#"]').on('click', function(e){
+        e.preventDefault();
+        var target = $(this).attr('href');
+        if ( $(target).length ) {
+          $('html, body').animate({
+            scrollTop: $(target).offset().top
+          }, 600);
+        }
+      });
+    });
+  </script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.parallax.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/jquery.magnific-popup.min.js"></script>
+<script src="js/magnific-popup-options.js"></script>
+<script src="js/modernizr.custom.js"></script>
+<script src="js/custom.js"></script>
+<script>
+function playTrailer(button, videoSrc) {
+  const container = button.closest('.video-container');
+  const poster = container.querySelector('img');
+  const video = container.querySelector('video');
+
+  video.querySelector('source').src = videoSrc;
+  video.load();
+  video.style.display = 'block';
+  poster.style.display = 'none';
+  button.style.display = 'none';
+  video.play();
+}
+</script>
+<script>
+     function openTrailer(title) {
+       const trailerMap = {
+         'Open 24 Hours': {
+           src: 'videos/trailer1.mp4',
+           desc: "A psychological thriller about a woman who takes a job at a 24-hour convenience store after being released from prison.",
+           year: "2018",
+           director: "Padraig Reynolds",
+           duration: "102 min",
+           accolades: "Official Selection - Frightfest" 
+         },
+         'Dark Light': {
+           src: 'videos/trailer2.mp4',
+           desc: "A mother fights to protect her daughter from a terrifying presence she believes is in her house.",
+           year: "2019",
+           director: "Padraig Reynolds",
+           duration: "90 min",
+           accolades: "Premiered at Sitges"
+         },
+         "Daddy's Girl": {
+           src: 'videos/trailer3.mp4',
+           desc: "A young woman held captive by her father must uncover a dark family secret.",
+           year: "2018",
+           director: "Julian Richards",
+           duration: "89 min",
+           accolades: "Official Selection - Fantasporto" 
+         }
+       };
+     
+       const film = trailerMap[title];
+       if (!film) return;
+     
+       document.getElementById('videoSource').src = film.src;
+       document.getElementById('modalVideo').load();
+       document.getElementById('filmTitle').textContent = `${title} (${film.year})`;
+       document.getElementById('filmDetails').innerHTML = `
+         <strong>${film.director}</strong> · ${film.duration}<br>
+         ${film.desc}<br><br>
+         <strong>ACCOLADES</strong><br>${film.accolades}`;
+       document.getElementById('trailerModal').style.display = 'flex';
+     }
+     
+     function closeTrailer() {
+       const video = document.getElementById('modalVideo');
+       video.pause();
+       document.getElementById('trailerModal').style.display = 'none';
+     }
+     </script>
+     
+     <!-- SCRIPTS -->
+  <script src="js/jquery.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.parallax.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/jquery.magnific-popup.min.js"></script>
+  <script src="js/magnific-popup-options.js"></script>
+  <script src="js/modernizr.custom.js"></script>
+
+  <!-- Unified smooth scrolling with navbar offset -->
+  <script>
+    document.querySelectorAll('a.smoothScroll').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const navbarHeight = document.getElementById('mainNavbar').offsetHeight;
+          const targetPosition = target.offsetTop - navbarHeight;
+          window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+
+  <!-- Navbar show/hide on scroll -->
+  <script>
+    let lastScrollTop = 0;
+    const navbar = document.getElementById('mainNavbar');
+    window.addEventListener('scroll', function() {
+      const st = window.pageYOffset || document.documentElement.scrollTop;
+      if (st > lastScrollTop && st > 100) navbar.style.top = '-80px';
+      else {
+        navbar.style.top = '0';
+        st > 50 ? navbar.classList.add('scrolled') : navbar.classList.remove('scrolled');
+      }
+      lastScrollTop = st <= 0 ? 0 : st;
+    });
+  </script>
+</body>
+</html>
