@@ -326,10 +326,6 @@
      </div>
    </div>
       
-
-
-   
-   
    
    <!-- COMING SOON SECTION -->
    <section id="coming-soon" class="section-coming">
@@ -564,7 +560,11 @@ function playTrailer(button, videoSrc) {
         year: "2018",
         director: "Padraig Reynolds",
         duration: "102 min",
-        accolades: "Official Selection - Frightfest"
+        accolades: "Official Selection:<br>\
+FrightFest London (2018), SITGES International Film Festival, SPAIN (2018)<br>\
+BIFAN Film Festival, SOUTH KOREA (2019), Fantastic Fest, USA (2018)<br>\
+Telluride Horror Show Film Festival, USA (2018)<br>\
+<strong>WINNER</strong>: Best Special Effects / Make-Up – Screamfest Horror Film Festival, Los Angeles, USA (2018)"
       },
       'Dark Light': {
         id: 'Isls30Tok3E',
@@ -572,7 +572,7 @@ function playTrailer(button, videoSrc) {
         year: "2019",
         director: "Padraig Reynolds",
         duration: "90 min",
-        accolades: "Premiered at Sitges"
+        accolades: "Premiered at FrieghtFest, London"
       },
       "Daddy's Girl": {
         id: 'PkVRva3AiOE',
@@ -580,8 +580,14 @@ function playTrailer(button, videoSrc) {
         year: "2018",
         director: "Julian Richards",
         duration: "89 min",
-        accolades: "Official Selection - Fantasporto"
-      }
+        accolades: "Official Selection:<br>\
+RAINDANCE, London (2018), BIFAN Film Festival, SOUTH KOREA (2019)<br>\
+National Film and Television Awards, USA (2019)<br>\
+Buffalo Dreams Fantastic Film Festival (2020) – 4 Nominations<br>\
+<strong>WINNER</strong>: Best Director<br>\
+FANTASPORTO Film Festival, PORTUGAL (2019)"
+
+  }
     };
   
     const film = trailerMap[title];
@@ -603,23 +609,6 @@ function playTrailer(button, videoSrc) {
   }
   </script>
   
-    const film = trailerMap[title];
-    if (!film) return;
-  
-    document.getElementById('modalIframe').src = `https://www.youtube.com/embed/${film.id}?autoplay=1&mute=0&rel=0`;
-    document.getElementById('filmTitle').textContent = `${title} (${film.year})`;
-    document.getElementById('filmDetails').innerHTML = `
-      <strong>${film.director}</strong> · ${film.duration}<br>
-      ${film.desc}<br><br>
-      <strong>ACCOLADES</strong><br>${film.accolades}`;
-    document.getElementById('trailerModal').style.display = 'flex';
-  }
-  
-  function closeTrailer() {
-    const iframe = document.getElementById('modalIframe');
-    iframe.src = '';
-    document.getElementById('trailerModal').style.display = 'none';
-  }
   </script>
   
      }
