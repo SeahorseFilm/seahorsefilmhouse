@@ -256,13 +256,66 @@
    </section>
    
    <!-- Trailer Modal Popup -->
-   <div id="trailerModal" class="trailer-modal" style="display: none;">
-     <div class="modal-content">
-       <span class="close-btn" onclick="closeTrailer()">&times;</span>
-       <iframe id="modalIframe" width="100%" height="500" src="" frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen>
-</iframe>
+  <!-- Trailer Modal Popup -->
+<div id="trailerModal" class="trailer-modal" style="display: none;">
+  <span class="close-btn" onclick="closeTrailer()">×</span>
+  <div class="modal-content">
+    <iframe id="modalIframe" width="100%" height="100%" src="" frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen style="border-radius: 10px; max-height: 65vh;">
+    </iframe>
+    <div class="film-description">
+      <h3 id="filmTitle" style="margin-top: 1rem;"></h3>
+      <p id="filmDetails"></p>
+    </div>
+  </div>
+</div>
+
+<style>
+.trailer-modal {
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 960px;
+  text-align: left;
+  color: #fff;
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 5rem;
+  font-weight: normal;
+  color: white;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+@media (max-width: 768px) {
+  .close-btn {
+    font-size: 4rem;
+    right: 16px;
+    top: 16px;
+  }
+
+  #modalIframe {
+    height: 100vh !important;
+  }
+}
+</style>
+
 
        </video>
        <div class="film-description">
@@ -502,7 +555,7 @@ function playTrailer(button, videoSrc) {
   video.play();
 }
 </script>
-<script>
+<<script>
   function openTrailer(title) {
     const trailerMap = {
       'Open 24 Hours': {
@@ -530,6 +583,25 @@ function playTrailer(button, videoSrc) {
         accolades: "Official Selection - Fantasporto"
       }
     };
+  
+    const film = trailerMap[title];
+    if (!film) return;
+  
+    document.getElementById('modalIframe').src = `https://www.youtube.com/embed/${film.id}?autoplay=1&mute=0&rel=0`;
+    document.getElementById('filmTitle').textContent = `${title} (${film.year})`;
+    document.getElementById('filmDetails').innerHTML = `
+      <strong>${film.director}</strong> · ${film.duration}<br>
+      ${film.desc}<br><br>
+      <strong>ACCOLADES</strong><br>${film.accolades}`;
+    document.getElementById('trailerModal').style.display = 'flex';
+  }
+  
+  function closeTrailer() {
+    const iframe = document.getElementById('modalIframe');
+    iframe.src = '';
+    document.getElementById('trailerModal').style.display = 'none';
+  }
+  </script>
   
     const film = trailerMap[title];
     if (!film) return;
