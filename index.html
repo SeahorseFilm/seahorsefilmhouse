@@ -60,22 +60,50 @@
 
 <!-- HERO SECTION with 3 trailers + mute toggle -->
 <section id="hero-carousel" class="hero-carousel">
-  <div class="carousel-slide active" style="background-image: url('images/film1.jpg');" data-url="https://youtube.com/watch?v=VIDEO1">
-    <div class="slide-content">
-      <h1>Open 24 Hours</h1>
-      <p>2025</p>
+  <!-- Slide 1 -->
+  <div class="carousel-slide active" style="background-image: url('images/film1.jpg');" data-url="https://youtu.be/iI7yLprZheA">
+    <div class="slide-overlay">
+      <div class="play-icon">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+          <polygon points="40,30 70,50 40,70" />
+        </svg>
+      </div>
+      
+      
+      <div class="slide-content">
+        <h1>Open 24 Hours</h1>
+        <p class="tagline">Some doors should stay closed</p>
+      </div>
     </div>
   </div>
-  <div class="carousel-slide" style="background-image: url('images/film2.jpg');" data-url="https://youtube.com/watch?v=VIDEO2">
-    <div class="slide-content">
-      <h1>Dark Light</h1>
-      <p>2025</p>
+
+  <!-- Slide 2 -->
+  <div class="carousel-slide" style="background-image: url('images/film2.jpg');" data-url="https://youtu.be/Isls30Tok3E">
+    <div class="slide-overlay">
+      <div class="play-icon">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+          <polygon points="40,30 70,50 40,70" />
+        </svg>
+      </div>
+      <div class="slide-content">
+        <h1>Dark Light</h1>
+        <p class="tagline">What hides in the shadows</p>
+      </div>
     </div>
   </div>
-  <div class="carousel-slide" style="background-image: url('images/film3.jpg');" data-url="https://youtube.com/watch?v=VIDEO3">
-    <div class="slide-content">
-      <h1>Daddy’s Girl</h1>
-      <p>2025</p>
+
+  <!-- Slide 3 -->
+  <div class="carousel-slide" style="background-image: url('images/film3.jpg');" data-url="https://youtu.be/PkVRva3AiOE">
+    <div class="slide-overlay">
+      <div class="play-icon">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+          <polygon points="40,30 70,50 40,70" />
+        </svg>
+      </div>
+      <div class="slide-content">
+        <h1>Daddy’s Girl</h1>
+        <p class="tagline">Family ties that bind too tight</p>
+      </div>
     </div>
   </div>
 
@@ -655,27 +683,22 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
   <script>
     let currentSlide = 0;
     const slides = document.querySelectorAll('.carousel-slide');
-    const slideInterval = 5000; // 5 seconds
+    const slideInterval = 5000;
     
     function showSlide(index) {
       slides.forEach((slide, i) => {
-        slide.classList.remove('active');
-        if (i === index) slide.classList.add('active');
+        slide.classList.toggle('active', i === index);
       });
       currentSlide = index;
     }
     
     function changeSlide(step) {
-      let newIndex = (currentSlide + step + slides.length) % slides.length;
-      showSlide(newIndex);
+      const nextIndex = (currentSlide + step + slides.length) % slides.length;
+      showSlide(nextIndex);
     }
     
-    // Auto-rotate
-    setInterval(() => {
-      changeSlide(1);
-    }, slideInterval);
+    setInterval(() => changeSlide(1), slideInterval);
     
-    // Click to open trailer
     slides.forEach(slide => {
       slide.addEventListener('click', () => {
         const url = slide.getAttribute('data-url');
@@ -683,6 +706,7 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
       });
     });
     </script>
+    
     
 </body>
 </html>
