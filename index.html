@@ -59,31 +59,31 @@
   </nav>
 
 <!-- HERO SECTION with 3 trailers + mute toggle -->
-<section id="hero" class="hero-section">
-  <iframe 
-  width="100%" 
-  height="100%" 
-  src="https://www.youtube.com/embed/iI7yLprZheA?rel=0&modestbranding=1&controls=1&autoplay=1&mute=1&loop=1&playlist=iI7yLprZheA" 
-  title="Open 24 Hours Trailer"
-  frameborder="0" 
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-  allowfullscreen
-  style="position:absolute; top:0; left:0; width:100%; height:100%;">
-</iframe>
+<section id="hero-carousel" class="hero-carousel">
+  <div class="carousel-slide active" style="background-image: url('images/film1.jpg');" data-url="https://youtube.com/watch?v=VIDEO1">
+    <div class="slide-content">
+      <h1>Open 24 Hours</h1>
+      <p>2025</p>
+    </div>
+  </div>
+  <div class="carousel-slide" style="background-image: url('images/film2.jpg');" data-url="https://youtube.com/watch?v=VIDEO2">
+    <div class="slide-content">
+      <h1>Dark Light</h1>
+      <p>2025</p>
+    </div>
+  </div>
+  <div class="carousel-slide" style="background-image: url('images/film3.jpg');" data-url="https://youtube.com/watch?v=VIDEO3">
+    <div class="slide-content">
+      <h1>Daddy’s Girl</h1>
+      <p>2025</p>
+    </div>
+  </div>
 
-   
-     <div class="hero-overlay">
-       <div class="container text-left">
-         <h1 id="film-title">Open 24 Hours</h1>
-         <p id="film-tagline">Some doors should stay closed</p>
-   
-         <div class="hero-buttons">
-           <button id="prev-btn">⏮ Prev</button>
-           <button id="next-btn">Next ⏭</button>
-           <button id="mute-btn">🔇</button>
-         </div>
-       </div>
-     </div>
+  <!-- Arrows -->
+  <button class="arrow left" onclick="changeSlide(-1)">❮</button>
+  <button class="arrow right" onclick="changeSlide(1)">❯</button>
+</section>
+
    </section>
    
    <style>
@@ -652,5 +652,37 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
       lastScrollTop = st <= 0 ? 0 : st;
     });
   </script>
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-slide');
+    const slideInterval = 5000; // 5 seconds
+    
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+        if (i === index) slide.classList.add('active');
+      });
+      currentSlide = index;
+    }
+    
+    function changeSlide(step) {
+      let newIndex = (currentSlide + step + slides.length) % slides.length;
+      showSlide(newIndex);
+    }
+    
+    // Auto-rotate
+    setInterval(() => {
+      changeSlide(1);
+    }, slideInterval);
+    
+    // Click to open trailer
+    slides.forEach(slide => {
+      slide.addEventListener('click', () => {
+        const url = slide.getAttribute('data-url');
+        if (url) window.open(url, '_blank');
+      });
+    });
+    </script>
+    
 </body>
 </html>
