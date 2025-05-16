@@ -1470,7 +1470,7 @@ section#coming-soon > .container > h2 {
 .arrow.right { right: 20px; }
 
 .arrow:hover {
-  background: rgba(255, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.551);
 }
 
 @media (max-width: 768px) {
@@ -1519,4 +1519,172 @@ section#coming-soon > .container > h2 {
 }
 .navbar-collapse {
   transition: height 0.4s ease, opacity 0.3s ease;
+}
+.trailer-modal {
+  position: fixed;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.9);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 900px;
+}
+
+.modal-content iframe {
+  width: 100%;
+  height: 500px;
+  border-radius: 10px;
+}
+
+.close-btn {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  color: white;
+  font-size: 32px;
+  cursor: pointer;
+}
+/* Film card poster hover container */
+.poster-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Image styling */
+.poster-hover img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Overlay content that appears on hover */
+.hover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+/* Make it scrollable if text overflows */
+.poster-hover:hover .hover-overlay {
+  opacity: 1;
+}
+
+/* Text styling inside the overlay */
+.hover-text {
+  color: white;
+  font-size: 14px;
+  line-height: 1;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.hover-text h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.hover-text p {
+  margin-bottom: 10px;
+  color: #ccc;
+}
+
+/* RESPONSIVE fix for phones */
+@media (max-width: 768px) {
+  .hover-text {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .hover-overlay {
+    padding: 15px;
+  }
+}
+.hover-overlay {
+  overflow-y: auto;
+  max-height: 100%;
+  padding: 20px;
+}
+
+.hover-text {
+  max-height: 100%;
+  overflow-y: auto;
+}
+.trailer-modal {
+  position: fixed;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.95);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 900px;
+  background: #111;
+  color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.modal-content video,
+.modal-content iframe {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.film-description {
+  overflow-y: auto;
+  max-height: 250px;
+  padding-right: 10px;
+  font-size: 14px;
+  line-height: 1;
+  color: #ccc;
+}
+.film-description {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 20px;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.film-description h3 {
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 10px;
 }

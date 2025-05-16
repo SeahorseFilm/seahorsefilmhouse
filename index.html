@@ -63,9 +63,9 @@
 <!-- HERO SECTION with 3 trailers + mute toggle -->
 <section id="hero-carousel" class="hero-carousel">
   <!-- Slide 1 -->
-  <div class="carousel-slide active" style="background-image: url('images/film1.jpg');" data-url="https://youtu.be/iI7yLprZheA">
+  <div class="carousel-slide active" style="background-image: url('images/film1.jpg');">
     <div class="slide-overlay">
-      <div class="play-icon">
+      <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/iI7yLprZheA')">
         <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
           <polygon points="40,30 70,50 40,70" />
         </svg>
@@ -79,9 +79,9 @@
   </div>
 
   <!-- Slide 2 -->
-  <div class="carousel-slide" style="background-image: url('images/film2.jpg');" data-url="https://youtu.be/Isls30Tok3E">
+  <div class="carousel-slide active" style="background-image: url('images/film2.jpg');">
     <div class="slide-overlay">
-      <div class="play-icon">
+      <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/Isls30Tok3E')">
         <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
           <polygon points="40,30 70,50 40,70" />
         </svg>
@@ -94,9 +94,9 @@
   </div>
 
   <!-- Slide 3 -->
-  <div class="carousel-slide" style="background-image: url('images/film3.jpg');" data-url="https://youtu.be/PkVRva3AiOE">
+  <div class="carousel-slide active" style="background-image: url('images/film3.jpg');">
     <div class="slide-overlay">
-     <div class="play-icon">
+      <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/PkVRva3AiOE')">
         <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
           <polygon points="40,30 70,50 40,70" />
         </svg>
@@ -147,7 +147,7 @@
      align-items: center;
      justify-content: flex-start;
      padding-left: 10%;
-     background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(0,0,0,0.8));
+     background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0,0,0,0.8));
      color: white;
    }
    .hero-buttons button {
@@ -162,7 +162,7 @@
      transition: background 0.3s;
    }
    .hero-buttons button:hover {
-     background: rgba(255, 255, 255, 0);
+     background: rgba(255,255,255,0.2);
    }
    </style>
    <script>
@@ -315,10 +315,14 @@
 }
 
 .modal-content {
-  width: 100%;
-  max-width: 960px;
-  text-align: left;
-  color: #fff;
+  <video id="modalVideo" controls autoplay style="width: 100%; border-radius: 8px;">
+  <source id="videoSource" src="" type="video/mp4" />
+</video>
+
+<div class="film-description">
+  <h3 id="filmTitle"></h3>
+  <p id="filmDetails"></p>
+</div>
 }
 
 .close-btn {
@@ -344,7 +348,6 @@
   }
 }
 </style>
-
 
        </video>
        <div class="film-description">
@@ -586,7 +589,7 @@ function playTrailer(button, videoSrc) {
       'Open 24 Hours': {
         id: 'iI7yLprZheA',
         desc: "A psychological thriller about a woman who takes a job at a 24-hour convenience store after being released from prison.",
-        year: "2018",
+        year: "2019",
         director: "Padraig Reynolds",
         duration: "102 min",
         accolades: "Official Selection:<br>\
@@ -598,7 +601,7 @@ Telluride Horror Show Film Festival, USA (2018)<br>\
       'Dark Light': {
         id: 'Isls30Tok3E',
         desc: "A mother fights to protect her daughter from a terrifying presence she believes is in her house.",
-        year: "2019",
+        year: "2020",
         director: "Padraig Reynolds",
         duration: "90 min",
         accolades: "Premiered at FrieghtFest, London"
@@ -746,6 +749,31 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
     $('.navbar-collapse.in').collapse('hide');
   });
 </script>
+<!-- YouTube Trailer Modal -->
+<div id="youtubeModal" class="trailer-modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-btn" onclick="closeYouTubeTrailer()">&times;</span>
+    <iframe id="youtubeFrame" width="100%" height="500" frameborder="0" allowfullscreen></iframe>
+  </div>
+</div>
+<script>
+  function playYouTubeTrailer(url) {
+    const modal = document.getElementById("youtubeModal");
+    const iframe = document.getElementById("youtubeFrame");
 
+    iframe.src = url + "?autoplay=1&rel=0";
+    modal.style.display = "flex";
+  }
+
+  function closeYouTubeTrailer() {
+    const modal = document.getElementById("youtubeModal");
+    const iframe = document.getElementById("youtubeFrame");
+
+    iframe.src = "";
+    modal.style.display = "none";
+  }
+</script>
+<script src="js/films.js"></script>
 </body>
 </html>
+
