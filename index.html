@@ -161,11 +161,6 @@
 
 </section>
 
-  
-
-
-   </section>
-   
    <style>
    .hero-section {
      position: relative;
@@ -225,59 +220,6 @@
     updateVh();
   </script>
   
-   <script>
-   const films = [
-     {
-       title: "Open 24 Hours",
-       tagline: "Some doors should stay closed",
-       video: "videos/trailer1.mp4"
-     },
-     {
-       title: "Dark Light",
-       tagline: "What hides in the shadows",
-       video: "videos/trailer2.mp4"
-     },
-     {
-       title: "Daddy's Girl",
-       tagline: "Family ties that bind too tight",
-       video: "videos/trailer3.mp4"
-     }
-   ];
-   
-   let currentIndex = 0;
-   const video = document.getElementById('hero-video');
-   const videoSource = document.getElementById('video-source');
-   const title = document.getElementById('film-title');
-   const tagline = document.getElementById('film-tagline');
-   const muteBtn = document.getElementById('mute-btn');
-   const nextBtn = document.getElementById('next-btn');
-   const prevBtn = document.getElementById('prev-btn');
-   
-   function updateHero(index) {
-     const film = films[index];
-     video.pause();
-     videoSource.src = film.video;
-     video.load();
-     video.play();
-     title.textContent = film.title;
-     tagline.textContent = film.tagline;
-   }
-   
-   muteBtn.addEventListener('click', () => {
-     video.muted = !video.muted;
-     muteBtn.textContent = video.muted ? '🔇' : '🔊';
-   });
-   
-   nextBtn.addEventListener('click', () => {
-     currentIndex = (currentIndex + 1) % films.length;
-     updateHero(currentIndex);
-   });
-   
-   prevBtn.addEventListener('click', () => {
-     currentIndex = (currentIndex - 1 + films.length) % films.length;
-     updateHero(currentIndex);
-   });
-   </script>
 <!-- ABOUT SECTION -->
 
 <section id="about" class="parallax-section" style="padding: 80px 0; background: #fff; color: #333; text-align: center;">
@@ -285,7 +227,7 @@
     <div class="about-info">
       <h3 style="letter-spacing: 8px; text-transform: uppercase; margin-bottom: 20px;">Introducing SEAHORSE FILMHOUSE</h3>
       <h1>Seahorse Filmhouse is an independent production company crafting bold, evocative cinema that lingers in the mind and stirs the soul. 
-      We specialize in intimate dramas and socially conscious stories, narratives that challenge perception and invite reflection.</p>
+        Our work explores intimate dramas, socially conscious stories, narratives that challenge perception and invite reflection.</p>
       Our films, recognized at international festivals and on global platforms, balance narrative depth with striking visual precision.</p>
       At our core, we are a studio of ideas. We champion the strange, the beautiful, and the poetic, shaping them into films that leave a lasting mark.</h1>
        
@@ -807,23 +749,7 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
     <iframe id="youtubeFrame" width="100%" height="500" frameborder="0" allowfullscreen></iframe>
   </div>
 </div>
-<script>
-  function playYouTubeTrailer(url) {
-    const modal = document.getElementById("youtubeModal");
-    const iframe = document.getElementById("youtubeFrame");
 
-    iframe.src = url + "?autoplay=1&rel=0";
-    modal.style.display = "flex";
-  }
-
-  function closeYouTubeTrailer() {
-    const modal = document.getElementById("youtubeModal");
-    const iframe = document.getElementById("youtubeFrame");
-
-    iframe.src = "";
-    modal.style.display = "none";
-  }
-</script>
 <script src="js/films.js"></script>
 
 <script>
