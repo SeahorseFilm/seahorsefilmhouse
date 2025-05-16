@@ -62,56 +62,107 @@
 
 <!-- HERO SECTION with 3 trailers + mute toggle -->
 <section id="hero-carousel" class="hero-carousel">
-  <!-- Slide 1 -->
+
+  <!-- Slide 1: Open 24 Hours -->
   <div class="carousel-slide active" style="background-image: url('images/film1.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/iI7yLprZheA')">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
           <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
-      
-      <div class="slide-content">
-        <h1>Open 24 Hours</h1>
-        <p class="tagline">Some doors should stay closed</p>
-      </div>
+    </div>
+    <div class="slide-content">
+      <h1>Open 24 Hours</h1>
+      <p class="tagline">Some doors should stay closed</p>
     </div>
   </div>
 
-  <!-- Slide 2 -->
-  <div class="carousel-slide active" style="background-image: url('images/film2.jpg');">
+  <!-- Slide 2: Dark Light -->
+  <div class="carousel-slide" style="background-image: url('images/film2.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/Isls30Tok3E')">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
           <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
-      <div class="slide-content">
-        <h1>Dark Light</h1>
-        <p class="tagline">What hides in the shadows</p>
-      </div>
+    </div>
+    <div class="slide-content">
+      <h1>Dark Light</h1>
+      <p class="tagline">What hides in the shadows?</p>
     </div>
   </div>
 
-  <!-- Slide 3 -->
-  <div class="carousel-slide active" style="background-image: url('images/film3.jpg');">
+  <!-- Slide 3: Daddy’s Girl -->
+  <div class="carousel-slide" style="background-image: url('images/film3.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/PkVRva3AiOE')">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
           <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
-      <div class="slide-content">
-        <h1>Daddy’s Girl</h1>
-        <p class="tagline">Family ties that bind too tight</p>
-      </div>
+    </div>
+    
+    </div>
+    <div class="slide-content">
+      <h1>Daddy’s Girl</h1>
+      <p class="tagline">Family ties that bind too tight</p>
     </div>
   </div>
 
-  <!-- Arrows -->
+  <!-- Slide 4: Open 24 Hours (alt) -->
+  <div class="carousel-slide" style="background-image: url('images/film4.jpg');">
+    <div class="slide-overlay">
+      <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/iI7yLprZheA')">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
+          <polygon points="40,30 70,50 40,70" />
+        </svg>
+      </div>
+    </div>
+    <div class="slide-content">
+      <h1>Open 24 Hours</h1>
+      <p class="tagline">Some doors should stay closed</p>
+    </div>
+  </div>
+
+  <!-- Slide 5: Dark Light (alt) -->
+  <div class="carousel-slide" style="background-image: url('images/film5.jpg');">
+    <div class="slide-overlay">
+      <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/Isls30Tok3E')">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
+          <polygon points="40,30 70,50 40,70" />
+        </svg>
+      </div>
+    </div>
+    <div class="slide-content">
+      <h1>Dark Light</h1>
+      <p class="tagline">What hides in the shadows?</p>
+    </div>
+  </div>
+
+  <!-- Slide 6: Daddy’s Girl (alt) -->
+  <div class="carousel-slide" style="background-image: url('images/film6.jpg');">
+    <div class="slide-overlay">
+      <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/PkVRva3AiOE')">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
+          <polygon points="40,30 70,50 40,70" />
+        </svg>
+      </div>
+    </div>
+    <div class="slide-content">
+      <h1>Daddy’s Girl</h1>
+      <p class="tagline">Family ties that bind too tight</p>
+    </div>
+  </div>
+
+  <!-- Navigation Arrows -->
   <button class="arrow left" onclick="changeSlide(-1)">❮</button>
   <button class="arrow right" onclick="changeSlide(1)">❯</button>
+
 </section>
+
+  
+
 
    </section>
    
@@ -774,6 +825,26 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
   }
 </script>
 <script src="js/films.js"></script>
+
+<script>
+  function playYouTubeTrailer(url) {
+    const modal = document.getElementById("youtubeModal");
+    const iframe = document.getElementById("youtubeFrame");
+
+    iframe.src = url + "?autoplay=1&rel=0";
+    modal.style.display = "flex";
+  }
+
+  function closeYouTubeTrailer() {
+    const modal = document.getElementById("youtubeModal");
+    const iframe = document.getElementById("youtubeFrame");
+
+    iframe.src = ""; // reset playback
+    modal.style.display = "none";
+  }
+</script>
+
+
 </body>
 </html>
 
