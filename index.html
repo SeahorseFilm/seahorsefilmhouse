@@ -103,8 +103,6 @@
         </svg>
       </div>
     </div>
-    
-    </div>
     <div class="slide-content">
       <h1>Daddy’s Girl</h1>
       <p class="tagline">Family ties that bind too tight</p>
@@ -115,8 +113,7 @@
   <div class="carousel-slide" style="background-image: url('images/film4.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/iI7yLprZheA')">
-        <svg width="80" height="40" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
-          <polygon points="40,30 70,50 40,70" />
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">          <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
     </div>
@@ -136,10 +133,11 @@
       </div>
     </div>
     <div class="slide-content">
-      <h1>Dark Light</h1>
-      <p class="tagline">What hides in the shadows?</p>
+      <h1>Daddy’s Girl</h1>
+      <p class="tagline">Family ties that bind too tight</p>
     </div>
   </div>
+   
 
   <!-- Slide 6: Daddy’s Girl (alt) -->
   <div class="carousel-slide" style="background-image: url('images/film6.jpg');">
@@ -151,14 +149,14 @@
       </div>
     </div>
     <div class="slide-content">
-      <h1>Daddy’s Girl</h1>
-      <p class="tagline">Family ties that bind too tight</p>
+      <h1>Dark Light</h1>
+      <p class="tagline">What hides in the shadows?</p>
     </div>
   </div>
 
   <!-- Navigation Arrows -->
-  <button class="arrow left" onclick="changeSlide(-1)">❮</button>
-  <button class="arrow right" onclick="changeSlide(1)">❯</button>
+  <button class="arrow left" onclick="changeSlide(1)">❮</button>
+  <button class="arrow right" onclick="changeSlide(2)">❯</button>
 
 </section>
 
@@ -206,7 +204,7 @@
      font-size: 14px;
      border-radius: 4px;
      cursor: pointer;
-     transition: 0.3s;
+     transition: 2s;
    }
    .hero-buttons button:hover {
      background: rgba(255,255,255,0.2);
@@ -238,41 +236,142 @@
 
 <!-- FILMS Section -->
 <section id="films" class="parallax-section">
-     <div class="container">
-       <h2>Films</h2>
-       <div class="film-grid">
-         <!-- Film Card -->
-         <div class="film-card" onclick="openTrailer('Open 24 Hours')">
-           <img src="images/project-image2.jpg" alt="Open 24 Hours" />
-           <div class="film-info">
-             <span class="film-year">2019</span>
-             <div class="film-title-row">
-              <h3>Open 24 Hours</h3>
-              <span class="inline-play-icon">▶Play Trailer</span>
-            </div>
-                       </div>
-         </div>
-         <div class="film-card" onclick="openTrailer('Dark Light')">
-           <img src="images/project-image3.jpg" alt="Dark Light" />
-           <div class="film-info">
-             <span class="film-year">2020</span>
-             <div class="film-title-row">
-             <h3>Dark Light</h3>
-             <span class="inline-play-icon">▶Play Trailer</span>
-</div>
-           </div>
-         </div>
-         <div class="film-card" onclick="openTrailer('Daddy\'s Girl')">
-           <img src="images/project-image1.jpg" alt="Daddy's Girl" />
-           <div class="film-info">
-            <span class="film-year">2018</span>
-            <div class="film-title-row">
-              <h3>Daddy's Girl</h3>
-              <span class="play-icon-text">▶ Play Trailer</span>
-            </div>
+  <div class="container">
+    <h2>Films</h2>
+    <div class="film-grid">
+<style>
+  /* Film Card Hover Overlay */
+  .film-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+  }
+  
+  .film-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+  }
+  
+  .film-card:hover img {
+      transform: scale(1.03);
+  }
+  
+  .film-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+  }
+  
+  .film-card:hover .film-overlay {
+      opacity: 2;
+  }
+  
+  .film-overlay h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+  }
+  
+  .film-overlay p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      max-width: 80%;
+  }
+  
+  /* Keep your existing film-info styles */
+</style>
+
+<!-- Modified Films Section -->
+
+          <!-- Open 24 Hours -->
+          <div class="film-card" onclick="openTrailer('Open 24 Hours')">
+              <img src="images/project-image2.jpg" alt="Open 24 Hours">
+              <div class="film-overlay">
+                  <h3>OPEN 24 Hours</h3>
+                  <p>Director:<strong>Padraig Reynolds</strong><p>
+                  <p>A psychological thriller about a woman who takes a job at a 24-hour convenience store after being released from prison."</p>
+                  <p><strong>ACCOLADES: 
+                    <br>[Official Selection]</strong><br>
+                    FrightFest London (2018)<br>SITGES International Film Festival, SPAIN (2018)<br>
+                    BIFAN Film Festival, SOUTH KOREA (2019)<br> Fantastic Fest, USA (2018)<br>
+                    Telluride Horror Show Film Festival, USA (2018)<br>
+                    <strong>WINNER</strong>: Best Special Effects/Make-Up – Screamfest Horror Film Festival, Los Angeles, USA (2018)"</p>
+                          
+                  <span class="play-icon-text">▶ Play Trailer</span>
+              </div>
+              <div class="film-info">
+                  <span class="film-year">2019</span>
+                  <div class="film-title-row">
+                      <h3>Open 24 Hours</h3>
+                   
+                  </div>
+              </div>
           </div>
-          
-           </div>
+          <div class="film-card" onclick="openTrailer('Dark Light')">
+            <img src="images/project-image3.jpg" alt="Dark Light">
+            <div class="film-overlay">
+                <h3>DARK LIGHT</h3>
+                <p>Director:<strong>Padraig Reynolds</strong><p>
+                <p>A mother fights to protect her daughter from a terrifying presence she believes is in her house.
+                  <strong>ACCOLADES: </strong><br>Premiered at FrightFest, London<br>
+                </p>
+                <span class="play-icon-text">▶ Play Trailer</span>
+            </div>
+            <div class="film-info">
+                <span class="film-year">2020</span>
+                <div class="film-title-row">
+                    <h3>Dark Light</h3>
+                  
+                </div>
+            </div>
+        </div>
+        
+        <!-- Daddy's Girl -->
+        <div class="film-card" onclick="openTrailer('Daddy\'s Girl')">
+            <img src="images/project-image1.jpg" alt="Daddy's Girl">
+            <div class="film-overlay">
+                <h3>DADDY'S GIRL</h3>
+              <p>Director:<strong>Julian Richards</strong><p>
+                <p>A young woman held captive by her father must uncover a dark family secret.<br>
+                  <strong>ACCOLADES:
+                    <br>[Official Selection]</strong><br>
+RAINDANCE, London (2018)<br>BIFAN Film Festival, SOUTH KOREA (2019)<br>
+National Film and Television Awards, USA (2019)<br>
+Buffalo Dreams Fantastic Film Festival (2020) – 4 Nominations<br>
+<strong>WINNER</strong>: Best Director<br>
+FANTASPORTO Film Festival, PORTUGAL (2019)
+                </p>
+                <span class="play-icon-text">▶ Play Trailer</span>
+            </div>
+            <div class="film-info">
+                <span class="film-year">2018</span>
+                <div class="film-title-row">
+                    <h3>Daddy's Girl</h3>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+
          </div>
        </div>
      </div>
@@ -354,31 +453,118 @@
       
    
    <!-- COMING SOON SECTION -->
+    
    <section id="coming-soon" class="section-coming">
      <div class="container">
        <h2>Coming Soon</h2>
        <div class="film-grid">
-        <div class="film-card">
-          <div class="coming-poster">
-            <img src="images/project-image4.jpg" alt="CHASM Poster" />
-          </div>
-          <div class="film-info">
-            <h3>Chasm</h3>
-            <p class="film-year">Fall 2025</p>
-          </div>
-        </div>
-        
-        
-        <div class="film-card">
-          <div class="coming-poster">
-            <img src="images/project-image5.jpg" alt="winter Dreams" />
-          </div>
-          <div class="film-info">
-            <h3>Winter Dreams</h3>
-            <p class="film-year">In Development</p>
-          </div>
-        </div>
-        
+
+        <style>
+          /* Add to your existing CSS */
+          .film-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+              gap: 40px;
+              margin-top: 30px;
+          }
+          
+          .film-card {
+              position: relative;
+              background: #000;
+              border-radius: 4px;
+              overflow: hidden;
+          }
+          
+          .coming-poster {
+              position: relative;
+              aspect-ratio: 2/3; /* Standard poster ratio */
+              overflow: hidden;
+          }
+          
+          .coming-poster img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              transition: transform 0.3s ease;
+          }
+          
+          .film-card:hover .coming-poster img {
+              transform: scale(1.03);
+          }
+          
+          .hover-overlay {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(0, 0, 0, 0.85);
+              color: white;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+              text-align: center;
+              padding: 20px;
+              box-sizing: border-box;
+          }
+          
+          .film-card:hover .hover-overlay {
+              opacity: 1;
+          }
+          
+          .film-info {
+              padding: 18px;
+              background: #111;
+          }
+          
+          .film-info h3 {
+              font-size: 18px;
+              margin-bottom: 5px;
+          }
+          
+          .film-year {
+              color: #a74aff;
+              font-size: 16px;
+          }
+      </style>
+
+          <div class="container">
+              <div class="film-grid">
+                  <!-- CHASM Card -->
+                  <div class="film-card">
+                      <div class="coming-poster">
+                          <img src="images/project-image4.jpg" alt="CHASM Poster">
+                          <div class="hover-overlay">
+                              <h3>CHASM</h3>
+                              <p>An atmospheric portrait of Ila, a woman on the edge of quiet transformation.
+                                A soulful exploration of the space between silence, mystery, and becoming.</p>
+                            
+                          </div>
+                      </div>
+                      <div class="film-info">
+                          <h3>Chasm</h3>
+                          <p class="film-year">Winter 2026</p>
+                      </div>
+                  </div>
+                  
+                  <!-- Winter Dreams Card -->
+                  <div class="film-card">
+                      <div class="coming-poster">
+                          <img src="images/project-image5.jpg" alt="Winter Dreams Poster">
+                          <div class="hover-overlay">
+                              <h3>WINTER DREAMS</h3>
+                              <p>A modern reimagining of Fitzgerald’s Winter Dreams—where ambition and desire blur the line between success and self-loss.
+                                Set in today’s world, it’s a story of chasing dreams, loving illusions, and waking up too late.</p>
+                          </div>
+                      </div>
+                      <div class="film-info">
+                          <h3>Winter Dreams</h3>
+                          <p class="film-year">In Development</p>
+                      </div>
+             
    </section>
   
 
@@ -400,8 +586,8 @@
                     <div class="col-md-4 col-sm-4 item">
                       <div class="team-item">
                         <img src="images/team-image1.jpg" class="img-responsive" alt="">
-                              <div class="team-overlay">
-                                <ul class="social-icon">
+                        <div class="team-overlay">
+                          <ul class="social-icon">
                                   <li>
                                     <a 
                                       href="https://www.imdb.com/name/nm11359091/?ref_=ext_shr_lnk" 
@@ -417,8 +603,6 @@
                          <p>R P Khemanand</p>
                          <h3>Producer/Director/Screenwriter</h3>
                     </div>
-
-                    
 
                     <div class="col-md-4 col-sm-4 item">
                          <div class="team-item">
@@ -615,7 +799,7 @@ Telluride Horror Show Film Festival, USA (2018)<br>\
         year: "2020",
         director: "Padraig Reynolds",
         duration: "90 min",
-        accolades: "Premiered at FrieghtFest, London"
+        accolades: "Premiered at FrightFest, London"
       },
       "Daddy's Girl": {
         id: 'PkVRva3AiOE',
@@ -805,6 +989,8 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
 </script>
 
 <!-- <script src="js/films.js"></script> -->
+
+
 
 </body>
 </html>
