@@ -1744,3 +1744,51 @@ body {
   background: rgb(255, 0, 0);
   border-radius: 100%;
 }
+/* Mobile Responsive Fixes */
+@media (max-width: 768px) {
+  /* Base adjustments */
+  body {
+      font-size: 14px;
+  }
+  
+  /* Header/footer text */
+  .filmhouse-header, .filmhouse-footer {
+      padding: 15px;
+      text-align: center;
+  }
+  
+  /* Film cards */
+  .film-grid {
+      grid-template-columns: 1fr !important; /* Single column on mobile */
+      gap: 20px;
+  }
+  
+  .film-card {
+      width: 100% !important;
+      max-width: 300px;
+      margin: 0 auto;
+  }
+  
+  /* Text elements */
+  h2, h3 {
+      font-size: 1.5em;
+  }
+  
+  .film-info, .hover-overlay {
+      padding: 12px;
+  }
+  
+  /* Coming Soon section */
+  .section-coming .film-grid {
+      grid-template-columns: 1fr;
+  }
+  
+  /* Footer credits */
+  .editor-credit {
+      font-size: 0.9em;
+      margin-top: 20px;
+  }
+}.poster-image {
+  max-width: 100%;
+  height: auto;
+}
