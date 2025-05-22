@@ -1853,3 +1853,19 @@ section#coming-soon > .container > h2 {
 }
 </style>
 
+
+@media (max-width: 768px) {
+  /* Nuclear option if other fixes don't work */
+  body {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent transform from causing overflow */
+  .film-card:hover .coming-poster img {
+      transform: scale(1.01); /* Reduce zoom effect */
+  }
+}
