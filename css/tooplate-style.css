@@ -1779,57 +1779,76 @@ section#coming-soon > .container > h2 {
     text-align: center;
   }
 }
-/* Prevent horizontal scroll */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
-  touch-action: pan-y; /* Only allow vertical scrolling */
+
+
+<style>
+/* Add to your existing CSS */
+.film-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 40px;
+    margin-top: 30px;
 }
 
-/* Contain all elements within viewport */
-.container {
-  width: 100vw;
-  overflow: hidden;
-  position: relative;
-}/* Fix for film cards */
 .film-card {
-  max-width: 100vw;
-  margin: 0;
-  padding: 0;
+    position: relative;
+    background: #000;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-/* Images and media */
-img, video, iframe {
-  max-width: 100%;
-  height: auto;
-  display: block;
+.coming-poster {
+    position: relative;
+    aspect-ratio: 2/3; /* Standard poster ratio */
+    overflow: hidden;
 }
 
-/* Text containers */
-.text-content {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
-}.navbar {
-  width: 100vw;
-  left: 0;
-  right: 0;
-  padding: 0 15px;
-  box-sizing: border-box;
-}* {
-  outline: 1px solid red !important;
-}@media (max-width: 768px) {
-  /* Nuclear option if other fixes don't work */
-  body {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-  }
-  
-  /* Prevent transform from causing overflow */
-  .film-card:hover .coming-poster img {
-      transform: scale(1.01); /* Reduce zoom effect */
-  }
+.coming-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
 }
+
+.film-card:hover .coming-poster img {
+    transform: scale(1.03);
+}
+
+.hover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.film-card:hover .hover-overlay {
+    opacity: 1;
+}
+
+.film-info {
+    padding: 18px;
+    background: #111;
+}
+
+.film-info h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.film-year {
+    color: #a74aff;
+    font-size: 16px;
+}
+</style>
