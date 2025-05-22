@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -367,9 +367,9 @@ FANTASPORTO Film Festival, PORTUGAL (2019)
                 <span class="film-year">2018</span>
                 <div class="film-title-row">
                     <h3>Daddy's Girl</h3>
-                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
-                      <polygon points="40,30 70,50 40,70" />
-                    </svg>
+                <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+                        <polygon points="40,30 70,50 40,70" />
+                      </svg>
                 </div>
             </div>
         </div>
@@ -466,78 +466,75 @@ FANTASPORTO Film Festival, PORTUGAL (2019)
        <div class="film-grid">
 
         <style>
-    
+          /* Add to your existing CSS */
+          .film-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+              gap: 40px;
+              margin-top: 30px;
+          }
           
-          .section-coming .film-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-        gap: 20px;
-        margin-top: 20px;
-        justify-items: center; /* Center the cards */
-    }
-    
-    .section-coming .film-card {
-        width: 450px; /* Fixed width */
-        position: relative;
-        background: #000;
-        border-radius: 4px;
-        overflow: hidden;
-    }
-    
-    .section-coming .coming-poster {
-        position: relative;
-        aspect-ratio: 2/3;
-        overflow: hidden;
-    }
-    
-    .section-coming .coming-poster img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-    
-    .section-coming .film-card:hover .coming-poster img {
-        transform: scale(1.03);
-    }
-    
-    .section-coming .hover-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        text-align: center;
-        padding: 10px;
-        box-sizing: border-box;
-    }
-    
-    .section-coming .film-card:hover .hover-overlay {
-        opacity: 1;
-    }
-    
-    .section-coming .film-info {
-        padding: 18px;
-        background: #111;
-    }
-    
-    .section-coming .film-info h3 {
-        font-size: 18px;
-        margin-bottom: 5px;
-    }
-    
-    .section-coming .film-year {
-        color: #a74aff;
-        font-size: 16px;
-    }
+          .film-card {
+              position: relative;
+              background: #000;
+              border-radius: 4px;
+              overflow: hidden;
+          }
+          
+          .coming-poster {
+              position: relative;
+              aspect-ratio: 2/3; /* Standard poster ratio */
+              overflow: hidden;
+          }
+          
+          .coming-poster img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              transition: transform 0.3s ease;
+          }
+          
+          .film-card:hover .coming-poster img {
+              transform: scale(1.03);
+          }
+          
+          .hover-overlay {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(0, 0, 0, 0.85);
+              color: white;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+              text-align: center;
+              padding: 20px;
+              box-sizing: border-box;
+          }
+          
+          .film-card:hover .hover-overlay {
+              opacity: 1;
+          }
+          
+          .film-info {
+              padding: 18px;
+              background: #111;
+          }
+          
+          .film-info h3 {
+              font-size: 18px;
+              margin-bottom: 5px;
+          }
+          
+          .film-year {
+              color: #a74aff;
+              font-size: 16px;
+          }
       </style>
 
           <div class="container">
