@@ -1807,9 +1807,9 @@ body {
 }
 
 .section-coming .film-card {
-  width: 18vw; /* Viewport width units */
-  min-width: 180px;
-  max-width: 220px;
+    width: 18vw; /* Viewport width units */
+    min-width: 180px;
+    max-width: 220px;
 }
 @media (max-width: 768px) {
   .section-coming .film-grid {
