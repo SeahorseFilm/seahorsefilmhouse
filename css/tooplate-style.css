@@ -1862,8 +1862,8 @@ section#coming-soon > .container > h2 {
   }
 }.section-coming .film-card {
   width: 18vw; /* Viewport width units */
-  min-width: 180px;
-  max-width: 500px;
+  min-width: 360px;
+  max-width: 768px;
 }
 /* Add to your existing CSS (global or mobile section) */
 html, body {
