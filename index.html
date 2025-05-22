@@ -68,7 +68,7 @@
   <div class="carousel-slide active" style="background-image: url('images/film1.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/iI7yLprZheA')">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="2">
           <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
@@ -83,7 +83,7 @@
   <div class="carousel-slide" style="background-image: url('images/film2.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/Isls30Tok3E')">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="2">
           <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
@@ -98,7 +98,7 @@
   <div class="carousel-slide" style="background-image: url('images/film3.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/PkVRva3AiOE')">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="2">
           <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
@@ -113,7 +113,7 @@
   <div class="carousel-slide" style="background-image: url('images/film4.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/iI7yLprZheA')">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">          <polygon points="40,30 70,50 40,70" />
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="2">          <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
     </div>
@@ -127,7 +127,7 @@
   <div class="carousel-slide" style="background-image: url('images/film5.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/Isls30Tok3E')">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="2">
           <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
@@ -143,7 +143,7 @@
   <div class="carousel-slide" style="background-image: url('images/film6.jpg');">
     <div class="slide-overlay">
       <div class="play-icon" onclick="playYouTubeTrailer('https://www.youtube.com/embed/PkVRva3AiOE')">
-        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="3">
+        <svg width="80" height="80" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="2">
           <polygon points="40,30 70,50 40,70" />
         </svg>
       </div>
@@ -319,7 +319,9 @@
                   <span class="film-year">2019</span>
                   <div class="film-title-row">
                       <h3>Open 24 Hours</h3>
-                   
+                      <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+                        <polygon points="40,30 70,50 40,70" />
+                      </svg>
                   </div>
               </div>
           </div>
@@ -337,7 +339,9 @@
                 <span class="film-year">2020</span>
                 <div class="film-title-row">
                     <h3>Dark Light</h3>
-                  
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+                      <polygon points="40,30 70,50 40,70" />
+                    </svg>
                 </div>
             </div>
         </div>
@@ -363,7 +367,9 @@ FANTASPORTO Film Festival, PORTUGAL (2019)
                 <span class="film-year">2018</span>
                 <div class="film-title-row">
                     <h3>Daddy's Girl</h3>
-                
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="1">
+                      <polygon points="40,30 70,50 40,70" />
+                    </svg>
                 </div>
             </div>
         </div>
@@ -460,75 +466,78 @@ FANTASPORTO Film Festival, PORTUGAL (2019)
        <div class="film-grid">
 
         <style>
-          /* Add to your existing CSS */
-          .film-grid {
-              display: grid;
-              grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-              gap: 40px;
-              margin-top: 30px;
-          }
+    
           
-          .film-card {
-              position: relative;
-              background: #000;
-              border-radius: 4px;
-              overflow: hidden;
-          }
-          
-          .coming-poster {
-              position: relative;
-              aspect-ratio: 2/3; /* Standard poster ratio */
-              overflow: hidden;
-          }
-          
-          .coming-poster img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              transition: transform 0.3s ease;
-          }
-          
-          .film-card:hover .coming-poster img {
-              transform: scale(1.03);
-          }
-          
-          .hover-overlay {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background: rgba(0, 0, 0, 0.85);
-              color: white;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-              opacity: 0;
-              transition: opacity 0.3s ease;
-              text-align: center;
-              padding: 20px;
-              box-sizing: border-box;
-          }
-          
-          .film-card:hover .hover-overlay {
-              opacity: 1;
-          }
-          
-          .film-info {
-              padding: 18px;
-              background: #111;
-          }
-          
-          .film-info h3 {
-              font-size: 18px;
-              margin-bottom: 5px;
-          }
-          
-          .film-year {
-              color: #a74aff;
-              font-size: 16px;
-          }
+          .section-coming .film-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+        justify-items: center; /* Center the cards */
+    }
+    
+    .section-coming .film-card {
+        width: 400px; /* Fixed width */
+        position: relative;
+        background: #000;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    
+    .section-coming .coming-poster {
+        position: relative;
+        aspect-ratio: 2/3;
+        overflow: hidden;
+    }
+    
+    .section-coming .coming-poster img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    .section-coming .film-card:hover .coming-poster img {
+        transform: scale(1.03);
+    }
+    
+    .section-coming .hover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        text-align: center;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+    
+    .section-coming .film-card:hover .hover-overlay {
+        opacity: 1;
+    }
+    
+    .section-coming .film-info {
+        padding: 18px;
+        background: #111;
+    }
+    
+    .section-coming .film-info h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+    
+    .section-coming .film-year {
+        color: #a74aff;
+        font-size: 16px;
+    }
       </style>
 
           <div class="container">
