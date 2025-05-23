@@ -872,7 +872,7 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
 
   <!-- Navbar show/hide on scroll -->
 
-  
+
   <script>
     let lastScrollTop = 0;
     const navbar = document.getElementById('mainNavbar');
@@ -912,8 +912,7 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
       });
     });
     </script>
-    
-    </script>
+  
    <script>
   // Collapse menu on nav item click
   $('.navbar-collapse a').on('click', function () {
@@ -948,53 +947,41 @@ FANTASPORTO Film Festival, PORTUGAL (2019)"
   $(window).on('scroll', function () {
     $('.navbar-collapse.in').collapse('hide');
   });
-</script>
-<!-- YouTube Trailer Modal -->
-<div id="youtubeModal" class="trailer-modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeYouTubeTrailer()">&times;</span>
-    <iframe id="youtubeFrame" width="100%" height="500" frameborder="0" allowfullscreen></iframe>
-  </div>
-</div>
-
-<script>
-  function playYouTubeTrailer(url) {
-    const modal = document.getElementById("youtubeModal");
-    const iframe = document.getElementById("youtubeFrame");
-
-    iframe.src = url + "?autoplay=1&rel=0";
-    modal.style.display = "flex";
-  }
-
-  function closeYouTubeTrailer() {
-    const modal = document.getElementById("youtubeModal");
-    const iframe = document.getElementById("youtubeFrame");
-
-    iframe.src = ""; // reset playback
-    modal.style.display = "none";
-  }
-</script>
-
-<script>
-  function playYouTubeTrailer(url) {
-    const modal = document.getElementById("youtubeModal");
-    const iframe = document.getElementById("youtubeFrame");
-
-    iframe.src = url + "?autoplay=1&rel=0";
-    modal.style.display = "flex";
-  }
-
-  function closeYouTubeTrailer() {
-    const modal = document.getElementById("youtubeModal");
-    const iframe = document.getElementById("youtubeFrame");
-
-    iframe.src = ""; // reset playback
-    modal.style.display = "none";
-  }
-</script>
 
 <!-- <script src="js/films.js"></script> -->
 
+
+// Paste this right before </body> in your HTML
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const navbar = document.getElementById('mainNavbar');
+  let lastScrollTop = 0;
+  const mobileBreakpoint = 768; // px
+  
+  window.addEventListener('scroll', function() {
+    // Only run this if on mobile
+    if (window.innerWidth <= mobileBreakpoint) {
+      const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      
+      if (currentScroll > lastScrollTop && currentScroll > 100) {
+        // Scrolling DOWN - hide navbar
+        navbar.style.transform = 'translateY(-100%)';
+      } else {
+        // Scrolling UP - show navbar
+        navbar.style.transform = 'translateY(0)';
+      }
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    }
+  });
+
+  // Reset navbar position when resizing to desktop
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > mobileBreakpoint) {
+      navbar.style.transform = 'translateY(0)';
+    }
+  });
+});
+</script>
 
 
 </body>

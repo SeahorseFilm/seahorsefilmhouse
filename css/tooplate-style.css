@@ -1130,6 +1130,28 @@ footer {
     height: calc(var(--vh, 1vh) * 80);
   }
 }
+/* ===== NAVBAR STYLES ===== */
+#mainNavbar {
+  background-color: transparent;
+  transition: transform 0.4s ease, background-color 0.3s ease;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+  padding: 20px 0;
+}
+
+/* Green background when scrolled */
+#mainNavbar.scrolled {
+  background-color: #00d283 !important;
+  padding: 12px 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Hide/show behavior for ALL devices */
+#mainNavbar.hidden {
+  transform: translateY(-100%);
+}
 /*---------------------------------------
   UNIFORM TEAM CARDS IN OWL CAROUSEL
 -----------------------------------------*/
@@ -1907,3 +1929,6 @@ html, body {
 .film-card {
   touch-action: manipulation; /* Disables double-tap zoom */
 }
+
+
+  }
