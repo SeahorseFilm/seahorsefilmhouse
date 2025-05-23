@@ -1861,7 +1861,7 @@ section#coming-soon > .container > h2 {
       width: 768px;
   }
 }.section-coming .film-card {
-  width: 18vw; /* Viewport width units */
+  width: 24vw; /* Viewport width units */
   min-width: 360px;
   max-width: 768px;
 }

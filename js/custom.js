@@ -47,3 +47,27 @@
         });
 
 })(jQuery);
+
+// Add this to your scripts (e.g., custom.js)
+document.addEventListener('DOMContentLoaded', function() {
+  const filmCards = document.querySelectorAll('.film-card');
+  
+  filmCards.forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Close other open cards first
+      filmCards.forEach(otherCard => {
+        if (otherCard !== card && otherCard.classList.contains('active')) {
+          otherCard.classList.remove('active');
+        }
+      });
+      // Toggle current card
+      card.classList.toggle('active');
+      e.stopPropagation(); // Prevent document-wide clicks
+    });
+  });
+
+  // Close overlays when clicking outside
+  document.addEventListener('click', function() {
+    filmCards.forEach(card => card.classList.remove('active'));
+  });
+});
