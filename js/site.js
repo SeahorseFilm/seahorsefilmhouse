@@ -27,6 +27,9 @@
       [titles, layers, notes].forEach(function (set) {
         set.forEach(function (el, n) { el.classList.toggle('active', n === current); });
       });
+      // let the page know which film is showing, so its image can be given a lighter tint
+      var m = layers[current].className.match(/bg-([a-z0-9-]+)/);
+      if (m) layers[current].parentNode.setAttribute('data-film', m[1]);
     };
     var start = function () { clearInterval(timer); timer = setInterval(function () { show(current + 1); }, 5500); };
     var noHover = window.matchMedia('(hover: none)').matches;

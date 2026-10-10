@@ -483,3 +483,7 @@ body::before {
 @media (max-width: 720px) { .hero-bg.bg-tokyo { background-position: 47% center; } }
 .film-hero.bg-tokyo { background-position: center 28%; }
 .concept-note { font-size: 0.82rem; margin-bottom: 8px; }
+
+/* Tokyo's sunset image is shown close to full colour: most of the dark tint is lifted while it is on screen */
+.hero-shade { transition: opacity 0.5s linear; }
+.hero[data-film="tokyo"] .hero-shade { opacity: 0.2; }
