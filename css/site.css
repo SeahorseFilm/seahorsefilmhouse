@@ -480,7 +480,10 @@ body::before {
 .modal .yt-link:hover { opacity: 1; text-decoration: underline; }
 /* panoramic image: on ordinary screens only part of its width shows; framed as Raj chose, tower at left, both figures in the car centred */
 .hero-bg.bg-tokyo { background-position: 54% center; }
-@media (max-width: 720px) { .hero-bg.bg-tokyo { background-position: 47% center; } }
+/* tall, narrow screens: use the zoomed-out phone version of the Tokyo image */
+@media (max-aspect-ratio: 4/5) {
+  .hero-bg.bg-tokyo { background-image: url(../images/hero-tokyo-phone.jpg) !important; background-position: center center; }
+}
 .film-hero.bg-tokyo { background-position: center 28%; }
 .concept-note { font-size: 0.82rem; margin-bottom: 8px; }
 
