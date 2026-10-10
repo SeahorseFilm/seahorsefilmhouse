@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://seahorsefilmhouse.com/sitemap.xml
