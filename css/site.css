@@ -490,3 +490,4 @@ body::before {
 /* Tokyo's sunset image is shown close to full colour: most of the dark tint is lifted while it is on screen */
 .hero-shade { transition: opacity 0.5s linear; }
 .hero[data-film="tokyo"] .hero-shade { opacity: 0.2; }
+.film-hero h1 .title-note { font-family: var(--mono); font-weight: 400; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; vertical-align: middle; margin-left: 10px; opacity: 0.9; }
