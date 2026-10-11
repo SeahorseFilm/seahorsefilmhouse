@@ -491,3 +491,13 @@ body::before {
 .hero-shade { transition: opacity 0.5s linear; }
 .hero[data-film="tokyo"] .hero-shade { opacity: 0.2; }
 .film-hero h1 .title-note { font-family: var(--mono); font-weight: 400; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; vertical-align: middle; margin-left: 10px; opacity: 0.9; }
+
+/* Where to watch, on released film pages */
+.sub-head .where { opacity: 0.6; margin-left: 0.6em; }
+.watch { margin: 0; }
+.watch div { display: flex; gap: 18px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
+.watch dt { flex: 0 0 8.5em; color: var(--muted); }
+.watch dd { margin: 0; }
+.watch a:hover, .watch-more a:hover { color: var(--accent); text-decoration: underline; }
+.watch-more { font-size: 0.85rem; margin: 12px 0 34px; }
+.watch-more a { color: var(--accent); }
