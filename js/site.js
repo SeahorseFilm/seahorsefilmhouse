@@ -72,6 +72,15 @@
     targets.forEach(function (el) { el.classList.add('reveal'); io.observe(el); });
   }
 
+  // Shop: clicking a small picture shows it as the product's main picture
+  document.querySelectorAll('.product .thumbs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var card = b.closest('.product');
+      card.querySelector('.shot img').src = b.getAttribute('data-src');
+      card.querySelectorAll('.thumbs button').forEach(function (o) { o.classList.toggle('on', o === b); });
+    });
+  });
+
   // Trailer modal
   var modal = document.getElementById('trailer-modal');
   if (modal) {
