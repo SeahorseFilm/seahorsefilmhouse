@@ -1,0 +1,7 @@
+# Netlify builds the site from source on every deploy; this file overrides the dashboard settings.
+[build]
+  command = "pip install -r requirements.txt && python3 02_BUILD/build.py"
+  publish = "01_SITE"
+
+[build.environment]
+  PYTHON_VERSION = "3.12"
