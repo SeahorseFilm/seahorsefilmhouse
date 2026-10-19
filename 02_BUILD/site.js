@@ -1,6 +1,7 @@
 (function () {
   var header = document.querySelector('.site-header');
   var toggle = document.querySelector('.nav-toggle');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function onScroll() {
     header.classList.toggle('solid', window.scrollY > 40 || !document.querySelector('.hero, .film-hero'));
@@ -9,9 +10,14 @@
   onScroll();
 
   if (toggle) {
-    toggle.addEventListener('click', function () {
-      var open = header.classList.toggle('open');
+    var setMenu = function (open) {
+      header.classList.toggle('open', open);
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    toggle.addEventListener('click', function () { setMenu(!header.classList.contains('open')); });
+    // Escape closes the phone menu and puts focus back on the menu button
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && header.classList.contains('open')) { setMenu(false); toggle.focus(); }
     });
   }
 
@@ -22,8 +28,20 @@
     var notes = document.querySelectorAll('.hero-note');
     var current = 0;
     var timer;
+    // Only the first film's image comes with the page; the others are fetched shortly after it has loaded
+    // (well before the first change at 5.5 seconds), or straight away if their film is picked first
+    var wake = function (layer) {
+      layer.querySelectorAll('[data-srcset]').forEach(function (el) {
+        el.setAttribute('srcset', el.getAttribute('data-srcset'));
+        el.removeAttribute('data-srcset');
+        if (el.hasAttribute('data-src')) { el.setAttribute('src', el.getAttribute('data-src')); el.removeAttribute('data-src'); }
+      });
+    };
+    var wakeAll = function () { setTimeout(function () { layers.forEach(wake); }, 1500); };
+    if (document.readyState === 'complete') wakeAll(); else window.addEventListener('load', wakeAll);
     var show = function (i) {
       current = (i + titles.length) % titles.length;
+      wake(layers[current]);
       [titles, layers, notes].forEach(function (set) {
         set.forEach(function (el, n) { el.classList.toggle('active', n === current); });
       });
@@ -31,7 +49,21 @@
       var m = layers[current].className.match(/bg-([a-z0-9-]+)/);
       if (m) layers[current].parentNode.setAttribute('data-film', m[1]);
     };
-    var start = function () { clearInterval(timer); timer = setInterval(function () { show(current + 1); }, 5500); };
+    var hero = document.getElementById('hero');
+    var heroOnScreen = true;
+    // The films change by themselves only while the hero is on screen, and never for visitors who ask for less motion
+    var start = function () {
+      clearInterval(timer);
+      if (reduceMotion || !heroOnScreen || document.hidden) return;
+      timer = setInterval(function () { show(current + 1); }, 5500);
+    };
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        heroOnScreen = entries[0].isIntersecting;
+        if (heroOnScreen) start(); else clearInterval(timer);
+      }).observe(hero);
+    }
+    document.addEventListener('visibilitychange', function () { if (document.hidden) clearInterval(timer); else start(); });
     var noHover = window.matchMedia('(hover: none)').matches;
     titles.forEach(function (t, n) {
       t.addEventListener('focus', function () { clearInterval(timer); show(n); });
@@ -41,7 +73,6 @@
       });
     });
     // The pointer only has to be level with a title, anywhere across the hero, to select it.
-    var hero = document.getElementById('hero');
     var list = document.querySelector('.hero-list');
     var lockedUntil = 0;
     hero.addEventListener('mousemove', function (e) {
@@ -62,22 +93,39 @@
   }
 
   // Arrival: sections resolve out of blur as they scroll into view
-  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if ('IntersectionObserver' in window && !reduceMotion) {
     var targets = document.querySelectorAll('.section-head, .grid > *, .statement, .signup > *, .page-head .wrap > *, .film-credits .wrap > *, .film-centre > *, .locations, .contact-layout > *, .about-stamp');
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
       });
     }, { threshold: 0.12 });
-    targets.forEach(function (el) { el.classList.add('reveal'); io.observe(el); });
+    targets.forEach(function (el) {
+      el.classList.add('reveal');
+      io.observe(el);
+      // once in focus, the element no longer needs a filter at all, which saves the browser work while scrolling
+      el.addEventListener('transitionend', function done(e) {
+        if (e.target !== el || e.propertyName !== 'filter' || !el.classList.contains('in')) return;
+        el.classList.remove('reveal', 'in');
+        el.removeEventListener('transitionend', done);
+      });
+    });
   }
 
   // Shop: clicking a small picture shows it as the product's main picture
   document.querySelectorAll('.product .thumbs button').forEach(function (b) {
     b.addEventListener('click', function () {
       var card = b.closest('.product');
-      card.querySelector('.shot img').src = b.getAttribute('data-src');
-      card.querySelectorAll('.thumbs button').forEach(function (o) { o.classList.toggle('on', o === b); });
+      var from = b.querySelectorAll('source, img'), to = card.querySelectorAll('.shot source, .shot img');
+      // same formats in the same order in both pictures; only the files change, not the sizes
+      to.forEach(function (el, i) {
+        el.setAttribute('srcset', from[i].getAttribute('srcset'));
+        if (el.tagName === 'IMG') el.setAttribute('src', from[i].getAttribute('src'));
+      });
+      card.querySelectorAll('.thumbs button').forEach(function (o) {
+        o.classList.toggle('on', o === b);
+        o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
+      });
     });
   });
 
@@ -85,7 +133,14 @@
   var modal = document.getElementById('trailer-modal');
   if (modal) {
     var frame = modal.querySelector('iframe');
-    var close = function () { frame.src = ''; modal.classList.remove('open'); };
+    var closeBtn = modal.querySelector('.close');
+    var opener = null;
+    var close = function () {
+      if (!modal.classList.contains('open')) return;
+      frame.src = ''; modal.classList.remove('open');
+      // focus goes back to the play button that opened the trailer
+      if (opener) { opener.focus(); opener = null; }
+    };
     document.querySelectorAll('[data-trailer]').forEach(function (b) {
       b.addEventListener('click', function (e) {
         e.preventDefault();
@@ -93,12 +148,25 @@
         frame.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1';
         var link = modal.querySelector('.yt-link');
         if (link) link.href = 'https://www.youtube.com/watch?v=' + id;
+        opener = b;
         modal.classList.add('open');
+        closeBtn.focus();
       });
     });
     modal.addEventListener('click', function (e) {
       if (e.target === modal || e.target.classList.contains('close')) close();
     });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    document.addEventListener('keydown', function (e) {
+      if (!modal.classList.contains('open')) return;
+      if (e.key === 'Escape') { close(); return; }
+      // keep Tab inside the overlay while it is open: close button, player, YouTube link
+      if (e.key === 'Tab') {
+        var items = [closeBtn, frame, modal.querySelector('.yt-link')].filter(Boolean);
+        var first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        else if (items.indexOf(document.activeElement) < 0) { e.preventDefault(); first.focus(); }
+      }
+    });
   }
 })();

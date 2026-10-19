@@ -24,7 +24,9 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
+/* <picture> only chooses the file; the <img> inside is laid out as before */
+picture { display: contents; }
 a { color: inherit; }
 .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
 
@@ -155,7 +157,7 @@ section.alt { background: var(--bg-raised); border-top: 1px solid var(--line); b
 .news-card time, .post time {
   font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
 }
-.news-card h3 { margin: 8px 0 10px; font-size: 1.45rem; }
+.news-card h3, .news-card h2 { margin: 8px 0 10px; font-size: 1.45rem; }
 .news-card p { color: var(--muted); font-size: 0.94rem; margin: 0; }
 .post { max-width: 760px; }
 .post .post-image { margin: 30px 0; }
@@ -216,7 +218,7 @@ section.alt { background: var(--bg-raised); border-top: 1px solid var(--line); b
 /* Footer */
 .site-footer { border-top: 1px solid var(--line); padding: 60px 0 34px; font-size: 0.92rem; }
 .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; margin-bottom: 44px; }
-.site-footer h4 { font-family: var(--ui); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
+.site-footer h4, .site-footer .foot-h { line-height: 1.65; font-family: var(--ui); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
 .site-footer ul { list-style: none; margin: 0; padding: 0; }
 .site-footer li { margin-bottom: 8px; }
 .site-footer a { text-decoration: none; opacity: 0.85; }
@@ -277,7 +279,9 @@ h1, h2, h3 { font-weight: 500; letter-spacing: -0.03em; line-height: 1.02; }
 h1 { font-size: clamp(2.8rem, 8.2vw, 6.6rem); }
 h2 { font-size: clamp(2.1rem, 4.8vw, 3.6rem); }
 h3 { font-size: 1.45rem; letter-spacing: -0.02em; line-height: 1.12; }
-.news-card h3 { font-size: 1.4rem; }
+.news-card h3, .news-card h2 { font-size: 1.4rem; }
+/* on the News page the card titles are h2s (no section heading above them); same look as the h3s elsewhere */
+.news-card h2 { letter-spacing: -0.02em; line-height: 1.12; }
 .person h3 { font-size: 1.15rem; }
 
 /* Bodoni for the small editorial lines */
@@ -293,7 +297,7 @@ h3 { font-size: 1.45rem; letter-spacing: -0.02em; line-height: 1.12; }
 
 /* Mono for dates, years and labels */
 .eyebrow, .film-card .meta .year, .news-card time, .post time, .sub-head, .facts li span:first-child,
-.locations span, .site-footer h4 {
+.locations span, .site-footer h4, .site-footer .foot-h {
   font-family: var(--mono); font-weight: 400; letter-spacing: 0.06em;
 }
 
@@ -361,14 +365,16 @@ body::before {
 /* Hero: film list; the hovered film's image resolves out of blur */
 .hero { height: 100vh; min-height: 620px; background: #1a1714; }
 .hero-bg {
-  position: absolute; inset: -60px; background-size: cover; background-position: center;
-  opacity: 0; filter: blur(44px);
-  transition: filter 0.5s var(--focus), opacity 0.3s linear; will-change: filter, opacity;
+  position: absolute; inset: -60px;
+  opacity: 0; filter: blur(44px); visibility: hidden;
+  /* once a layer has faded out it is hidden, so the browser stops drawing it and its blur */
+  transition: filter 0.5s var(--focus), opacity 0.3s linear, visibility 0s linear 0.5s; will-change: filter, opacity;
 }
-.hero-bg.active { opacity: 1; filter: blur(0); }
+.hero-bg.active { opacity: 1; filter: blur(0); visibility: visible; transition: filter 0.5s var(--focus), opacity 0.3s linear, visibility 0s; }
+.hero-bg img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center; }
 /* posters of unreleased films: show the upper-middle of the artwork */
-.hero-bg.soft { background-position: center 32%; }
-.hero-bg.bg-chasm { background-position: center 52%; }
+.hero-bg.soft img { object-position: center 32%; }
+.hero-bg.bg-chasm img { object-position: center 52%; }
 .hero-shade {
   position: absolute; inset: 0;
   background: linear-gradient(to bottom, rgba(26,23,20,0.42) 0%, rgba(26,23,20,0) 24%),
@@ -411,8 +417,9 @@ body::before {
 }
 
 /* Arrival: elements resolve out of blur as they enter the screen */
-.reveal { filter: blur(16px); transition: filter 1s var(--focus); will-change: filter; }
-.reveal.in { filter: blur(0); }
+.reveal { filter: blur(16px); transition: filter 1s var(--focus); }
+/* will-change only while resolving; site.js removes both classes when it has finished */
+.reveal.in { filter: blur(0); will-change: filter; }
 @media (prefers-reduced-motion: reduce) {
   .reveal, .hero-bg, .hero-title, .hero-note { transition: none; }
   .reveal { filter: none; }
@@ -438,6 +445,9 @@ body::before {
 /* Film page: tall lead image, small title, thin play mark; credits row; centred column with poster */
 .film-hero.tall { min-height: 76vh; display: flex; align-items: flex-end; background-position: center 20%; padding-bottom: 34px; }
 .film-hero.tall .wrap { width: 100%; }
+/* the lead image is an <img> behind the tint, cropped like a background image */
+.film-hero { isolation: isolate; }
+.film-hero > picture > img { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center 20%; }
 .film-hero h1 { font-size: clamp(2.1rem, 4.2vw, 3.6rem); letter-spacing: -0.03em; line-height: 1.05; }
 .film-hero .tagline { font-size: 1.15rem; margin-top: 8px; }
 .film-hero .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; display: block; color: #ffffff; }
@@ -462,14 +472,15 @@ body::before {
   .film-hero .play { top: 44%; }
   .film-credits .wrap { grid-template-columns: 1fr 1fr; gap: 22px; }
 }
-.film-hero.bg-chasm { background-position: center 52%; }
-.film-hero.bg-winter-dreams { background-position: center 32%; }
+.film-hero.bg-chasm img { object-position: center 52%; }
+.film-hero.bg-winter-dreams img { object-position: center 32%; }
 
 /* Shop */
 .product .shot { aspect-ratio: 3 / 4; overflow: hidden; background: #ffffff; }
 .product .shot img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--focus); }
 .product:hover .shot img { transform: scale(1.03); }
-.product h3 { margin-top: 16px; font-size: 1.3rem; }
+.product h3, .product .product-name { margin-top: 16px; font-size: 1.3rem; }
+.product .product-name { letter-spacing: -0.02em; line-height: 1.12; }
 .product p { color: var(--muted); font-size: 0.94rem; margin: 6px 0 14px; }
 .product .buy { display: flex; align-items: center; justify-content: space-between; gap: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
 .product .soon, .product .price { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; }
@@ -479,12 +490,12 @@ body::before {
   font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; }
 .modal .yt-link:hover { opacity: 1; text-decoration: underline; }
 /* panoramic image: on ordinary screens only part of its width shows; framed as Raj chose, tower at left, both figures in the car centred */
-.hero-bg.bg-tokyo { background-position: 54% center; }
-/* tall, narrow screens: use the zoomed-out phone version of the Tokyo image */
+.hero-bg.bg-tokyo img { object-position: 54% center; }
+/* tall, narrow screens: the zoomed-out phone version of the Tokyo image (chosen in the <picture>) */
 @media (max-aspect-ratio: 4/5) {
-  .hero-bg.bg-tokyo { background-image: url(../images/hero-tokyo-phone.jpg) !important; background-position: center center; }
+  .hero-bg.bg-tokyo img { object-position: center center; }
 }
-.film-hero.bg-tokyo { background-position: center 28%; }
+.film-hero.bg-tokyo img { object-position: center 28%; }
 .concept-note { font-size: 0.82rem; margin-bottom: 8px; }
 
 /* Tokyo's sunset image is shown close to full colour: most of the dark tint is lifted while it is on screen */
@@ -493,7 +504,7 @@ body::before {
 .film-hero h1 .title-note { font-family: var(--mono); font-weight: 400; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; vertical-align: middle; margin-left: 10px; opacity: 0.9; }
 
 /* Where to watch, on released film pages */
-.sub-head .where { opacity: 0.6; margin-left: 0.6em; }
+.sub-head .where { margin-left: 0.6em; }
 .watch { margin: 0; }
 .watch div { display: flex; gap: 18px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
 .watch dt { flex: 0 0 8.5em; color: var(--muted); }
@@ -520,3 +531,41 @@ body::before {
 .product .thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .shop-grid { row-gap: 54px; }
 .product .thumbs button { width: 46px; }
+
+/* ================= Accessibility ================= */
+/* Keyboard focus: a clear outline in the text colour of wherever the element sits */
+:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+main:focus { outline: none; }
+.modal :focus-visible { outline-color: #ffffff; }
+.cookie-note :focus-visible { outline-color: #F1EEE8; }
+
+/* Skip link: off screen until it has keyboard focus */
+.skip-link {
+  position: absolute; left: 16px; top: -200px; z-index: 200; padding: 12px 18px;
+  background: #1a1714; color: #f1eee8; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; text-decoration: none;
+}
+.skip-link:focus { top: 16px; outline-color: #1a1714; }
+
+/* Text on the darker bone panels: muted text a shade deeper so it meets the 4.5:1 contrast minimum */
+section.alt, section.tint, .news-card { --muted: #69635a; }
+
+/* Bigger touch areas without changing how anything looks: invisible padding round small links and buttons */
+.text-link, .cookie-note button, .watch a, .site-footer li a { position: relative; }
+.text-link::after { content: ""; position: absolute; left: 0; right: 0; top: -15px; bottom: -15px; }
+/* where-to-watch rows and footer lists: as tall as the row spacing allows without overlapping the next one */
+.watch a::after { content: ""; position: absolute; left: 0; right: 0; top: -12px; bottom: -12px; }
+.site-footer li a::after { content: ""; position: absolute; left: 0; right: 0; top: -7px; bottom: -7px; }
+.cookie-note button::after { content: ""; position: absolute; left: 0; right: 0; top: -6px; bottom: -6px; }
+@media (min-width: 721px) {
+  .nav a { position: relative; }
+  .nav a::after { content: ""; position: absolute; left: -8px; right: -8px; top: -7px; bottom: -7px; }
+}
+/* close button: a 44px target, with the cross where it was */
+.modal .close { top: 6px; right: 6px; padding: 8px 12px; }
+
+/* Reduced motion: no transitions, smooth scrolling or film rotation (site.js) */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; transition-delay: 0s !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
