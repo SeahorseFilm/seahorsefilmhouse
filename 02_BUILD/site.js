@@ -103,6 +103,12 @@
     targets.forEach(function (el) {
       el.classList.add('reveal');
       io.observe(el);
+      // once in focus, the element no longer needs a filter at all, which saves the browser work while scrolling
+      el.addEventListener('transitionend', function done(e) {
+        if (e.target !== el || e.propertyName !== 'filter' || !el.classList.contains('in')) return;
+        el.classList.remove('reveal', 'in');
+        el.removeEventListener('transitionend', done);
+      });
     });
   }
 
