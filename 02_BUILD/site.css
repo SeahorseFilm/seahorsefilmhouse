@@ -417,9 +417,8 @@ body::before {
 }
 
 /* Arrival: elements resolve out of blur as they enter the screen */
-.reveal { filter: blur(16px); transition: filter 1s var(--focus); }
-/* will-change only while resolving; site.js removes both classes when it has finished */
-.reveal.in { filter: blur(0); will-change: filter; }
+.reveal { filter: blur(16px); transition: filter 1s var(--focus); will-change: filter; }
+.reveal.in { filter: blur(0); }
 @media (prefers-reduced-motion: reduce) {
   .reveal, .hero-bg, .hero-title, .hero-note { transition: none; }
   .reveal { filter: none; }
