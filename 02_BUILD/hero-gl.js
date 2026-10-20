@@ -1,5 +1,6 @@
-// Home hero, WebGL version (trial): films dissolve into each other through moving grain,
-// with a brief blur at the hand-over, so the image still "resolves out of blur".
+// Home hero, WebGL version (trial): changing films works like a focus pull on a camera lens.
+// The current film drifts out of focus (with a lens's slight 'breathing'), the next one takes over
+// while both are soft, then pulls sharp. No grain, no ripple.
 // site.js keeps choosing the film; this script only draws it. If anything fails, or the device
 // is slow, it removes itself and the ordinary CSS hero is left showing.
 (function () {
@@ -25,36 +26,32 @@
     'uniform sampler2D tA, tB;',
     'uniform vec2 rA, rB;',       // cover scale for each image
     'uniform vec2 oA, oB;',       // cover offset (CSS background-position)
-    'uniform float prog, time, aspect;',
+    'uniform float prog, aspect;',
     'uniform vec2 mouse;',
-    'float h(vec2 q){ return fract(sin(dot(q, vec2(127.1, 311.7))) * 43758.5453); }',
-    'float n(vec2 q){ vec2 i = floor(q), f = fract(q); f = f*f*(3.0-2.0*f);',
-    '  return mix(mix(h(i), h(i+vec2(1,0)), f.x), mix(h(i+vec2(0,1)), h(i+vec2(1,1)), f.x), f.y); }',
-    'float fbm(vec2 q){ float s = 0.0, a = 0.5; for (int i = 0; i < 5; i++) { s += a * n(q); q *= 2.03; a *= 0.5; } return s; }',
-    'vec3 img(sampler2D t, vec2 r, vec2 o, vec2 uv, float blur){',
-    '  vec2 c = uv * r + o; vec3 s = texture2D(t, c).rgb;',
-    '  if (blur > 0.0005) {',          // eight-tap soft blur during the hand-over
-    '    float a = h(gl_FragCoord.xy) * 6.2832; mat2 rot = mat2(cos(a), -sin(a), sin(a), cos(a));',  // turn the taps per pixel: soft, not doubled
-    '    vec2 d = vec2(blur / aspect, blur); mat2 sc = mat2(d.x, 0.0, 0.0, d.y);',
-    '    s += texture2D(t, c + sc*rot*vec2( 1.0, 0.0)).rgb + texture2D(t, c + sc*rot*vec2(-1.0, 0.0)).rgb;',
-    '    s += texture2D(t, c + sc*rot*vec2( 0.0, 1.0)).rgb + texture2D(t, c + sc*rot*vec2( 0.0,-1.0)).rgb;',
-    '    s += texture2D(t, c + sc*rot*vec2( 0.7, 0.7)).rgb + texture2D(t, c + sc*rot*vec2(-0.7, 0.7)).rgb;',
-    '    s += texture2D(t, c + sc*rot*vec2( 0.7,-0.7)).rgb + texture2D(t, c + sc*rot*vec2(-0.7,-0.7)).rgb;',
-    '    s /= 9.0; }',
-    '  return s; }',
+    // lens blur: 40 samples on a golden-angle spiral fill a disc evenly; bright points weigh more, like bokeh
+    'vec3 lens(sampler2D t, vec2 c, float r){',
+    '  vec3 sum = vec3(0.0); float wsum = 0.0;',
+    '  for (int i = 0; i < 40; i++) {',
+    '    float k = float(i) + 0.5, rad = sqrt(k / 40.0) * r, ang = k * 2.39996;',
+    '    vec3 s = texture2D(t, c + vec2(cos(ang) / aspect, sin(ang)) * rad).rgb;',
+    '    float w = 1.0 + 3.0 * pow(dot(s, vec3(0.299, 0.587, 0.114)), 4.0);',
+    '    sum += s * w; wsum += w; }',
+    '  return sum / wsum; }',
+    'vec3 shot(sampler2D t, vec2 r, vec2 o, vec2 uv, float f){',   // f: 0 sharp, 1 fully out of focus
+    '  uv = (uv - 0.5) / (1.0 + 0.018 * f) + 0.5;',                 // focus breathing: the frame eases in a touch as focus slides
+    '  vec2 c = uv * r + o;',
+    '  if (f < 0.002) return texture2D(t, c).rgb;',
+    '  return lens(t, c, 0.03 * f); }',
     'void main(){',
-    '  float w = sin(3.14159 * prog);',                          // 0 at rest, 1 mid hand-over
-    '  vec2 uv = (v - 0.5) / 1.025 + 0.5;',                       // slight overscan for the drift
-    '  uv += (mouse - 0.5) * 0.012;',                             // image leans gently with the pointer
-    '  float m = fbm(vec2(v.x * aspect, v.y) * 2.6 + time * 0.03);',
-    '  vec2 warp = (vec2(fbm(v * 3.0 + 7.1 + time * 0.05), fbm(v * 3.0 - 3.7)) - 0.5) * 0.06 * w;',
-    '  float edge = smoothstep(prog - 0.12, prog + 0.12, m * 0.76 + v.y * 0.24);', // dissolves upward through the grain
-    '  vec3 a = img(tA, rA, oA, uv + warp, 0.018 * w);',
-    '  vec3 b = img(tB, rB, oB, uv - warp, 0.018 * w);',
-    '  vec3 col = mix(b, a, edge);',
-    '  float g = h(floor(v * vec2(aspect, 1.0) * 540.0) + floor(time * 24.0)) - 0.5;', // moving film grain
-    '  col += g * 0.055;',
-    '  gl_FragColor = vec4(col, 1.0);',
+    '  vec2 uv = (v - 0.5) / 1.02 + 0.5;',                        // small overscan so the lean never shows an edge
+    '  uv += (mouse - 0.5) * 0.008;',                             // image leans very gently with the pointer
+    '  if (prog <= 0.0) { gl_FragColor = vec4(shot(tA, rA, oA, uv, 0.0), 1.0); return; }',
+    '  float fOut = smoothstep(0.0, 0.5, prog);',                 // old film: focus slides away
+    '  float fIn = 1.0 - smoothstep(0.5, 1.0, prog);',            // new film: focus pulls in
+    '  float m = smoothstep(0.3, 0.7, prog);',                    // hand-over happens while both are soft
+    '  vec3 a = m < 1.0 ? shot(tA, rA, oA, uv, fOut) : vec3(0.0);',
+    '  vec3 b = m > 0.0 ? shot(tB, rB, oB, uv, fIn) : vec3(0.0);',
+    '  gl_FragColor = vec4(mix(a, b, m), 1.0);',
     '}'
   ].join('\n');
 
@@ -79,7 +76,7 @@
   gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   var U = {};
-  ['tA', 'tB', 'rA', 'rB', 'oA', 'oB', 'prog', 'time', 'aspect', 'mouse'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
+  ['tA', 'tB', 'rA', 'rB', 'oA', 'oB', 'prog', 'aspect', 'mouse'].forEach(function (k) { U[k] = gl.getUniformLocation(prog, k); });
   gl.uniform1i(U.tA, 0); gl.uniform1i(U.tB, 1);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   var maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE);
@@ -120,7 +117,7 @@
     for (var i = 0; i < layers.length; i++) if (layers[i].classList.contains('active')) return i;
     return 0;
   }
-  var from = activeIndex(), to = from, t0 = 0, DUR = 1100, running = false, visible = true;
+  var from = activeIndex(), to = from, t0 = 0, DUR = 1400, running = false, visible = true;
   var mouse = [0.5, 0.5], mouseNow = [0.5, 0.5], start = performance.now();
   var slowFrames = 0, frames = 0, last = 0;
 
@@ -144,7 +141,6 @@
       frames++; last = now;
       var p = to === from ? 1 : Math.min((now - t0) / DUR, 1);
       if (freeze) { from = freeze[0]; to = freeze[1]; p = freeze[2]; }   // test only: hold one moment of a hand-over
-      var e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
       if (p >= 1) from = to;
       mouseNow[0] += (mouse[0] - mouseNow[0]) * 0.05; mouseNow[1] += (mouse[1] - mouseNow[1]) * 0.05;
       var aspect = canvas.width / canvas.height, A = cover(films[from], aspect), B = cover(films[to], aspect);
@@ -152,8 +148,7 @@
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, films[to].tex);
       gl.uniform2fv(U.rA, A.r); gl.uniform2fv(U.oA, A.o);
       gl.uniform2fv(U.rB, B.r); gl.uniform2fv(U.oB, B.o);
-      gl.uniform1f(U.prog, from === to ? 0 : e);
-      gl.uniform1f(U.time, (now - start) / 1000);
+      gl.uniform1f(U.prog, from === to ? 0 : p);
       gl.uniform1f(U.aspect, aspect);
       gl.uniform2fv(U.mouse, mouseNow);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
