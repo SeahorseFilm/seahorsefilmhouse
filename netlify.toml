@@ -5,6 +5,8 @@
 
 [build.environment]
   PYTHON_VERSION = "3.12"
+  # WebGL focus-pull home hero (02_BUILD/hero-gl.js), live since 2026-10-21 at Raj's request. "0" turns it off.
+  HERO_GL = "1"
 
 # Browser caching. Every page links its images, CSS and JS with a ?v= fingerprint that changes whenever the
 # file does, so browsers can keep them for a year and still pick up new versions straight away.
@@ -22,8 +24,3 @@
   for = "/js/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-
-# Trial WebGL home hero: switched on for pull-request previews only, never for the live site.
-# Remove this block (or move it to [context.production.environment]) once Raj decides.
-[context.deploy-preview.environment]
-  HERO_GL = "1"
