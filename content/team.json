@@ -1,0 +1,54 @@
+{
+  "people": [
+    {
+      "name": "R P Khemanand",
+      "role": "Producer / Director / Screenwriter",
+      "imdb": "https://www.imdb.com/name/nm11359091/",
+      "photo": {
+        "source": "team-image1.jpg",
+        "file": "team-rp-khemanand.jpg",
+        "alt": "R P Khemanand"
+      }
+    },
+    {
+      "name": "Padraig Reynolds",
+      "role": "Director / Screenwriter",
+      "imdb": "https://www.imdb.com/name/nm1754478/",
+      "photo": {
+        "source": "team-image2.jpg",
+        "file": "team-padraig-reynolds.jpg",
+        "alt": "Padraig Reynolds"
+      }
+    },
+    {
+      "name": "Ed Marx",
+      "role": "Film Editor",
+      "imdb": "https://www.imdb.com/name/nm0003759/",
+      "photo": {
+        "source": "team-image3.jpg",
+        "file": "team-ed-marx.jpg",
+        "alt": "Ed Marx"
+      }
+    },
+    {
+      "name": "Holly Amber Church",
+      "role": "Music Composer",
+      "imdb": "https://www.imdb.com/name/nm1498772/",
+      "photo": {
+        "source": "team-image5.jpg",
+        "file": "team-holly-amber-church.jpg",
+        "alt": "Holly Amber Church"
+      }
+    },
+    {
+      "name": "Shibani Kapur",
+      "role": "Producer",
+      "imdb": "https://www.imdb.com/name/nm11359090/",
+      "photo": {
+        "source": "team-image6.jpg",
+        "file": "team-shibani-kapur.jpg",
+        "alt": "Shibani Kapur"
+      }
+    }
+  ]
+}

@@ -5,9 +5,9 @@ Never push to `main`. Work on a branch and open a pull request; Raj (the owner) 
 
 ## How the site is built
 
-- All content and page templates live in `02_BUILD/build.py`: films, news, team, shop products, page layout, `<head>` metadata, structured data, sitemap.
+- Editorial content lives in `content/*.json`: films, news, team, shop products, social links and contact details (see `CONTENT_EDITING.md`). Page templates, layout, `<head>` metadata, structured data and the sitemap live in `02_BUILD/build.py`; the build checks the content files and stops with a clear message if one is wrong.
 - Styles: `02_BUILD/site.css`. Script: `02_BUILD/site.js`. Images: `02_BUILD/source_images/` and `02_BUILD/shop_photos/` (resized by build.py with Pillow).
-- Build: `pip install -r requirements.txt && python3 02_BUILD/build.py` writes the site into `01_SITE/`.
+- Build: `pip install -r requirements.txt && python3 02_BUILD/build.py` writes the site into `01_SITE/`. Check the content files with `python3 02_BUILD/test_content.py`.
 - `01_SITE/` is generated output. It is git-ignored and never committed or edited by hand.
 - Preview locally: `python3 02_BUILD/preview_server.py`, then open http://127.0.0.1:4173.
 - Netlify runs the same build (see `netlify.toml`) and makes a deploy preview for every pull request. Use it for before/after checks: live site = before, deploy preview = after.
@@ -21,7 +21,7 @@ Never push to `main`. Work on a branch and open a pull request; Raj (the owner) 
 - **Logo:** lowercase "sfh" in heavy Bodoni Moda, centred over SEAHORSE FILMHOUSE in small sans capitals. Don't redraw, recolour or swap it.
 - **Signature effects:** the home hero film list, where hovering a title brings that film's image into focus out of blur, and sections that resolve out of blur on scroll. You may make them cheaper (for example GPU-friendly properties or smaller images) and respect `prefers-reduced-motion`, but don't remove them or change how they look.
 - **Location wording:** Los Angeles, London, Mumbai and UAE are listed as places of operation. Never call any of them a head office, base or registered address. Never mention Burbank.
-- **Tokyo (upcoming film):** use only the synopsis already in build.py. The pitch deck is confidential: no plot details, characters, casting or partners.
+- **Tokyo (upcoming film):** use only the synopsis already in `content/films.json`. The pitch deck is confidential: no plot details, characters, casting or partners.
 
 ## Keep working
 

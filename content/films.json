@@ -1,0 +1,387 @@
+{
+  "_note": "One entry per film, in the order they appear on the home page list. See CONTENT_EDITING.md.",
+  "films": [
+    {
+      "slug": "open-24-hours",
+      "title": "Open 24 Hours",
+      "year": "2019",
+      "status": "released",
+      "tagline": "Some doors should stay closed",
+      "director": "Padraig Reynolds",
+      "runtime": "102 min",
+      "genre": "Psychological thriller",
+      "synopsis": "A psychological thriller about a woman who takes a job at a 24-hour convenience store after being released from prison.",
+      "cast": [
+        "Vanessa Grasse",
+        "Brendan Fletcher",
+        "Emily Tennant",
+        "Cole Vigue",
+        "Daniel O'Meara"
+      ],
+      "trailer_url": "https://www.youtube.com/watch?v=iI7yLprZheA",
+      "trailer_uploaded": "2022-08-06T10:29:17-07:00",
+      "watch_checked": "2026-10-11",
+      "watch": [
+        {
+          "label": "Stream",
+          "services": [
+            {
+              "name": "Amazon Prime Video",
+              "url": "https://watch.amazon.com/detail?gti=amzn1.dv.gti.a4b97701-668c-2fc6-5783-1dc577e5d187"
+            }
+          ]
+        },
+        {
+          "label": "Rent or buy",
+          "services": [
+            {
+              "name": "Apple TV",
+              "url": "https://tv.apple.com/us/movie/open-24-hours/umc.cmc.dhqll3nmnujvbzkgf15l0c11"
+            },
+            {
+              "name": "Amazon",
+              "url": "https://watch.amazon.com/detail?gti=amzn1.dv.gti.a4b97701-668c-2fc6-5783-1dc577e5d187"
+            },
+            {
+              "name": "Fandango at Home",
+              "url": "https://athome.fandango.com/content/browse/details/Open-24-Hours/1450145"
+            }
+          ]
+        },
+        {
+          "label": "Free with ads",
+          "services": [
+            {
+              "name": "Tubi",
+              "url": "https://tubitv.com/movies/562781"
+            },
+            {
+              "name": "Pluto TV",
+              "url": "https://pluto.tv/on-demand/movies/open-24-hours-2020-1-1"
+            }
+          ]
+        }
+      ],
+      "watch_url": "https://www.justwatch.com/us/movie/open-24-hours",
+      "accolades": [
+        {
+          "text": "Winner: Best Special Effects / Make-Up, Screamfest Horror Film Festival, Los Angeles (2018)",
+          "award": true
+        },
+        {
+          "text": "Official Selection: FrightFest, London (2018)"
+        },
+        {
+          "text": "Official Selection: Sitges International Film Festival, Spain (2018)"
+        },
+        {
+          "text": "Official Selection: Fantastic Fest, USA (2018)"
+        },
+        {
+          "text": "Official Selection: Telluride Horror Show, USA (2018)"
+        },
+        {
+          "text": "Official Selection: BIFAN, South Korea (2019)"
+        }
+      ],
+      "images": {
+        "poster": {
+          "source": "project-image2.jpg",
+          "file": "poster-open-24-hours.jpg",
+          "alt": "Open 24 Hours poster"
+        },
+        "stills": [
+          {
+            "source": "film1.jpg",
+            "file": "still-open-24-hours-1.jpg",
+            "alt": "Still from Open 24 Hours"
+          },
+          {
+            "source": "film4.jpg",
+            "file": "still-open-24-hours-2.jpg",
+            "alt": "Still from Open 24 Hours"
+          }
+        ],
+        "home": {
+          "file": "still-open-24-hours-1.jpg"
+        },
+        "lead": {
+          "file": "still-open-24-hours-2.jpg",
+          "alt": "Still from Open 24 Hours"
+        }
+      }
+    },
+    {
+      "slug": "dark-light",
+      "title": "Dark Light",
+      "year": "2019",
+      "status": "released",
+      "tagline": "What hides in the shadows?",
+      "director": "Padraig Reynolds",
+      "runtime": "90 min",
+      "genre": "Horror",
+      "synopsis": "A mother fights to protect her daughter from a terrifying presence she believes is in her house.",
+      "cast": [
+        "Jessica Madsen",
+        "Opal Littleton",
+        "Ed Brody",
+        "Kristina Clifford"
+      ],
+      "trailer_url": "https://www.youtube.com/watch?v=Isls30Tok3E",
+      "trailer_uploaded": "2025-05-14T13:53:31-07:00",
+      "watch": [
+        {
+          "label": "Stream",
+          "services": [
+            {
+              "name": "Amazon Prime Video",
+              "url": "https://watch.amazon.com/detail?gti=amzn1.dv.gti.f0b76568-916d-5c83-23e6-af5f892b63b2"
+            }
+          ]
+        },
+        {
+          "label": "Rent or buy",
+          "services": [
+            {
+              "name": "Apple TV",
+              "url": "https://tv.apple.com/us/movie/dark-light/umc.cmc.101z9fm2f5zv8j2k25ux4ub1"
+            },
+            {
+              "name": "Amazon",
+              "url": "https://watch.amazon.com/detail?gti=amzn1.dv.gti.f0b76568-916d-5c83-23e6-af5f892b63b2"
+            },
+            {
+              "name": "Fandango at Home",
+              "url": "https://athome.fandango.com/content/browse/details/Dark-Light/1304711"
+            }
+          ]
+        },
+        {
+          "label": "Free with ads",
+          "services": [
+            {
+              "name": "YouTube",
+              "url": "https://www.youtube.com/watch?v=2EMJyNB70pQ"
+            },
+            {
+              "name": "Tubi",
+              "url": "https://tubitv.com/movies/661319"
+            }
+          ]
+        }
+      ],
+      "watch_url": "https://www.justwatch.com/us/movie/dark-light-2019",
+      "accolades": [
+        {
+          "text": "Premiered at FrightFest, London"
+        }
+      ],
+      "images": {
+        "poster": {
+          "source": "project-image3.jpg",
+          "file": "poster-dark-light.jpg",
+          "alt": "Dark Light poster"
+        },
+        "stills": [
+          {
+            "source": "film2.jpg",
+            "file": "still-dark-light-1.jpg",
+            "alt": "Still from Dark Light"
+          },
+          {
+            "source": "film6.jpg",
+            "file": "still-dark-light-2.jpg",
+            "alt": "Still from Dark Light"
+          }
+        ],
+        "home": {
+          "file": "still-dark-light-1.jpg"
+        },
+        "lead": {
+          "file": "still-dark-light-2.jpg",
+          "alt": "Still from Dark Light"
+        }
+      }
+    },
+    {
+      "slug": "daddys-girl",
+      "title": "Daddy&rsquo;s Girl",
+      "plain_title": "Daddy's Girl",
+      "year": "2018",
+      "status": "released",
+      "tagline": "Family ties that bind too tight",
+      "director": "Julian Richards",
+      "runtime": "89 min",
+      "genre": "Horror thriller",
+      "synopsis": "A young woman held captive by her father must uncover a dark family secret.",
+      "cast": [
+        "Jemma Dallender",
+        "Costas Mandylor"
+      ],
+      "trailer_url": "https://www.youtube.com/watch?v=PkVRva3AiOE",
+      "trailer_uploaded": "2022-08-06T12:26:58-07:00",
+      "watch": [
+        {
+          "label": "Rent or buy",
+          "services": [
+            {
+              "name": "Apple TV",
+              "url": "https://tv.apple.com/us/movie/daddys-girl/umc.cmc.300g7xw5ei16q106pmizd81iy"
+            },
+            {
+              "name": "Fandango at Home",
+              "url": "https://athome.fandango.com/content/browse/details/Daddy-s-Girl/1521389"
+            }
+          ]
+        },
+        {
+          "label": "Free with ads",
+          "services": [
+            {
+              "name": "Tubi",
+              "url": "https://tubitv.com/movies/100032317"
+            },
+            {
+              "name": "Fandango at Home",
+              "url": "https://athome.fandango.com/content/browse/details/Daddy-s-Girl/1521389"
+            }
+          ]
+        }
+      ],
+      "watch_url": "https://www.justwatch.com/us/movie/daddys-girl-2018",
+      "accolades": [
+        {
+          "text": "Winner: Best Director, Fantasporto Film Festival, Portugal (2019)",
+          "award": true
+        },
+        {
+          "text": "Buffalo Dreams Fantastic Film Festival (2020): 4 nominations"
+        },
+        {
+          "text": "Official Selection: Raindance, London (2018)"
+        },
+        {
+          "text": "Official Selection: BIFAN, South Korea (2019)"
+        },
+        {
+          "text": "National Film and Television Awards, USA (2019)"
+        }
+      ],
+      "images": {
+        "poster": {
+          "source": "project-image1.jpg",
+          "file": "poster-daddys-girl.jpg",
+          "alt": "Daddy's Girl poster"
+        },
+        "stills": [
+          {
+            "source": "film3.jpg",
+            "file": "still-daddys-girl-1.jpg",
+            "alt": "Still from Daddy's Girl"
+          },
+          {
+            "source": "film5.jpg",
+            "file": "still-daddys-girl-2.jpg",
+            "alt": "Still from Daddy's Girl"
+          }
+        ],
+        "home": {
+          "file": "still-daddys-girl-1.jpg"
+        },
+        "lead": {
+          "file": "still-daddys-girl-2.jpg",
+          "alt": "Still from Daddy's Girl"
+        }
+      }
+    },
+    {
+      "slug": "chasm",
+      "title": "Chasm",
+      "year": "2027",
+      "status": "upcoming",
+      "tagline": "The space between silence, mystery, and becoming",
+      "stage": "Coming 2027",
+      "synopsis": "An atmospheric portrait of Ila, a woman on the edge of quiet transformation. A soulful exploration of the space between silence, mystery, and becoming.",
+      "images": {
+        "poster": {
+          "source": "project-image4.jpg",
+          "file": "poster-chasm.jpg",
+          "alt": "Chasm poster"
+        },
+        "stills": [],
+        "home": {
+          "source": "project-image4.jpg",
+          "file": "hero-chasm.jpg",
+          "alt": "Seahorse Filmhouse"
+        },
+        "lead": {
+          "file": "hero-chasm.jpg",
+          "alt": "Seahorse Filmhouse"
+        }
+      }
+    },
+    {
+      "slug": "tokyo",
+      "title": "Tokyo",
+      "year": "2027",
+      "status": "upcoming",
+      "tagline": "Some destinations don&rsquo;t set you free",
+      "director": "R P Khemanand",
+      "runtime": "c. 95 min",
+      "languages": "Japanese / English / Hindi",
+      "title_note": "working title",
+      "stage": "In development",
+      "concept_art": true,
+      "synopsis": "A woman hires a private driver for a long journey west out of Tokyo. They share almost no language, each carrying something they can’t bring themselves to say.",
+      "_note": "Wording agreed with Raj on 2026-10-12. Publish only what is here: no further plot, character, casting or partner details (the pitch deck is confidential).",
+      "images": {
+        "poster": {
+          "source": "tokyo-poster.png",
+          "file": "poster-tokyo.jpg",
+          "alt": "Tokyo poster"
+        },
+        "stills": [],
+        "home": {
+          "source": "tokyo-skyline.png",
+          "file": "hero-tokyo.jpg",
+          "alt": "Concept artwork for Tokyo: the city skyline at sunset",
+          "phone": {
+            "source": "tokyo-skyline.png",
+            "file": "hero-tokyo-phone.jpg"
+          }
+        },
+        "lead": {
+          "source": "tokyo-mirror.png",
+          "file": "still-tokyo-mirror.jpg",
+          "alt": "Seahorse Filmhouse"
+        }
+      }
+    },
+    {
+      "slug": "winter-dreams",
+      "title": "Winter Dreams",
+      "year": "In development",
+      "status": "upcoming",
+      "tagline": "Chasing dreams, loving illusions, and waking up too late",
+      "stage": "In development",
+      "synopsis": "A modern reimagining of F. Scott Fitzgerald&rsquo;s <em>Winter Dreams</em>, where ambition and desire blur the line between success and self-loss. Set in today&rsquo;s world, it is a story of chasing dreams, loving illusions, and waking up too late.",
+      "images": {
+        "poster": {
+          "source": "project-image5.jpg",
+          "file": "poster-winter-dreams.jpg",
+          "alt": "Winter Dreams poster"
+        },
+        "stills": [],
+        "home": {
+          "source": "project-image5.jpg",
+          "file": "hero-winter-dreams.jpg",
+          "alt": "Seahorse Filmhouse"
+        },
+        "lead": {
+          "file": "hero-winter-dreams.jpg",
+          "alt": "Seahorse Filmhouse"
+        }
+      }
+    }
+  ]
+}
