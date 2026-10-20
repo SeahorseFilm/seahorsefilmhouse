@@ -4,6 +4,7 @@
 Run:  python3 02_BUILD/build.py
 To add news: add an entry to the top of NEWS below, then run the build again.
 """
+import hashlib
 import html
 import json
 import re
@@ -11,7 +12,7 @@ import shutil
 from datetime import date
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, features
 
 HERE = Path(__file__).parent
 OUT = HERE.parent / "01_SITE"
@@ -326,6 +327,12 @@ Russell for Best Makeup.</p>
 ]
 
 CURRENT = ' class="current"'
+CURRENT_PAGE = CURRENT + ' aria-current="page"'  # menu link of the page being shown
+# how wide each kind of image is drawn, so the browser can choose a file (see the grid rules in site.css)
+SIZES_POSTER = "(max-width: 900px) calc(50vw - 33px), 360px"
+SIZES_CARD = "(max-width: 720px) calc(100vw - 48px), (max-width: 900px) calc(50vw - 39px), 360px"
+SIZES_FILM_POSTER = "(max-width: 488px) calc(100vw - 48px), 440px"
+SIZES_TEAM = "(max-width: 720px) calc(50vw - 35px), (max-width: 900px) calc(33vw - 31px), 210px"
 NAV = [("Home", "index.html"), ("Films", "films.html"), ("News", "news.html"), ("Shop", "shop.html"), ("About", "about.html"), ("Contact", "contact.html")]
 
 
@@ -339,7 +346,7 @@ def stamp(uid, size=150):
 </svg>"""
 
 
-COUNTER = """<div class="cookie-note" id="cookie-note" hidden>
+COUNTER = """<div class="cookie-note" id="cookie-note" role="region" aria-label="Cookie notice" hidden>
   <p>We use Google Analytics cookies to count visits to this site. Is that all right?</p>
   <div><button type="button" data-consent="no">Decline</button><button type="button" data-consent="yes">Accept</button></div>
 </div>
@@ -363,6 +370,8 @@ COUNTER = """<div class="cookie-note" id="cookie-note" hidden>
     if (!c) { return; }
     try { localStorage.setItem(KEY, c); } catch (err) {}
     note.hidden = true;
+    // the buttons are gone, so keyboard focus moves on to the page itself
+    document.getElementById("main").focus({ preventScroll: true });
     if (c === "yes") { start(); }
   });
 })();
@@ -404,61 +413,75 @@ def nice_date(iso):
     return date(y, m, d).strftime("%-d %B %Y")
 
 
-def page(path, title, description, body, current="", image="share.jpg", search_title="", head=""):
+def page(path, title, description, body, current="", image="share.jpg", search_title="", head="",
+         og_type="website", og_extra="", image_alt="", robots=""):
     """Wrap body in the shared layout and write it to OUT/path."""
     depth = path.count("/")
     root = "../" * depth
-    links = [f'<a href="{root}{href}"{CURRENT if href == current else ""}>{label}</a>' for label, href in NAV]
+    links = [f'<a href="{root}{href}"{CURRENT_PAGE if href == current else ""}>{label}</a>' for label, href in NAV]
     half = (len(links) + 1) // 2
     # two groups, so the logo can sit in the centre of the header between them
     nav = f'<span class="g">{"".join(links[:half])}</span><span class="g">{"".join(links[half:])}</span>'
     social = "".join(
         f'<li><a href="{url}" target="_blank" rel="noopener">{name}</a></li>' for name, url in SOCIAL.items() if url
     )
-    social_block = f"<div><h4>Follow</h4><ul>{social}</ul></div>" if social else (
-        f'<div><h4>Stay in touch</h4><ul><li><a href="{root}index.html#signup">Join the mailing list</a></li>'
+    social_block = f'<div><h2 class="foot-h">Follow</h2><ul>{social}</ul></div>' if social else (
+        f'<div><h2 class="foot-h">Stay in touch</h2><ul><li><a href="{root}index.html#signup">Join the mailing list</a></li>'
         f'<li><a href="{root}contact.html">Contact us</a></li></ul></div>'
     )
     counter = COUNTER.replace("GA_ID", GA_ID) if GA_ID else ""
+    # the notice sits first in the page so keyboard users reach it straight away; it is fixed to the foot of the screen
+    counter_note, counter = (counter.split("</div>\n<script>", 1) if counter else ("", ""))
+    if counter:
+        counter_note, counter = counter_note + "</div>", "<script>" + counter
     full_title = "Seahorse Filmhouse" if not title else f"{title} | Seahorse Filmhouse"
     # search_title is the longer line shown in search results and on the browser tab
     tab_title = (search_title if search_title.startswith("Seahorse Filmhouse")
                  else f"{search_title} | Seahorse Filmhouse" if search_title else full_title)
     description = description.replace('"', "&quot;")
+    image_alt = (image_alt or full_title).replace('"', "&quot;")
+    size = PIC.get(image, {})
+    og_size = (f'\n<meta property="og:image:width" content="{size["w"]}">\n<meta property="og:image:height" content="{size["h"]}">'
+               if size else "")
+    robots = f'\n<meta name="robots" content="{robots}">' if robots else ""
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{tab_title}</title>
-<meta name="description" content="{description}">
+<meta name="description" content="{description}">{robots}
 <meta name="google-site-verification" content="RyrXxN7FP37vGVC3hiQqt4avTftQgCJ8jtQxv17IyrA">
 <link rel="canonical" href="{SITE_URL}/{'' if path == 'index.html' else path}">
 <meta property="og:site_name" content="Seahorse Filmhouse">
 <meta property="og:title" content="{full_title}">
 <meta property="og:description" content="{description}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{og_type}">
 <meta property="og:url" content="{SITE_URL}/{'' if path == 'index.html' else path}">
-<meta property="og:image" content="{SITE_URL}/images/{image}">
+<meta property="og:image" content="{SITE_URL}/images/{image}">{og_size}
+<meta property="og:image:alt" content="{image_alt}">{og_extra}
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:alt" content="{image_alt}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Gloock&family=Cormorant+Garamond:wght@500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" sizes="48x48" href="{root}images/icon-48.png">
-<link rel="icon" type="image/png" sizes="512x512" href="{root}images/icon-512.png">
-<link rel="apple-touch-icon" href="{root}images/icon-180.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400&family=Cormorant+Garamond:wght@500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="48x48" href="{img_url("icon-48.png", root)}">
+<link rel="icon" type="image/png" sizes="512x512" href="{img_url("icon-512.png", root)}">
+<link rel="apple-touch-icon" href="{img_url("icon-180.png", root)}">
 <link rel="stylesheet" href="{root}css/site.css?v={STAMP}">
 {head}
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
+{counter_note}
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="{root}index.html" aria-label="Seahorse Filmhouse"><span class="m">s<span class="f">f</span>h</span><span class="s">Seahorse Filmhouse</span></a>
-    <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
-    <nav class="nav">{nav}</nav>
+    <a class="brand" href="{root}index.html"><span class="m" aria-hidden="true">s<span class="f">f</span>h</span><span class="s">Seahorse Filmhouse</span></a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+    <nav class="nav" id="site-nav" aria-label="Main">{nav}</nav>
   </div>
 </header>
-<main>
+<main id="main" tabindex="-1">
 {body}
 </main>
 <footer class="site-footer">
@@ -469,7 +492,7 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
         <p>Independent film production.<br>With operations in Los Angeles, London, Mumbai and the UAE.</p>
       </div>
       <div>
-        <h4>Explore</h4>
+        <h2 class="foot-h">Explore</h2>
         <ul>
           <li><a href="{root}index.html">Home</a></li>
           <li><a href="{root}films.html">Films</a></li>
@@ -484,8 +507,8 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
     <p class="copyright">&copy; {YEAR} Seahorse Filmhouse. All rights reserved.</p>
   </div>
 </footer>
-<div class="modal" id="trailer-modal" role="dialog" aria-label="Trailer">
-  <button class="close" aria-label="Close trailer">&times;</button>
+<div class="modal" id="trailer-modal" role="dialog" aria-modal="true" aria-label="Trailer" hidden>
+  <button class="close" type="button" aria-label="Close trailer">&times;</button>
   <div class="frame"><iframe src="" title="Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     <a class="yt-link" href="#" target="_blank" rel="noopener">Not playing? Watch on YouTube &rarr;</a></div>
 </div>
@@ -502,15 +525,16 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
 def film_card(film, root=""):
     line = f'Directed by {film["director"]}' if film.get("director") else film["stage"]
     return f"""<a class="film-card" href="{root}films/{film['slug']}.html">
-  <div class="poster"><img src="{root}images/{film['poster']}" alt="{plain(film)} poster" loading="lazy"></div>
+  <div class="poster">{picture(film['poster'], root, f"{plain(film)} poster", SIZES_POSTER)}</div>
   <div class="meta"><span class="year">{film['year']}</span><h3>{film['title']}</h3><p>{line}</p></div>
 </a>"""
 
 
-def news_card(post, root=""):
+def news_card(post, root="", h="h3"):
+    """h: heading level of the card title, one below the heading of the section the card sits in."""
     return f"""<a class="news-card" href="{root}news/{post['slug']}.html">
-  <div class="thumb"><img src="{root}images/{post['image']}" alt="{image_alt(post['image'])}" loading="lazy"></div>
-  <div class="body"><time datetime="{post['date']}">{nice_date(post['date'])}</time><h3>{post['title']}</h3><p>{post['summary']}</p></div>
+  <div class="thumb">{picture(post['image'], root, image_alt(post['image']), SIZES_CARD)}</div>
+  <div class="body"><time datetime="{post['date']}">{nice_date(post['date'])}</time><{h}>{post['title']}</{h}><p>{post['summary']}</p></div>
 </a>"""
 
 
@@ -537,6 +561,83 @@ def signup_block(root="", heading="Be the first to know", text="Release dates, f
 </section>"""
 
 
+# Every image is also written at smaller widths and as AVIF and WebP, so each browser downloads the smallest
+# copy that is still sharp on its screen. The full-size JPEG keeps its old name: share previews and search data use it.
+HAS_AVIF = features.check("avif")
+WIDTHS = (150, 350, 400, 450, 600, 640, 720, 960, 1280, 1920, 2560)
+PIC = {}  # output name -> {"w", "h", "v", "sizes": [widths], "formats": [...]}, filled as images are written
+BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACw="  # stand-in for hero images that load after the page
+
+
+def save_image(im, name, widths=(), quality=82, copy_from=None, avif=65, webp=86, **jpeg):
+    """Write `name` (full-size JPEG) plus the smaller widths listed, each as JPEG, AVIF and WebP.
+    copy_from: use that file unchanged as the full-size JPEG instead of re-encoding it."""
+    out = OUT / "images"
+    stem = name.rsplit(".", 1)[0]
+    if copy_from:
+        shutil.copy(copy_from, out / name)
+    else:
+        im.save(out / name, "JPEG", quality=quality, optimize=True, progressive=True, **jpeg)
+    sizes = sorted({w for w in widths if w < im.width} | {im.width})
+    formats = (["avif"] if HAS_AVIF and avif else []) + (["webp"] if webp else [])
+    for w in sizes:
+        small = im if w == im.width else im.resize((w, round(im.height * w / im.width)), Image.LANCZOS)
+        if w != im.width:
+            small.save(out / f"{stem}-{w}.jpg", "JPEG", quality=quality, optimize=True, progressive=True, **jpeg)
+        base = stem if w == im.width else f"{stem}-{w}"
+        if "avif" in formats:
+            small.save(out / f"{base}.avif", "AVIF", quality=avif, speed=6,
+                       subsampling="4:4:4" if jpeg.get("subsampling") == 0 else "4:2:0")
+        if "webp" in formats:
+            small.save(out / f"{base}.webp", "WEBP", quality=webp, method=6)
+    # short fingerprint of the picture: changes when the image does, so browsers may cache images for a long time
+    v = hashlib.md5((out / name).read_bytes()).hexdigest()[:8]
+    PIC[name] = {"w": im.width, "h": im.height, "v": v, "sizes": sizes, "formats": formats}
+
+
+def srcset(name, root, fmt):
+    info, stem = PIC[name], name.rsplit(".", 1)[0]
+    return ", ".join(f"{root}images/{stem if w == info['w'] else f'{stem}-{w}'}.{fmt}?v={info['v']} {w}w"
+                     for w in info["sizes"])
+
+
+def picture(name, root, alt, sizes, lazy=True, high=False, defer=False, phone=None):
+    """<picture> for a site image: AVIF, then WebP, then JPEG, each at several widths, with the image's own
+    width and height so the page does not jump while it loads.
+    defer: leave the files for site.js to fetch once the page has loaded (the hero images not shown first).
+    phone: (name, sizes) of a different crop used on tall, narrow screens."""
+    info = PIC[name]
+    # deferred: a blank placeholder now, the real files in data-srcset for site.js
+    pre = f'srcset="{BLANK}" data-' if defer else ""
+    sources = ""
+    if phone:
+        for fmt in PIC[phone[0]]["formats"] + ["jpg"]:
+            kind = "jpeg" if fmt == "jpg" else fmt
+            sources += (f'<source media="(max-aspect-ratio: 4/5)" type="image/{kind}" '
+                        f'{pre}srcset="{srcset(phone[0], root, fmt)}" sizes="{phone[1]}">')
+    for fmt in info["formats"]:
+        sources += f'<source type="image/{fmt}" {pre}srcset="{srcset(name, root, fmt)}" sizes="{sizes}">'
+    src = f'{root}images/{name}?v={info["v"]}'
+    load = (' loading="lazy"' if lazy else "") + (' fetchpriority="high"' if high else "")
+    img = (f'<img src="{BLANK}" data-src="{src}" data-srcset="{srcset(name, root, "jpg")}"' if defer
+           else f'<img src="{src}" srcset="{srcset(name, root, "jpg")}"')
+    return (f'<picture>{sources}{img} sizes="{sizes}" width="{info["w"]}" height="{info["h"]}" '
+            f'alt="{alt}"{load} decoding="async"></picture>')
+
+
+def cover_sizes(name, extra="0px", height="100vh"):
+    """`sizes` for an image that fills a box (background-style, cropped to fit) of 100vw + extra by height + extra:
+    on screens narrower than the picture, its width is set by the height of the box."""
+    info = PIC[name]
+    return (f"(max-aspect-ratio: {info['w']}/{info['h']}) calc(({height} + {extra}) * {info['w'] / info['h']:.3f}), "
+            f"calc(100vw + {extra})")
+
+
+def img_url(name, root=""):
+    """Plain URL of the full-size JPEG, with its fingerprint."""
+    return f"{root}images/{name}?v={PIC[name]['v']}"
+
+
 def build_images():
     out = OUT / "images"
     out.mkdir(parents=True, exist_ok=True)
@@ -550,7 +651,8 @@ def build_images():
             im = ImageEnhance.Brightness(im).enhance(1.06)
             im = ImageEnhance.Contrast(im).enhance(1.12)
             im = ImageEnhance.Color(im).enhance(1.18)
-        im.save(out / name, "JPEG", quality=82, optimize=True, progressive=True)
+        widths = (640, 960, 1280) if name.startswith("still-") else (350, 400, 600) if name.startswith("team-") else (400, 600)
+        save_image(im, name, widths)
     # Full-screen hero versions of the two posters: the sources are only 1024px wide, so they are
     # enlarged and sharpened here; otherwise they look soft when stretched across a wide screen.
     from PIL import ImageFilter
@@ -559,12 +661,12 @@ def build_images():
         im = Image.open(SRC_IMG / src).convert("RGB")
         if im.width >= 3000:
             # already high resolution (the 4K panoramic Tokyo image): keep it at its original size and
-            # save with full colour detail, at Raj's request
-            im.save(out / name, "JPEG", quality=92, subsampling=0, optimize=True, progressive=True)
+            # save with full colour detail, at Raj's request (AVIF also keeps full colour; WebP cannot, so none)
+            save_image(im, name, (1280, 1920, 2560), quality=92, subsampling=0, avif=85, webp=0)
             continue
         im = im.resize((1920, round(im.height * 1920 / im.width)), Image.LANCZOS)
         im = im.filter(ImageFilter.UnsharpMask(radius=2.4, percent=150, threshold=2))
-        im.save(out / name, "JPEG", quality=84, optimize=True, progressive=True)
+        save_image(im, name, (640, 960, 1280) if name.startswith("still-") else (960, 1280), quality=84)
     # Phone version of the panoramic Tokyo image: on a tall, narrow screen the wide picture would lose both
     # sides, so it is shown whole-ish as a band, zoomed out, over a blurred copy of itself.
     from PIL import ImageEnhance
@@ -585,12 +687,15 @@ def build_images():
             mask.paste(v, (0, y, band.width, y + 1))
             mask.paste(v, (0, band.height - 1 - y, band.width, band.height - y))
         fill.paste(band, (0, 520), mask)
-        fill.save(out / "hero-tokyo-phone.jpg", "JPEG", quality=88, optimize=True, progressive=True)
+        save_image(fill, "hero-tokyo-phone.jpg", (720,), quality=88)
     shutil.copy(SRC_IMG / "_share.jpg", out / "share.jpg")
+    with Image.open(SRC_IMG / "_share.jpg") as im:
+        PIC["share.jpg"] = {"w": im.width, "h": im.height}
     for name in ("shop-book.jpg",):
-        shutil.copy(SRC_IMG / f"_{name}", out / name)
+        save_image(Image.open(SRC_IMG / f"_{name}").convert("RGB"), name, (150, 450, 900), copy_from=SRC_IMG / f"_{name}")
     for size in (48, 180, 512):
         shutil.copy(SRC_IMG / f"_icon-{size}.png", out / f"icon-{size}.png")
+        PIC[f"icon-{size}.png"] = {"w": size, "h": size, "v": hashlib.md5((out / f"icon-{size}.png").read_bytes()).hexdigest()[:8]}
 
 
 def build_home():
@@ -611,7 +716,10 @@ def build_home():
         soft = " soft" if f["status"] == "upcoming" else ""
         img = hero_img.get(slug, f"hero-{slug}.jpg")
         year = f["year"] if f["year"].isdigit() else "Soon"
-        layers += f"""<div class="hero-bg bg-{slug}{soft}{active}" style="background-image:url('images/{img}')"></div>\n"""
+        # only the first film's image loads with the page; site.js fetches the others once the page has loaded
+        phone = ("hero-tokyo-phone.jpg", cover_sizes("hero-tokyo-phone.jpg", "120px")) if slug == "tokyo" else None
+        pic = picture(img, "", "", cover_sizes(img, "120px"), lazy=False, high=i == 0, defer=i > 0, phone=phone)
+        layers += f"""<div class="hero-bg bg-{slug}{soft}{active}">{pic}</div>\n"""
         titles += (f"""<a class="hero-title{active}" href="films/{slug}.html" data-i="{i}">"""
                    f"""<span class="t">{f['title']}</span><span class="y">{year}</span></a>\n""")
         # released films show the tagline only; upcoming ones also show their status
@@ -718,7 +826,7 @@ def build_films():
                     f'<a href="{url}" target="_blank" rel="noopener">{name}</a>' for name, url in services) + "</dd></div>"
                 for label, services in f["watch"])
             centre = f"""<p class="synopsis">{f['synopsis']}</p>
-<div class="film-poster"><img src="../images/{f['poster']}" alt="{plain(f)} poster"></div>
+<div class="film-poster">{picture(f['poster'], "../", f"{plain(f)} poster", SIZES_FILM_POSTER)}</div>
 <p class="sub-head">Where to watch <span class="where">United States</span></p>
 <dl class="watch">{watch_rows}</dl>
 <p class="watch-more"><a href="{f['watch_url']}" target="_blank" rel="noopener">All current options &rarr;</a></p>
@@ -735,7 +843,7 @@ def build_films():
                        + (credit("Languages", f["languages"]) if f.get("languages") else "")
                        + ("" if f.get("runtime") else credit("Produced by", "Seahorse Filmhouse")))
             centre = f"""<p class="synopsis">{f['synopsis']}</p>
-<div class="film-poster"><img src="../images/{f['poster']}" alt="{plain(f)} poster"></div>
+<div class="film-poster">{picture(f['poster'], "../", f"{plain(f)} poster", SIZES_FILM_POSTER)}</div>
 {'<p class="muted concept-note">Images shown are concept artwork; the film has not yet been shot.</p>' if f.get("concept_art") else ''}
 <p class="muted">Updates on this project are posted in <a href="../news.html" style="color:var(--accent)">News</a> and sent to the mailing list.</p>
 <div class="btn-row" style="margin-top:26px"><a class="btn primary" href="#signup">Get updates</a><a class="btn" href="../contact.html">Distribution and press enquiries</a></div>"""
@@ -749,7 +857,8 @@ def build_films():
         play = (f"""<a class="play" href="https://www.youtube.com/watch?v={f['trailer']}" data-trailer="{f['trailer']}" aria-label="Play the {plain(f)} trailer">
   <svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="30,14 86,50 30,86"/></svg></a>"""
                 if f.get("trailer") else "")
-        body = f"""<section class="film-hero tall bg-{f['slug']}" style="background-image:url('../images/{bg}')">{play}<div class="wrap">
+        hero = picture(bg, "../", "", cover_sizes(bg, height="80vh"), lazy=False, high=True)
+        body = f"""<section class="film-hero tall bg-{f['slug']}">{hero}{play}<div class="wrap">
   <h1>{f['title']}{' <span class="title-note">(' + f['title_note'] + ')</span>' if f.get('title_note') else ''}</h1>
   <p class="tagline">{f['tagline']}</p>
 </div></section>
@@ -776,7 +885,7 @@ def build_films():
                                 "contentUrl": f"https://www.youtube.com/watch?v={f['trailer']}",
                                 "embedUrl": f"https://www.youtube.com/embed/{f['trailer']}"}
         page(f"films/{f['slug']}.html", plain(f), desc, body, current="films.html", image=bg,
-             search_title=search_title, head=ld(movie))
+             search_title=search_title, head=ld(movie), og_type="video.movie", image_alt=image_alt(bg))
 
 
 def build_news():
@@ -784,7 +893,7 @@ def build_news():
   <p class="eyebrow">Latest</p><h1>News</h1>
   <p class="lead">Updates on our films, festival screenings and new projects.</p>
 </div></section>
-<section class="block"><div class="wrap"><div class="grid three">{''.join(news_card(p) for p in NEWS)}</div></div></section>
+<section class="block"><div class="wrap"><div class="grid three">{''.join(news_card(p, h="h2") for p in NEWS)}</div></div></section>
 {signup_block()}"""
     page("news.html", "News", "News and updates from Seahorse Filmhouse: films, festivals and new projects.",
          body, current="news.html")
@@ -792,12 +901,13 @@ def build_news():
     for p in NEWS:
         portrait = p["image"].startswith("poster-")
         img_style = ' style="max-width:360px"' if portrait else ""
+        post_sizes = "(max-width: 408px) calc(100vw - 48px), 360px" if portrait else "(max-width: 760px) calc(100vw - 48px), 712px"
         body = f"""<section class="page-head"><div class="wrap post">
   <time datetime="{p['date']}">{nice_date(p['date'])}</time>
   <h1 style="margin-top:12px;font-size:clamp(2rem,4.6vw,3.2rem)">{p['title']}</h1>
 </div></section>
 <section class="block tight"><div class="wrap post">
-  <div class="post-image"{img_style}><img src="../images/{p['image']}" alt="{image_alt(p['image'])}"></div>
+  <div class="post-image"{img_style}>{picture(p['image'], "../", image_alt(p['image']), post_sizes, lazy=False, high=True)}</div>
   <div class="post-body">{p['body']}</div>
   <p style="margin-top:40px"><a class="text-link" href="../news.html">&larr; All news</a></p>
 </div></section>
@@ -806,13 +916,15 @@ def build_news():
                       "image": f"{SITE_URL}/images/{p['image']}", "description": p["summary"],
                       "author": ORG, "publisher": ORG,
                       "mainEntityOfPage": f"{SITE_URL}/news/{p['slug']}.html"})
-        page(f"news/{p['slug']}.html", p["title"], p["summary"], body, current="news.html", image=p["image"], head=article)
+        page(f"news/{p['slug']}.html", p["title"], p["summary"], body, current="news.html", image=p["image"], head=article,
+             og_type="article", og_extra=f'\n<meta property="article:published_time" content="{p["date"]}">',
+             image_alt=image_alt(p["image"]))
 
 
 def build_about():
     people = "".join(
         f"""<div class="person">
-  <div class="photo"><img src="images/{img}" alt="{name}" loading="lazy"></div>
+  <div class="photo">{picture(img, "", name, SIZES_TEAM)}</div>
   <h3>{name}</h3><p>{role}</p>
   <a class="text-link" href="{imdb}" target="_blank" rel="noopener">IMDb</a>
 </div>""" for name, role, img, imdb in TEAM
@@ -905,7 +1017,7 @@ def build_contact():
   <p class="lead">Thanks for getting in touch. If you sent a message, we will reply as soon as we can.</p>
   <p style="margin-top:30px"><a class="btn" href="index.html">Back to home</a></p>
 </div></section>"""
-    page("thank-you.html", "Thank you", "Thank you for contacting Seahorse Filmhouse.", body)
+    page("thank-you.html", "Thank you", "Thank you for contacting Seahorse Filmhouse.", body, robots="noindex")
 
 
 # Shop: products are "coming soon" until the Fourthwall shop is live. To switch one on, give it a
@@ -932,7 +1044,6 @@ SHOP_PHOTOS = HERE / "shop_photos"
 
 def build_shop_photos():
     """Raj's product photos (02_BUILD/shop_photos) -> images/shop-<slug>-<n>.jpg, 3:4, on white."""
-    out = OUT / "images"
     for pr in PRODUCTS:
         names = []
         for n, src in enumerate(pr.get("photos", []), 1):
@@ -943,7 +1054,7 @@ def build_shop_photos():
             if im.width != 900:
                 im = im.resize((900, round(im.height * 900 / im.width)), Image.LANCZOS)
             name = f"shop-{pr['slug']}-{n}.jpg"
-            im.save(out / name, "JPEG", quality=86, optimize=True, progressive=True)
+            save_image(im, name, (150, 450), quality=86)
             names.append(name)
         if names:
             pr["images"] = names
@@ -951,7 +1062,7 @@ def build_shop_photos():
 
 def build_shop():
     cards = ""
-    for pr in PRODUCTS:
+    for n, pr in enumerate(PRODUCTS):
         if pr["url"]:
             action = f'<span class="price">{pr["price"]}</span><a class="btn primary" href="{pr["url"]}" target="_blank" rel="noopener">Buy</a>'
         else:
@@ -960,12 +1071,12 @@ def build_shop():
         thumbs = ""
         if len(images) > 1:
             thumbs = '<div class="thumbs">' + "".join(
-                f'<button type="button" class="{"on" if i == 0 else ""}" data-src="images/{im}" aria-label="{pr["name"]}, view {i + 1}">'
-                f'<img src="images/{im}" alt="" loading="lazy"></button>' for i, im in enumerate(images)) + "</div>"
+                f'<button type="button" class="{"on" if i == 0 else ""}" aria-pressed="{"true" if i == 0 else "false"}" aria-label="{pr["name"]}, view {i + 1}">'
+                f'{picture(im, "", "", "46px")}</button>' for i, im in enumerate(images)) + "</div>"
         cards += f"""<div class="product">
-  <div class="shot"><img src="images/{images[0]}" alt="{pr['name']}" loading="lazy"></div>
+  <div class="shot">{picture(images[0], "", pr['name'], SIZES_CARD, lazy=n > 0, high=n == 0)}</div>
   {thumbs}
-  <h3>{pr['name']}</h3>
+  <h2 class="product-name">{pr['name']}</h2>
   <p>{pr['text']}</p>
   <div class="buy">{action}</div>
 </div>"""
