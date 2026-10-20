@@ -8,6 +8,7 @@ import hashlib
 import html
 import json
 import re
+import os
 import shutil
 from datetime import date
 from pathlib import Path
@@ -1104,6 +1105,16 @@ def build_meta():
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
 
 
+def add_hero_gl():
+    """Trial only, off unless HERO_GL=1: the WebGL home hero (hero-gl.js) on the home page."""
+    shutil.copy(HERE / "hero-gl.js", OUT / "js" / "hero-gl.js")
+    home = OUT / "index.html"
+    tag = f'<script src="js/site.js?v={STAMP}"></script>'
+    html = home.read_text(encoding="utf-8")
+    assert tag in html
+    home.write_text(html.replace(tag, tag + f'\n<script src="js/hero-gl.js?v={STAMP}"></script>'), encoding="utf-8")
+
+
 def main():
     if OUT.exists():
         shutil.rmtree(OUT)
@@ -1120,6 +1131,8 @@ def main():
     build_shop()
     build_contact()
     build_meta()
+    if os.environ.get("HERO_GL") == "1":
+        add_hero_gl()
     print(f"Built {len(list(OUT.rglob('*.html')))} pages into {OUT}")
 
 

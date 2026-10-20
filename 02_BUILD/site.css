@@ -568,3 +568,7 @@ section.alt, section.tint, .news-card { --muted: #69635a; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: 0.01ms !important; transition-delay: 0s !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* Trial WebGL hero (hero-gl.js, only when built with HERO_GL=1): the canvas takes over from the CSS image layers */
+.hero-gl { position: absolute; top: -60px; left: -60px; width: calc(100% + 120px); height: calc(100% + 120px); display: block; }
+.hero.gl-on .hero-bg { visibility: hidden; }

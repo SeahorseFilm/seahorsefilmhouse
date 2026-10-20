@@ -22,3 +22,8 @@
   for = "/js/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# Trial WebGL home hero: switched on for pull-request previews only, never for the live site.
+# Remove this block (or move it to [context.production.environment]) once Raj decides.
+[context.deploy-preview.environment]
+  HERO_GL = "1"
