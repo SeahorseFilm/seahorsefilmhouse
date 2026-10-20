@@ -572,3 +572,15 @@ section.alt, section.tint, .news-card { --muted: #69635a; }
 /* Trial WebGL hero (hero-gl.js, only when built with HERO_GL=1): the canvas takes over from the CSS image layers */
 .hero-gl { position: absolute; top: -60px; left: -60px; width: calc(100% + 120px); height: calc(100% + 120px); display: block; }
 .hero.gl-on .hero-bg { visibility: hidden; }
+
+/* Home page shop row: four products, model photos, linking to each on the Shop page */
+.grid.four { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.shop-card { display: block; color: inherit; text-decoration: none; }
+.shop-card .shot { aspect-ratio: 3 / 4; overflow: hidden; background: #ffffff; }
+.shop-card .shot img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--focus); }
+.shop-card:hover .shot img { transform: scale(1.03); }
+.shop-card .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 12px; }
+.shop-card h3 { font-size: 1.05rem; letter-spacing: -0.01em; margin: 0; }
+.shop-card .soon { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+@media (max-width: 900px) { .grid.four { grid-template-columns: 1fr 1fr; gap: 18px; } }
+@media (max-width: 720px) { .shop-card .meta { flex-direction: column; gap: 2px; } }

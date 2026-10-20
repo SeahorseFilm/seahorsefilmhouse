@@ -332,6 +332,7 @@ CURRENT_PAGE = CURRENT + ' aria-current="page"'  # menu link of the page being s
 # how wide each kind of image is drawn, so the browser can choose a file (see the grid rules in site.css)
 SIZES_POSTER = "(max-width: 900px) calc(50vw - 33px), 360px"
 SIZES_CARD = "(max-width: 720px) calc(100vw - 48px), (max-width: 900px) calc(50vw - 39px), 360px"
+SIZES_SHOP_ROW = "(max-width: 900px) calc(50vw - 39px), 270px"
 SIZES_FILM_POSTER = "(max-width: 488px) calc(100vw - 48px), 440px"
 SIZES_TEAM = "(max-width: 720px) calc(50vw - 35px), (max-width: 900px) calc(33vw - 31px), 210px"
 NAV = [("Home", "index.html"), ("Films", "films.html"), ("News", "news.html"), ("Shop", "shop.html"), ("About", "about.html"), ("Contact", "contact.html")]
@@ -528,6 +529,16 @@ def film_card(film, root=""):
     return f"""<a class="film-card" href="{root}films/{film['slug']}.html">
   <div class="poster">{picture(film['poster'], root, f"{plain(film)} poster", SIZES_POSTER)}</div>
   <div class="meta"><span class="year">{film['year']}</span><h3>{film['title']}</h3><p>{line}</p></div>
+</a>"""
+
+
+def shop_card(pr, root=""):
+    """Home page shop row: one product, its model photo where there is one, linking to it on the Shop page."""
+    images = pr["images"]
+    pick = next((im for im, src in zip(images, pr["photos"]) if "model" in src), images[0])
+    return f"""<a class="shop-card" href="{root}shop.html#{pr['slug']}">
+  <div class="shot">{picture(pick, root, pr['name'], SIZES_SHOP_ROW)}</div>
+  <div class="meta"><h3>{pr['name']}</h3><span class="soon">{'Coming soon' if not pr['url'] else pr['price']}</span></div>
 </a>"""
 
 
@@ -773,6 +784,16 @@ def build_home():
       <a class="text-link" href="films.html">All films &rarr;</a>
     </div>
     <div class="grid three posters">{''.join(film_card(f) for f in released)}</div>
+  </div>
+</section>
+
+<section class="block alt" id="shop-row">
+  <div class="wrap">
+    <div class="section-head">
+      <div><p class="eyebrow">Shop</p><h2>Objects from the filmhouse</h2></div>
+      <a class="text-link" href="shop.html">Visit the shop &rarr;</a>
+    </div>
+    <div class="grid four home-shop">{''.join(shop_card(pr) for pr in PRODUCTS if pr.get('images'))}</div>
   </div>
 </section>
 
@@ -1074,7 +1095,7 @@ def build_shop():
             thumbs = '<div class="thumbs">' + "".join(
                 f'<button type="button" class="{"on" if i == 0 else ""}" aria-pressed="{"true" if i == 0 else "false"}" aria-label="{pr["name"]}, view {i + 1}">'
                 f'{picture(im, "", "", "46px")}</button>' for i, im in enumerate(images)) + "</div>"
-        cards += f"""<div class="product">
+        cards += f"""<div class="product" id="{pr['slug']}">
   <div class="shot">{picture(images[0], "", pr['name'], SIZES_CARD, lazy=n > 0, high=n == 0)}</div>
   {thumbs}
   <h2 class="product-name">{pr['name']}</h2>
@@ -1123,11 +1144,11 @@ def main():
     shutil.copy(HERE / "site.css", OUT / "css" / "site.css")
     shutil.copy(HERE / "site.js", OUT / "js" / "site.js")
     build_images()
+    build_shop_photos()
     build_home()
     build_films()
     build_news()
     build_about()
-    build_shop_photos()
     build_shop()
     build_contact()
     build_meta()
