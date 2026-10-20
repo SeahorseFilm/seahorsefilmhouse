@@ -2,7 +2,8 @@
 """Builds the Seahorse Filmhouse site into ../01_SITE.
 
 Run:  python3 02_BUILD/build.py
-To add news: add an entry to the top of NEWS below, then run the build again.
+Films, news, team, shop products and site-wide details live in ../content (JSON); see CONTENT_EDITING.md.
+This file holds the page layout, image processing, search-engine data and analytics consent.
 """
 import hashlib
 import html
@@ -10,10 +11,13 @@ import json
 import re
 import os
 import shutil
+import sys
 from datetime import date
 from pathlib import Path
 
 from PIL import Image, features
+
+from content_loader import ContentError, load_content
 
 HERE = Path(__file__).parent
 OUT = HERE.parent / "01_SITE"
@@ -27,305 +31,13 @@ GA_ID = "G-QYHK3HQZ3T"
 YEAR = date.today().year
 STAMP = __import__('time').strftime('%Y%m%d%H%M')  # cache-buster so browsers pick up new CSS/JS
 
-# Only links that are confirmed go here; empty ones are not shown.
-SOCIAL = {
-    "YouTube": "https://www.youtube.com/@seahorsefilmhouse",
-    "Instagram": "https://www.instagram.com/seahorsefilmhouse/",
-    "IMDb": "",
-    "LinkedIn": "https://www.linkedin.com/company/seahorsefilmhouse/",
-}
+CONTENT = HERE.parent / "content"
+SHOP_PHOTOS = HERE / "shop_photos"
 
-# source file -> (output name, max width)
-IMAGES = {
-    "film1.jpg": ("still-open-24-hours-1.jpg", 1920),
-    "film4.jpg": ("still-open-24-hours-2.jpg", 1920),
-    "film2.jpg": ("still-dark-light-1.jpg", 1920),
-    "film3.jpg": ("still-daddys-girl-1.jpg", 1920),
-    # film5/film6 identified from the trailers: the man in the woods is in the Daddy's Girl trailer,
-    # the mugshot belongs to Dark Light (whose trailer shows the same woman under arrest)
-    "film5.jpg": ("still-daddys-girl-2.jpg", 1920),
-    "film6.jpg": ("still-dark-light-2.jpg", 1920),
-    "project-image2.jpg": ("poster-open-24-hours.jpg", 900),
-    "project-image3.jpg": ("poster-dark-light.jpg", 900),
-    "project-image1.jpg": ("poster-daddys-girl.jpg", 900),
-    "project-image4.jpg": ("poster-chasm.jpg", 900),
-    "project-image5.jpg": ("poster-winter-dreams.jpg", 900),
-    "tokyo-poster.png": ("poster-tokyo.jpg", 900),
-    "team-image1.jpg": ("team-rp-khemanand.jpg", 700),
-    "team-image2.jpg": ("team-padraig-reynolds.jpg", 700),
-    "team-image3.jpg": ("team-ed-marx.jpg", 700),
-    "team-image5.jpg": ("team-holly-amber-church.jpg", 700),
-    "team-image6.jpg": ("team-shibani-kapur.jpg", 700),
-}
-
-FILMS = [
-    {
-        "slug": "open-24-hours",
-        "title": "Open 24 Hours",
-        "year": "2019",
-        "status": "released",
-        "tagline": "Some doors should stay closed",
-        "director": "Padraig Reynolds",
-        "runtime": "102 min",
-        "genre": "Psychological thriller",
-        "synopsis": "A psychological thriller about a woman who takes a job at a 24-hour "
-                    "convenience store after being released from prison.",
-        "trailer": "iI7yLprZheA",
-        "trailer_date": "2022-08-06T10:29:17-07:00",  # when the trailer was uploaded to YouTube; Google requires it
-        "poster": "poster-open-24-hours.jpg",
-        "stills": ["still-open-24-hours-1.jpg", "still-open-24-hours-2.jpg"],
-        "page_hero": "still-open-24-hours-2.jpg",
-        "cast": ["Vanessa Grasse", "Brendan Fletcher", "Emily Tennant", "Cole Vigue", "Daniel O'Meara"],
-        # United States availability and links, from JustWatch (checked 2026-10-11); recheck every few months
-        "watch": [
-            ("Stream", [("Amazon Prime Video", "https://watch.amazon.com/detail?gti=amzn1.dv.gti.a4b97701-668c-2fc6-5783-1dc577e5d187")]),
-            ("Rent or buy", [("Apple TV", "https://tv.apple.com/us/movie/open-24-hours/umc.cmc.dhqll3nmnujvbzkgf15l0c11"),
-                             ("Amazon", "https://watch.amazon.com/detail?gti=amzn1.dv.gti.a4b97701-668c-2fc6-5783-1dc577e5d187"),
-                             ("Fandango at Home", "https://athome.fandango.com/content/browse/details/Open-24-Hours/1450145")]),
-            ("Free with ads", [("Tubi", "https://tubitv.com/movies/562781"),
-                               ("Pluto TV", "https://pluto.tv/on-demand/movies/open-24-hours-2020-1-1")]),
-        ],
-        "watch_url": "https://www.justwatch.com/us/movie/open-24-hours",
-        "accolades": [
-            ("win", "Winner: Best Special Effects / Make-Up, Screamfest Horror Film Festival, Los Angeles (2018)"),
-            ("", "Official Selection: FrightFest, London (2018)"),
-            ("", "Official Selection: Sitges International Film Festival, Spain (2018)"),
-            ("", "Official Selection: Fantastic Fest, USA (2018)"),
-            ("", "Official Selection: Telluride Horror Show, USA (2018)"),
-            ("", "Official Selection: BIFAN, South Korea (2019)"),
-        ],
-    },
-    {
-        "slug": "dark-light",
-        "title": "Dark Light",
-        "year": "2019",
-        "status": "released",
-        "tagline": "What hides in the shadows?",
-        "director": "Padraig Reynolds",
-        "runtime": "90 min",
-        "genre": "Horror",
-        "synopsis": "A mother fights to protect her daughter from a terrifying presence "
-                    "she believes is in her house.",
-        "trailer": "Isls30Tok3E",
-        "trailer_date": "2025-05-14T13:53:31-07:00",  # when the trailer was uploaded to YouTube; Google requires it
-        "poster": "poster-dark-light.jpg",
-        "stills": ["still-dark-light-1.jpg", "still-dark-light-2.jpg"],
-        "page_hero": "still-dark-light-2.jpg",
-        "cast": ["Jessica Madsen", "Opal Littleton", "Ed Brody", "Kristina Clifford"],
-        "watch": [
-            ("Stream", [("Amazon Prime Video", "https://watch.amazon.com/detail?gti=amzn1.dv.gti.f0b76568-916d-5c83-23e6-af5f892b63b2")]),
-            ("Rent or buy", [("Apple TV", "https://tv.apple.com/us/movie/dark-light/umc.cmc.101z9fm2f5zv8j2k25ux4ub1"),
-                             ("Amazon", "https://watch.amazon.com/detail?gti=amzn1.dv.gti.f0b76568-916d-5c83-23e6-af5f892b63b2"),
-                             ("Fandango at Home", "https://athome.fandango.com/content/browse/details/Dark-Light/1304711")]),
-            ("Free with ads", [("YouTube", "https://www.youtube.com/watch?v=2EMJyNB70pQ"),
-                               ("Tubi", "https://tubitv.com/movies/661319")]),
-        ],
-        "watch_url": "https://www.justwatch.com/us/movie/dark-light-2019",
-        "accolades": [
-            ("", "Premiered at FrightFest, London"),
-        ],
-    },
-    {
-        "slug": "daddys-girl",
-        "title": "Daddy&rsquo;s Girl",
-        "plain_title": "Daddy's Girl",
-        "year": "2018",
-        "status": "released",
-        "tagline": "Family ties that bind too tight",
-        "director": "Julian Richards",
-        "runtime": "89 min",
-        "genre": "Horror thriller",
-        "synopsis": "A young woman held captive by her father must uncover a dark family secret.",
-        "trailer": "PkVRva3AiOE",
-        "trailer_date": "2022-08-06T12:26:58-07:00",  # when the trailer was uploaded to YouTube; Google requires it
-        "poster": "poster-daddys-girl.jpg",
-        "stills": ["still-daddys-girl-1.jpg", "still-daddys-girl-2.jpg"],
-        "page_hero": "still-daddys-girl-2.jpg",
-        "cast": ["Jemma Dallender", "Costas Mandylor"],
-        "watch": [
-            ("Rent or buy", [("Apple TV", "https://tv.apple.com/us/movie/daddys-girl/umc.cmc.300g7xw5ei16q106pmizd81iy"),
-                             ("Fandango at Home", "https://athome.fandango.com/content/browse/details/Daddy-s-Girl/1521389")]),
-            ("Free with ads", [("Tubi", "https://tubitv.com/movies/100032317"),
-                               ("Fandango at Home", "https://athome.fandango.com/content/browse/details/Daddy-s-Girl/1521389")]),
-        ],
-        "watch_url": "https://www.justwatch.com/us/movie/daddys-girl-2018",
-        "accolades": [
-            ("win", "Winner: Best Director, Fantasporto Film Festival, Portugal (2019)"),
-            ("", "Buffalo Dreams Fantastic Film Festival (2020): 4 nominations"),
-            ("", "Official Selection: Raindance, London (2018)"),
-            ("", "Official Selection: BIFAN, South Korea (2019)"),
-            ("", "National Film and Television Awards, USA (2019)"),
-        ],
-    },
-    {
-        "slug": "chasm",
-        "title": "Chasm",
-        "year": "2027",
-        "status": "upcoming",
-        "tagline": "The space between silence, mystery, and becoming",
-        "synopsis": "An atmospheric portrait of Ila, a woman on the edge of quiet transformation. "
-                    "A soulful exploration of the space between silence, mystery, and becoming.",
-        "poster": "poster-chasm.jpg",
-        "stills": [],
-        "stage": "Coming 2027",
-    },
-    {
-        "slug": "tokyo",
-        "title": "Tokyo",
-        "year": "2027",
-        "status": "upcoming",
-        "tagline": "Some destinations don&rsquo;t set you free",
-        "director": "R P Khemanand",
-        # Raj asked (2026-10-12) for a synopsis that does not give away the plot: no gun, no destination
-        "synopsis": "A woman hires a private driver for a long journey west out of Tokyo. They share almost no language, each carrying something they can’t bring themselves to say.",
-        "title_note": "working title",
-        "runtime": "c. 95 min",
-        "languages": "Japanese / English / Hindi",
-        "poster": "poster-tokyo.jpg",
-        "stills": [],
-        "page_hero": "still-tokyo-mirror.jpg",
-        "stage": "In development",
-        "concept_art": True,
-    },
-    {
-        "slug": "winter-dreams",
-        "title": "Winter Dreams",
-        "year": "In development",
-        "status": "upcoming",
-        "tagline": "Chasing dreams, loving illusions, and waking up too late",
-        "synopsis": "A modern reimagining of F. Scott Fitzgerald&rsquo;s <em>Winter Dreams</em>, where "
-                    "ambition and desire blur the line between success and self-loss. Set in today&rsquo;s "
-                    "world, it is a story of chasing dreams, loving illusions, and waking up too late.",
-        "poster": "poster-winter-dreams.jpg",
-        "stills": [],
-        "stage": "In development",
-    },
-]
-
-TEAM = [
-    ("R P Khemanand", "Producer / Director / Screenwriter", "team-rp-khemanand.jpg", "https://www.imdb.com/name/nm11359091/"),
-    ("Padraig Reynolds", "Director / Screenwriter", "team-padraig-reynolds.jpg", "https://www.imdb.com/name/nm1754478/"),
-    ("Ed Marx", "Film Editor", "team-ed-marx.jpg", "https://www.imdb.com/name/nm0003759/"),
-    ("Holly Amber Church", "Music Composer", "team-holly-amber-church.jpg", "https://www.imdb.com/name/nm1498772/"),
-    ("Shibani Kapur", "Producer", "team-shibani-kapur.jpg", "https://www.imdb.com/name/nm11359090/"),
-]
-
-# Newest first. Every post must be factual and approved before the site goes live.
-NEWS = [
-    {
-        "slug": "tokyo-announced-for-2027",
-        "date": "2026-10-11",
-        "title": "Tokyo: a new film for 2027",
-        "summary": "A woman, the driver she has hired, and a long road west out of Tokyo. A new film from Seahorse Filmhouse.",
-        "image": "hero-tokyo.jpg",
-        "body": """
-<p>Seahorse Filmhouse is developing <em>Tokyo</em> (working title), a new feature directed by R P Khemanand and
-planned for 2027.</p>
-<p>A woman hires a private driver for a long journey west out of Tokyo. They share almost no language, each carrying something they can’t bring themselves to say.</p>
-<p>The film is a feature of about 95 minutes, in Japanese, English and Hindi.</p>
-<p>Follow the project on the <a href="../films/tokyo.html">Tokyo page</a>.</p>
-""",
-    },
-    {
-        "slug": "chasm-coming-2027",
-        "date": "2026-10-10",
-        "title": "Chasm is coming in 2027",
-        "summary": "An atmospheric portrait of Ila, a woman on the edge of quiet transformation.",
-        "image": "poster-chasm.jpg",
-        "body": """
-<p><em>Chasm</em>, from Seahorse Filmhouse, is set for 2027.</p>
-<p>The film is an atmospheric portrait of Ila, a woman on the edge of quiet transformation, and a soulful
-exploration of the space between silence, mystery, and becoming.</p>
-<p>More details will be posted on the <a href="../films/chasm.html">Chasm page</a> as the release approaches.</p>
-""",
-    },
-    {
-        "slug": "winter-dreams-in-development",
-        "date": "2026-10-10",
-        "title": "Winter Dreams: a Fitzgerald story for today",
-        "summary": "In development: a modern reimagining of F. Scott Fitzgerald's Winter Dreams.",
-        "image": "poster-winter-dreams.jpg",
-        "body": """
-<p>Seahorse Filmhouse is developing <em>Winter Dreams</em>, a modern reimagining of F. Scott Fitzgerald&rsquo;s
-short story.</p>
-<p>Set in today&rsquo;s world, it follows ambition and desire as they blur the line between success and
-self-loss: a story of chasing dreams, loving illusions, and waking up too late.</p>
-<p>Follow the project on the <a href="../films/winter-dreams.html">Winter Dreams page</a>.</p>
-""",
-    },
-    # --- Press archive: each item is written from a published source, linked at the foot of the post ---
-    {
-        "slug": "daddys-girl-dvd-and-vod-release",
-        "date": "2020-09-23",
-        "title": "Daddy&rsquo;s Girl arrives on DVD and on demand",
-        "summary": "Rue Morgue reports the North American release of Julian Richards' award-winning thriller.",
-        "image": "still-daddys-girl-2.jpg",
-        "body": """
-<p>Rue Morgue has announced the North American home release of <em><a href="../films/daddys-girl.html">Daddy&rsquo;s Girl</a></em>,
-with the DVD out on 29 September 2020 and video on demand following on 2 October, through Cleopatra Entertainment.</p>
-<p>The magazine notes that director Julian Richards won the Best Director prize at the Fantasporto International Film
-Festival for the film. The cast is led by Jemma Dallender and Costas Mandylor, from a screenplay by Timothy Hill and Sean Hogan.</p>
-<p class="source">Source: <a href="https://rue-morgue.com/award-winning-rural-shocker-daddys-girl-is-coming-next-week-trailer-and-poster/" target="_blank" rel="noopener">Rue Morgue, 23 September 2020</a></p>
-""",
-    },
-    {
-        "slug": "open-24-hours-trailer-and-release-date",
-        "date": "2020-07-21",
-        "title": "Open 24 Hours: new trailer and an August release",
-        "summary": "Dread Central shares the official trailer and poster, with the film out on 18 August 2020.",
-        "image": "still-open-24-hours-2.jpg",
-        "body": """
-<p>Dread Central has published the official trailer and poster for <em><a href="../films/open-24-hours.html">Open 24 Hours</a></em>,
-released by 4Digital Media, and reports that the film is available on video on demand and DVD from 18 August 2020.</p>
-<p>Written and directed by Padraig Reynolds, the film stars Vanessa Grasse as Mary, alongside Brendan Fletcher, Emily Tennant,
-Cole Vigue and Daniel O&rsquo;Meara.</p>
-<p class="source">Source: <a href="https://dreadcentral.com/news/334050/trailer-poster-for-gruesome-sadistic-horror-open-24-hours" target="_blank" rel="noopener">Dread Central, 21 July 2020</a></p>
-""",
-    },
-    {
-        "slug": "dark-light-us-release",
-        "date": "2019-12-06",
-        "title": "Dark Light released in the United States",
-        "summary": "Vertical Entertainment releases Padraig Reynolds' creature feature in the US.",
-        "image": "still-dark-light-1.jpg",
-        "body": """
-<p><em><a href="../films/dark-light.html">Dark Light</a></em> was released in the United States on 6 December 2019, distributed by
-Vertical Entertainment, according to Box Office Mojo&rsquo;s listing for the film.</p>
-<p>The release followed the film&rsquo;s world premiere at Arrow Video FrightFest in London that August.</p>
-<p class="source">Source: <a href="https://www.boxofficemojo.com/title/tt9135260/credits" target="_blank" rel="noopener">Box Office Mojo</a></p>
-""",
-    },
-    {
-        "slug": "dark-light-world-premiere-frightfest",
-        "date": "2019-08-25",
-        "title": "Dark Light has its world premiere at FrightFest",
-        "summary": "Padraig Reynolds' sci-fi horror premieres at Arrow Video FrightFest 2019 in London.",
-        "image": "still-dark-light-2.jpg",
-        "body": """
-<p><em><a href="../films/dark-light.html">Dark Light</a></em> had its world premiere at Arrow Video FrightFest 2019 in London.</p>
-<p>Written and directed by Padraig Reynolds, the film stars Jessica Madsen as Annie Knox, a mother whose daughter disappears from
-the family&rsquo;s rural home, with Opal Littleton, Ed Brody and Kristina Clifford. SciFiNow covered the film from the festival,
-and Britflicks spoke to Reynolds ahead of the premiere.</p>
-<p class="source">Sources: <a href="https://www.scifinow.co.uk/reviews/dark-light-first-look-review-arrow-frightfest-2019/" target="_blank" rel="noopener">SciFiNow, 25 August 2019</a>
-&middot; <a href="https://www.britflicks.com/blog/post/8998/Writer-Director-Padraig-Reynolds-Talks-About-His-Horror-Movie-DARK-LIGHT-Ahead-Of-Arrow-Video-FrightFest-World-Premiere/" target="_blank" rel="noopener">Britflicks</a></p>
-""",
-    },
-    {
-        "slug": "open-24-hours-at-screamfest",
-        "date": "2018-10-12",
-        "title": "Open 24 Hours screens at Screamfest in Los Angeles",
-        "summary": "The film's West Coast premiere follows FrightFest in London and Fantastic Fest in Austin.",
-        "image": "still-open-24-hours-1.jpg",
-        "body": """
-<p><em><a href="../films/open-24-hours.html">Open 24 Hours</a></em> screened at the Screamfest Horror Film Festival in Los Angeles
-on 12 October 2018, its West Coast premiere.</p>
-<p>The festival&rsquo;s programme notes that the film had already had its European premiere at FrightFest in London and its North
-American premiere at Fantastic Fest in Austin. Screamfest lists Seahorse Filmhouse as producer, and credits Josh and Sierra
-Russell for Best Makeup.</p>
-<p class="source">Source: <a href="https://www.screamfest.com/2018/film/open-24-hours" target="_blank" rel="noopener">Screamfest 2018</a></p>
-""",
-    },
-]
+# Filled from the content/*.json files by main()
+SITE, FILMS, NEWS, TEAM, PRODUCTS = {}, [], [], [], []
+SOCIAL = {}  # only links that are filled in are shown; empty ones are skipped
+IMAGE_ALT, IMAGE_JOBS = {}, []
 
 CURRENT = ' class="current"'
 CURRENT_PAGE = CURRENT + ' aria-current="page"'  # menu link of the page being shown
@@ -390,15 +102,8 @@ def text_only(markup):
 
 
 def image_alt(name):
-    """A short description of a site image, read out by screen readers and used by image search."""
-    if name == "hero-tokyo.jpg":
-        return "Concept artwork for Tokyo: the city skyline at sunset"
-    for f in FILMS:
-        if name == f["poster"]:
-            return f"{plain(f)} poster"
-        if name in f.get("stills", []):
-            return f"Still from {plain(f)}"
-    return "Seahorse Filmhouse"
+    """A short description of a site image, read out by screen readers and used by image search (from content/)."""
+    return IMAGE_ALT[name]
 
 
 def ld(data):
@@ -491,7 +196,7 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
     <div class="footer-grid">
       <div>
         <a class="footer-stamp" href="{root}index.html">{stamp("footer")}</a>
-        <p>Independent film production.<br>With operations in Los Angeles, London, Mumbai and the UAE.</p>
+        <p>{"<br>".join(SITE["footer_lines"])}</p>
       </div>
       <div>
         <h2 class="foot-h">Explore</h2>
@@ -527,7 +232,7 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
 def film_card(film, root=""):
     line = f'Directed by {film["director"]}' if film.get("director") else film["stage"]
     return f"""<a class="film-card" href="{root}films/{film['slug']}.html">
-  <div class="poster">{picture(film['poster'], root, f"{plain(film)} poster", SIZES_POSTER)}</div>
+  <div class="poster">{picture(film['poster'], root, image_alt(film['poster']), SIZES_POSTER)}</div>
   <div class="meta"><span class="year">{film['year']}</span><h3>{film['title']}</h3><p>{line}</p></div>
 </a>"""
 
@@ -538,7 +243,7 @@ def shop_card(pr, root=""):
     pick = next((im for im, src in zip(images, pr["photos"]) if "model" in src), images[0])
     return f"""<a class="shop-card" href="{root}shop.html#{pr['slug']}">
   <div class="shot">{picture(pick, root, pr['name'], SIZES_SHOP_ROW)}</div>
-  <div class="meta"><h3>{pr['name']}</h3><span class="soon">{'Coming soon' if not pr['url'] else pr['price']}</span></div>
+  <div class="meta"><h3>{pr['name']}</h3><span class="soon">{pr['price'] if pr['availability'] == 'available' else 'Coming soon'}</span></div>
 </a>"""
 
 
@@ -650,39 +355,24 @@ def img_url(name, root=""):
     return f"{root}images/{name}?v={PIC[name]['v']}"
 
 
-def build_images():
-    out = OUT / "images"
-    out.mkdir(parents=True, exist_ok=True)
-    for src, (name, width) in IMAGES.items():
-        im = Image.open(SRC_IMG / src).convert("RGB")
-        if im.width > width:
-            im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
-        if name.startswith("still-"):
-            # give the film stills more punch: a touch brighter, more contrast and richer colour
-            from PIL import ImageEnhance
-            im = ImageEnhance.Brightness(im).enhance(1.06)
-            im = ImageEnhance.Contrast(im).enhance(1.12)
-            im = ImageEnhance.Color(im).enhance(1.18)
-        widths = (640, 960, 1280) if name.startswith("still-") else (350, 400, 600) if name.startswith("team-") else (400, 600)
-        save_image(im, name, widths)
-    # Full-screen hero versions of the two posters: the sources are only 1024px wide, so they are
-    # enlarged and sharpened here; otherwise they look soft when stretched across a wide screen.
-    from PIL import ImageFilter
-    for src, name in (("project-image4.jpg", "hero-chasm.jpg"), ("project-image5.jpg", "hero-winter-dreams.jpg"),
-                      ("tokyo-skyline.png", "hero-tokyo.jpg"), ("tokyo-mirror.png", "still-tokyo-mirror.jpg")):
-        im = Image.open(SRC_IMG / src).convert("RGB")
-        if im.width >= 3000:
-            # already high resolution (the 4K panoramic Tokyo image): keep it at its original size and
-            # save with full colour detail, at Raj's request (AVIF also keeps full colour; WebP cannot, so none)
-            save_image(im, name, (1280, 1920, 2560), quality=92, subsampling=0, avif=85, webp=0)
-            continue
-        im = im.resize((1920, round(im.height * 1920 / im.width)), Image.LANCZOS)
-        im = im.filter(ImageFilter.UnsharpMask(radius=2.4, percent=150, threshold=2))
-        save_image(im, name, (640, 960, 1280) if name.startswith("still-") else (960, 1280), quality=84)
-    # Phone version of the panoramic Tokyo image: on a tall, narrow screen the wide picture would lose both
-    # sides, so it is shown whole-ish as a band, zoomed out, over a blurred copy of itself.
-    from PIL import ImageEnhance
-    wide = Image.open(SRC_IMG / "tokyo-skyline.png").convert("RGB")
+# How each kind of picture in content/ is processed: widest size kept, the smaller widths also written, and the
+# colour treatment. The kind is set by where the picture is used (poster, stills, team photo, ...).
+TREATMENTS = {
+    "poster": dict(width=900, widths=(400, 600)),
+    "still": dict(width=1920, widths=(640, 960, 1280), enhance=True),  # a touch more punch for film stills
+    "portrait": dict(width=700, widths=(350, 400, 600)),
+    "news": dict(width=1920, widths=(640, 960, 1280)),
+}
+# full-screen hero pictures: the sources can be small, so they are enlarged and sharpened; "lead" is a film page's
+# own lead image where it is not a still
+HERO_WIDTHS = {"home": (960, 1280), "lead": (640, 960, 1280)}
+
+
+def save_phone_hero(source, name):
+    """Phone version of the panoramic Tokyo image: on a tall, narrow screen the wide picture would lose both
+    sides, so it is shown whole-ish as a band, zoomed out, over a blurred copy of itself."""
+    from PIL import ImageEnhance, ImageFilter
+    wide = Image.open(SRC_IMG / source).convert("RGB")
     if wide.width >= 3000:
         crop_w = round(wide.height * 1.6)
         left = round(wide.width * 0.175)
@@ -699,12 +389,42 @@ def build_images():
             mask.paste(v, (0, y, band.width, y + 1))
             mask.paste(v, (0, band.height - 1 - y, band.width, band.height - y))
         fill.paste(band, (0, 520), mask)
-        save_image(fill, "hero-tokyo-phone.jpg", (720,), quality=88)
+        save_image(fill, name, (720,), quality=88)
+
+
+def build_images():
+    out = OUT / "images"
+    out.mkdir(parents=True, exist_ok=True)
+    from PIL import ImageEnhance, ImageFilter
+    for job in IMAGE_JOBS:
+        name, role = job["file"], job["role"]
+        im = Image.open(SRC_IMG / job["source"]).convert("RGB")
+        if role == "shop":
+            # the book photo is already finished: copied as it is
+            save_image(im, name, (150, 450, 900), copy_from=SRC_IMG / job["source"])
+        elif role in HERO_WIDTHS:
+            if im.width >= 3000:
+                # already high resolution (the 4K panoramic Tokyo image): keep it at its original size and
+                # save with full colour detail, at Raj's request (AVIF also keeps full colour; WebP cannot, so none)
+                save_image(im, name, (1280, 1920, 2560), quality=92, subsampling=0, avif=85, webp=0)
+            else:
+                im = im.resize((1920, round(im.height * 1920 / im.width)), Image.LANCZOS)
+                im = im.filter(ImageFilter.UnsharpMask(radius=2.4, percent=150, threshold=2))
+                save_image(im, name, HERO_WIDTHS[role], quality=84)
+            if job["phone"]:
+                save_phone_hero(job["phone"]["source"], job["phone"]["file"])
+        else:
+            t = TREATMENTS[role]
+            if im.width > t["width"]:
+                im = im.resize((t["width"], round(im.height * t["width"] / im.width)), Image.LANCZOS)
+            if t.get("enhance"):
+                im = ImageEnhance.Brightness(im).enhance(1.06)
+                im = ImageEnhance.Contrast(im).enhance(1.12)
+                im = ImageEnhance.Color(im).enhance(1.18)
+            save_image(im, name, t["widths"])
     shutil.copy(SRC_IMG / "_share.jpg", out / "share.jpg")
     with Image.open(SRC_IMG / "_share.jpg") as im:
         PIC["share.jpg"] = {"w": im.width, "h": im.height}
-    for name in ("shop-book.jpg",):
-        save_image(Image.open(SRC_IMG / f"_{name}").convert("RGB"), name, (150, 450, 900), copy_from=SRC_IMG / f"_{name}")
     for size in (48, 180, 512):
         shutil.copy(SRC_IMG / f"_icon-{size}.png", out / f"icon-{size}.png")
         PIC[f"icon-{size}.png"] = {"w": size, "h": size, "v": hashlib.md5((out / f"icon-{size}.png").read_bytes()).hexdigest()[:8]}
@@ -713,23 +433,17 @@ def build_images():
 def build_home():
     released = [f for f in FILMS if f["status"] == "released"]
     upcoming = [f for f in FILMS if f["status"] == "upcoming"]
-    by_slug = {f["slug"]: f for f in FILMS}
-    # Hero: every film as a line of the list; hovering a title brings its image into focus.
-    hero_img = {
-        "open-24-hours": "still-open-24-hours-1.jpg",
-        "dark-light": "still-dark-light-1.jpg",
-        "daddys-girl": "still-daddys-girl-1.jpg",
-    }
-    order = ["open-24-hours", "dark-light", "daddys-girl", "chasm", "tokyo", "winter-dreams"]
+    # Hero: every film as a line of the list, in the order of content/films.json; hovering a title brings its
+    # image into focus.
     layers = titles = notes = ""
-    for i, slug in enumerate(order):
-        f = by_slug[slug]
+    for i, f in enumerate(FILMS):
+        slug = f["slug"]
         active = " active" if i == 0 else ""
         soft = " soft" if f["status"] == "upcoming" else ""
-        img = hero_img.get(slug, f"hero-{slug}.jpg")
+        img = f["home_image"]
         year = f["year"] if f["year"].isdigit() else "Soon"
         # only the first film's image loads with the page; site.js fetches the others once the page has loaded
-        phone = ("hero-tokyo-phone.jpg", cover_sizes("hero-tokyo-phone.jpg", "120px")) if slug == "tokyo" else None
+        phone = (f["home_phone"], cover_sizes(f["home_phone"], "120px")) if f.get("home_phone") else None
         pic = picture(img, "", "", cover_sizes(img, "120px"), lazy=False, high=i == 0, defer=i > 0, phone=phone)
         layers += f"""<div class="hero-bg bg-{slug}{soft}{active}">{pic}</div>\n"""
         titles += (f"""<a class="hero-title{active}" href="films/{slug}.html" data-i="{i}">"""
@@ -798,8 +512,8 @@ def build_home():
 </section>
 
 {signup_block()}"""
-    org = ld({**ORG, "logo": f"{SITE_URL}/images/icon-512.png", "foundingDate": "2017",
-              "description": "Independent film production company with operations in Los Angeles, London, Mumbai and the UAE.",
+    org = ld({**ORG, "logo": f"{SITE_URL}/images/icon-512.png", "foundingDate": SITE["founding_year"],
+              "description": SITE["org_description"],
               "sameAs": [url for url in SOCIAL.values() if url]})
     site = ld({"@type": "WebSite", "name": "Seahorse Filmhouse", "url": f"{SITE_URL}/"})
     page("index.html", "",
@@ -835,7 +549,7 @@ def build_films():
 
     for f in FILMS:
         # the film's own page leads with a different image from the one used on the home page
-        bg = f.get("page_hero") or (f["stills"][0] if f["stills"] else f"hero-{f['slug']}.jpg")
+        bg = f["page_hero"]
         def credit(label, value):
             return f'<div><span>{label}</span><strong>{value}</strong></div>'
 
@@ -848,7 +562,7 @@ def build_films():
                     f'<a href="{url}" target="_blank" rel="noopener">{name}</a>' for name, url in services) + "</dd></div>"
                 for label, services in f["watch"])
             centre = f"""<p class="synopsis">{f['synopsis']}</p>
-<div class="film-poster">{picture(f['poster'], "../", f"{plain(f)} poster", SIZES_FILM_POSTER)}</div>
+<div class="film-poster">{picture(f['poster'], "../", image_alt(f['poster']), SIZES_FILM_POSTER)}</div>
 <p class="sub-head">Where to watch <span class="where">United States</span></p>
 <dl class="watch">{watch_rows}</dl>
 <p class="watch-more"><a href="{f['watch_url']}" target="_blank" rel="noopener">All current options &rarr;</a></p>
@@ -865,7 +579,7 @@ def build_films():
                        + (credit("Languages", f["languages"]) if f.get("languages") else "")
                        + ("" if f.get("runtime") else credit("Produced by", "Seahorse Filmhouse")))
             centre = f"""<p class="synopsis">{f['synopsis']}</p>
-<div class="film-poster">{picture(f['poster'], "../", f"{plain(f)} poster", SIZES_FILM_POSTER)}</div>
+<div class="film-poster">{picture(f['poster'], "../", image_alt(f['poster']), SIZES_FILM_POSTER)}</div>
 {'<p class="muted concept-note">Images shown are concept artwork; the film has not yet been shot.</p>' if f.get("concept_art") else ''}
 <p class="muted">Updates on this project are posted in <a href="../news.html" style="color:var(--accent)">News</a> and sent to the mailing list.</p>
 <div class="btn-row" style="margin-top:26px"><a class="btn primary" href="#signup">Get updates</a><a class="btn" href="../contact.html">Distribution and press enquiries</a></div>"""
@@ -910,6 +624,15 @@ def build_films():
              search_title=search_title, head=ld(movie), og_type="video.movie", image_alt=image_alt(bg))
 
 
+def post_body(p):
+    """A news post's paragraphs, then its source links, as page markup."""
+    parts = [f"<p>{text}</p>" for text in p["body"]]
+    if p["sources"]:
+        links = " &middot; ".join(f'<a href="{url}" target="_blank" rel="noopener">{label}</a>' for label, url in p["sources"])
+        parts.append(f'<p class="source">{"Source" if len(p["sources"]) == 1 else "Sources"}: {links}</p>')
+    return "\n" + "\n".join(parts) + "\n"
+
+
 def build_news():
     body = f"""<section class="page-head"><div class="wrap">
   <p class="eyebrow">Latest</p><h1>News</h1>
@@ -930,7 +653,7 @@ def build_news():
 </div></section>
 <section class="block tight"><div class="wrap post">
   <div class="post-image"{img_style}>{picture(p['image'], "../", image_alt(p['image']), post_sizes, lazy=False, high=True)}</div>
-  <div class="post-body">{p['body']}</div>
+  <div class="post-body">{post_body(p)}</div>
   <p style="margin-top:40px"><a class="text-link" href="../news.html">&larr; All news</a></p>
 </div></section>
 {signup_block("../")}"""
@@ -946,11 +669,12 @@ def build_news():
 def build_about():
     people = "".join(
         f"""<div class="person">
-  <div class="photo">{picture(img, "", name, SIZES_TEAM)}</div>
-  <h3>{name}</h3><p>{role}</p>
-  <a class="text-link" href="{imdb}" target="_blank" rel="noopener">IMDb</a>
-</div>""" for name, role, img, imdb in TEAM
+  <div class="photo">{picture(t["photo"], "", t["alt"], SIZES_TEAM)}</div>
+  <h3>{t["name"]}</h3><p>{t["role"]}</p>
+  <a class="text-link" href="{t["imdb"]}" target="_blank" rel="noopener">IMDb</a>
+</div>""" for t in TEAM
     )
+    locations = "\n".join(f"      <div><strong>{place}</strong><span>{country}</span></div>" for place, country in SITE["locations"])
     body = f"""<section class="page-head"><div class="wrap">
   <p class="eyebrow">About</p><h1>A studio of ideas</h1>
   <p class="lead">Seahorse Filmhouse is an independent production company with operations in Los Angeles, London, Mumbai and the UAE.</p>
@@ -973,10 +697,7 @@ def build_about():
   <div class="wrap">
     <div class="section-head"><div><p class="eyebrow">Where we work</p><h2>Four places</h2></div></div>
     <div class="locations">
-      <div><strong>Los Angeles</strong><span>United States</span></div>
-      <div><strong>London</strong><span>United Kingdom</span></div>
-      <div><strong>Mumbai</strong><span>India</span></div>
-      <div><strong>UAE</strong><span>United Arab Emirates</span></div>
+{locations}
     </div>
   </div>
 </section>
@@ -1002,8 +723,7 @@ def build_about():
 
 
 def build_contact():
-    options = "".join(f"<option>{o}</option>" for o in
-                      ["General enquiry", "Distribution", "Festivals and programming", "Press", "Collaboration"])
+    options = "".join(f"<option>{o}</option>" for o in SITE["enquiry_subjects"])
     follow = " &nbsp;&middot;&nbsp; ".join(
         f'<a class="text-link" href="{url}" target="_blank" rel="noopener">{name}</a>' for name, url in SOCIAL.items() if url)
     body = f"""<section class="page-head"><div class="wrap">
@@ -1014,7 +734,7 @@ def build_contact():
   <div class="wrap contact-layout">
     <div>
       <p class="sub-head">Operating in</p>
-      <p>Los Angeles, London, Mumbai and the UAE</p>
+      <p>{SITE["operating_in"]}</p>
       <p class="sub-head" style="margin-top:26px">Follow</p>
       <p>{follow}</p>
       <p class="sub-head" style="margin-top:26px">Updates</p>
@@ -1042,28 +762,6 @@ def build_contact():
     page("thank-you.html", "Thank you", "Thank you for contacting Seahorse Filmhouse.", body, robots="noindex")
 
 
-# Shop: products are "coming soon" until the Fourthwall shop is live. To switch one on, give it a
-# "url" (its Fourthwall product page) and a "price"; the card then shows a Buy button instead.
-PRODUCTS = [
-    {"name": "sfh tee, black", "slug": "tee-black",
-     "photos": ["tee-black-front.png", "tee-black-model-front.png", "tee-black-back.png", "tee-black-model-back.png"],
-     "text": "An oversized black tee with the sfh mark in white on the front and the Seahorse Filmhouse stamp on the back.", "price": "", "url": ""},
-    {"name": "sfh tee, grey", "slug": "tee-grey",
-     "photos": ["tee-grey-back.png", "tee-grey-model.png", "tee-grey-front.png"],
-     "text": "A relaxed grey tee with the sfh mark large across the back and small on the sleeve.", "price": "", "url": ""},
-    {"name": "sfh crop top", "slug": "top",
-     "photos": ["top-model-front.png", "top-front.png", "top-back.png", "top-model-back.png"],
-     "text": "A black cropped tee with the sfh mark tone on tone on the front and the stamp on the back.", "price": "", "url": ""},
-    {"name": "sfh cap", "slug": "cap",
-     "photos": ["cap-front.png", "cap-model-front.png", "cap-side.png", "cap-model-side.png"],
-     "text": "A black cap with the sfh mark on a front patch and again at the back.", "price": "", "url": ""},
-    {"name": "Open 24 Hours: the book", "slug": "book", "image": "shop-book.jpg",
-     "text": "A coffee table book of photographs from the film.", "price": "", "url": ""},
-]
-
-SHOP_PHOTOS = HERE / "shop_photos"
-
-
 def build_shop_photos():
     """Raj's product photos (02_BUILD/shop_photos) -> images/shop-<slug>-<n>.jpg, 3:4, on white."""
     for pr in PRODUCTS:
@@ -1085,7 +783,7 @@ def build_shop_photos():
 def build_shop():
     cards = ""
     for n, pr in enumerate(PRODUCTS):
-        if pr["url"]:
+        if pr["availability"] == "available":
             action = f'<span class="price">{pr["price"]}</span><a class="btn primary" href="{pr["url"]}" target="_blank" rel="noopener">Buy</a>'
         else:
             action = '<span class="soon">Coming soon</span><a class="text-link" href="#signup">Notify me &rarr;</a>'
@@ -1136,7 +834,20 @@ def add_hero_gl():
     home.write_text(html.replace(tag, tag + f'\n<script src="js/hero-gl.js?v={STAMP}"></script>'), encoding="utf-8")
 
 
+def load_site_content():
+    """Read and check content/*.json (see content_loader.py); stop with a clear message if anything is wrong."""
+    global SITE, FILMS, NEWS, TEAM, PRODUCTS, SOCIAL, IMAGE_ALT, IMAGE_JOBS
+    try:
+        c = load_content(CONTENT, SRC_IMG, SHOP_PHOTOS)
+    except ContentError as e:
+        sys.exit(f"\n{e}\n\nFix the file(s) in content/ and run the build again (see CONTENT_EDITING.md).")
+    SITE, FILMS, NEWS, TEAM, PRODUCTS = c.site, c.films, c.news, c.team, c.products
+    SOCIAL = dict(c.site["social"])
+    IMAGE_ALT, IMAGE_JOBS = c.image_alts, c.image_jobs
+
+
 def main():
+    load_site_content()
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "css").mkdir(parents=True)

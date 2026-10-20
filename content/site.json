@@ -1,0 +1,54 @@
+{
+  "social": [
+    {
+      "name": "YouTube",
+      "url": "https://www.youtube.com/@seahorsefilmhouse"
+    },
+    {
+      "name": "Instagram",
+      "url": "https://www.instagram.com/seahorsefilmhouse/"
+    },
+    {
+      "name": "IMDb",
+      "url": ""
+    },
+    {
+      "name": "LinkedIn",
+      "url": "https://www.linkedin.com/company/seahorsefilmhouse/"
+    }
+  ],
+  "operating_in": "Los Angeles, London, Mumbai and the UAE",
+  "footer_lines": [
+    "Independent film production.",
+    "With operations in Los Angeles, London, Mumbai and the UAE."
+  ],
+  "locations": [
+    {
+      "place": "Los Angeles",
+      "country": "United States"
+    },
+    {
+      "place": "London",
+      "country": "United Kingdom"
+    },
+    {
+      "place": "Mumbai",
+      "country": "India"
+    },
+    {
+      "place": "UAE",
+      "country": "United Arab Emirates"
+    }
+  ],
+  "organization": {
+    "description": "Independent film production company with operations in Los Angeles, London, Mumbai and the UAE.",
+    "founding_year": "2017"
+  },
+  "enquiry_subjects": [
+    "General enquiry",
+    "Distribution",
+    "Festivals and programming",
+    "Press",
+    "Collaboration"
+  ]
+}

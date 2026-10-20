@@ -1,0 +1,72 @@
+{
+  "_note": "To switch a product on, set availability to \"available\" and fill in price and url. See CONTENT_EDITING.md.",
+  "products": [
+    {
+      "slug": "tee-black",
+      "name": "sfh tee, black",
+      "text": "An oversized black tee with the sfh mark in white on the front and the Seahorse Filmhouse stamp on the back.",
+      "availability": "coming-soon",
+      "price": "",
+      "url": "",
+      "photos": [
+        "tee-black-front.png",
+        "tee-black-model-front.png",
+        "tee-black-back.png",
+        "tee-black-model-back.png"
+      ]
+    },
+    {
+      "slug": "tee-grey",
+      "name": "sfh tee, grey",
+      "text": "A relaxed grey tee with the sfh mark large across the back and small on the sleeve.",
+      "availability": "coming-soon",
+      "price": "",
+      "url": "",
+      "photos": [
+        "tee-grey-back.png",
+        "tee-grey-model.png",
+        "tee-grey-front.png"
+      ]
+    },
+    {
+      "slug": "top",
+      "name": "sfh crop top",
+      "text": "A black cropped tee with the sfh mark tone on tone on the front and the stamp on the back.",
+      "availability": "coming-soon",
+      "price": "",
+      "url": "",
+      "photos": [
+        "top-model-front.png",
+        "top-front.png",
+        "top-back.png",
+        "top-model-back.png"
+      ]
+    },
+    {
+      "slug": "cap",
+      "name": "sfh cap",
+      "text": "A black cap with the sfh mark on a front patch and again at the back.",
+      "availability": "coming-soon",
+      "price": "",
+      "url": "",
+      "photos": [
+        "cap-front.png",
+        "cap-model-front.png",
+        "cap-side.png",
+        "cap-model-side.png"
+      ]
+    },
+    {
+      "slug": "book",
+      "name": "Open 24 Hours: the book",
+      "text": "A coffee table book of photographs from the film.",
+      "availability": "coming-soon",
+      "price": "",
+      "url": "",
+      "image": {
+        "source": "_shop-book.jpg",
+        "file": "shop-book.jpg"
+      }
+    }
+  ]
+}
