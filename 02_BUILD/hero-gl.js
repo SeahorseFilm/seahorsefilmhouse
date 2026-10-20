@@ -41,14 +41,14 @@
     '  uv = (uv - 0.5) / (1.0 + 0.018 * f) + 0.5;',                 // focus breathing: the frame eases in a touch as focus slides
     '  vec2 c = uv * r + o;',
     '  if (f < 0.002) return texture2D(t, c).rgb;',
-    '  return lens(t, c, 0.03 * f); }',
+    '  return lens(t, c, 0.022 * f); }',
     'void main(){',
     '  vec2 uv = (v - 0.5) / 1.02 + 0.5;',                        // small overscan so the lean never shows an edge
     '  uv += (mouse - 0.5) * 0.008;',                             // image leans very gently with the pointer
     '  if (prog <= 0.0) { gl_FragColor = vec4(shot(tA, rA, oA, uv, 0.0), 1.0); return; }',
     '  float fOut = smoothstep(0.0, 0.5, prog);',                 // old film: focus slides away
-    '  float fIn = 1.0 - smoothstep(0.5, 1.0, prog);',            // new film: focus pulls in
-    '  float m = smoothstep(0.3, 0.7, prog);',                    // hand-over happens while both are soft
+    '  float fIn = pow(1.0 - smoothstep(0.5, 1.0, prog), 2.0);',            // new film: focus pulls in
+    '  float m = smoothstep(0.4, 0.6, prog);',                    // hand-over happens while both are soft
     '  vec3 a = m < 1.0 ? shot(tA, rA, oA, uv, fOut) : vec3(0.0);',
     '  vec3 b = m > 0.0 ? shot(tB, rB, oB, uv, fIn) : vec3(0.0);',
     '  gl_FragColor = vec4(mix(a, b, m), 1.0);',
@@ -117,7 +117,7 @@
     for (var i = 0; i < layers.length; i++) if (layers[i].classList.contains('active')) return i;
     return 0;
   }
-  var from = activeIndex(), to = from, t0 = 0, DUR = 1400, running = false, visible = true;
+  var from = activeIndex(), to = from, t0 = 0, DUR = 550, running = false, visible = true;
   var mouse = [0.5, 0.5], mouseNow = [0.5, 0.5], start = performance.now();
   var slowFrames = 0, frames = 0, last = 0;
 
