@@ -81,37 +81,43 @@
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   var maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE);
 
-  // Each film's image and framing come from the CSS layer, so the phone Tokyo image and Raj's framing carry over.
+  // Each film's picture comes from the page itself: site.js fetches the images (right size, format and,
+  // on tall phone screens, the phone version of Tokyo); this script waits until they are in, then uses
+  // the same pixels and the same framing (CSS object-position).
   var films = layers.map(function (el) {
-    var cs = getComputedStyle(el);
-    var url = (cs.backgroundImage.match(/url\(["']?(.*?)["']?\)/) || [])[1];
-    var pos = cs.backgroundPosition.split(' ').map(function (s) { return s.indexOf('%') > -1 ? parseFloat(s) / 100 : 0.5; });
-    return { url: url, px: pos[0], py: pos[1] === undefined ? 0.5 : pos[1], tex: null, w: 1, h: 1 };
+    var img = el.querySelector('img');
+    var pos = getComputedStyle(img).objectPosition.split(' ').map(function (s) { return s.indexOf('%') > -1 ? parseFloat(s) / 100 : 0.5; });
+    return { img: img, px: pos[0], py: pos[1] === undefined ? 0.5 : pos[1], tex: null, w: 1, h: 1 };
   });
 
-  function load(f) {
+  function ready(f) {
     return new Promise(function (ok, bad) {
-      var im = new Image();
-      im.onload = function () {
-        var src = im;
-        if (im.width > maxTex || im.height > maxTex) {           // shrink only if the GPU can't take it
-          var k = maxTex / Math.max(im.width, im.height), c = document.createElement('canvas');
-          c.width = Math.floor(im.width * k); c.height = Math.floor(im.height * k);
-          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); src = c;
-        }
-        f.tex = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, f.tex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, src);
-        if (gl2) gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl2 ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        f.w = im.width; f.h = im.height; ok();
-      };
-      im.onerror = bad;
-      im.src = f.url;
+      var im = f.img, tries = 0;
+      (function check() {
+        var real = im.currentSrc && im.currentSrc.indexOf('data:') !== 0;
+        if (real && im.complete && im.naturalWidth > 1) {
+          (im.decode ? im.decode() : Promise.resolve()).then(function () { upload(f); ok(); }, bad);
+        } else if (++tries > 150) bad();                       // nothing after 30 s: keep the CSS hero
+        else setTimeout(check, 200);
+      })();
     });
+  }
+  function upload(f) {
+    var im = f.img, src = im;
+    if (im.naturalWidth > maxTex || im.naturalHeight > maxTex) {   // shrink only if the GPU can't take it
+      var k = maxTex / Math.max(im.naturalWidth, im.naturalHeight), c = document.createElement('canvas');
+      c.width = Math.floor(im.naturalWidth * k); c.height = Math.floor(im.naturalHeight * k);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); src = c;
+    }
+    f.tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, f.tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, src);
+    if (gl2) gl.generateMipmap(gl.TEXTURE_2D);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl2 ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    f.w = im.naturalWidth; f.h = im.naturalHeight;
   }
 
   function activeIndex() {
@@ -154,7 +160,7 @@
     requestAnimationFrame(frame);
   }
 
-  Promise.all(films.map(load)).then(function () {
+  Promise.all(films.map(ready)).then(function () {
     hero.insertBefore(canvas, hero.querySelector('.hero-shade'));
     resize();
     hero.classList.add('gl-on');
