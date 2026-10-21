@@ -2,9 +2,9 @@
   "_note": "One entry per post. The site sorts by date, newest first. See CONTENT_EDITING.md.",
   "posts": [
     {
+      "title": "Tokyo: a new film for 2027",
       "slug": "tokyo-announced-for-2027",
       "date": "2026-10-11",
-      "title": "Tokyo: a new film for 2027",
       "summary": "A woman, the driver she has hired, and a long road west out of Tokyo. A new film from Seahorse Filmhouse.",
       "image": {
         "file": "hero-tokyo.jpg",
@@ -18,9 +18,9 @@
       ]
     },
     {
+      "title": "Chasm is coming in 2027",
       "slug": "chasm-coming-2027",
       "date": "2026-10-10",
-      "title": "Chasm is coming in 2027",
       "summary": "An atmospheric portrait of Ila, a woman on the edge of quiet transformation.",
       "image": {
         "file": "poster-chasm.jpg",
@@ -33,9 +33,9 @@
       ]
     },
     {
+      "title": "Winter Dreams: a Fitzgerald story for today",
       "slug": "winter-dreams-in-development",
       "date": "2026-10-10",
-      "title": "Winter Dreams: a Fitzgerald story for today",
       "summary": "In development: a modern reimagining of F. Scott Fitzgerald's Winter Dreams.",
       "image": {
         "file": "poster-winter-dreams.jpg",
@@ -48,9 +48,9 @@
       ]
     },
     {
+      "title": "Daddy&rsquo;s Girl arrives on DVD and on demand",
       "slug": "daddys-girl-dvd-and-vod-release",
       "date": "2020-09-23",
-      "title": "Daddy&rsquo;s Girl arrives on DVD and on demand",
       "summary": "Rue Morgue reports the North American release of Julian Richards' award-winning thriller.",
       "image": {
         "file": "still-daddys-girl-2.jpg",
@@ -68,9 +68,9 @@
       ]
     },
     {
+      "title": "Open 24 Hours: new trailer and an August release",
       "slug": "open-24-hours-trailer-and-release-date",
       "date": "2020-07-21",
-      "title": "Open 24 Hours: new trailer and an August release",
       "summary": "Dread Central shares the official trailer and poster, with the film out on 18 August 2020.",
       "image": {
         "file": "still-open-24-hours-2.jpg",
@@ -88,9 +88,9 @@
       ]
     },
     {
+      "title": "Dark Light released in the United States",
       "slug": "dark-light-us-release",
       "date": "2019-12-06",
-      "title": "Dark Light released in the United States",
       "summary": "Vertical Entertainment releases Padraig Reynolds' creature feature in the US.",
       "image": {
         "file": "still-dark-light-1.jpg",
@@ -108,9 +108,9 @@
       ]
     },
     {
+      "title": "Dark Light has its world premiere at FrightFest",
       "slug": "dark-light-world-premiere-frightfest",
       "date": "2019-08-25",
-      "title": "Dark Light has its world premiere at FrightFest",
       "summary": "Padraig Reynolds' sci-fi horror premieres at Arrow Video FrightFest 2019 in London.",
       "image": {
         "file": "still-dark-light-2.jpg",
@@ -132,10 +132,10 @@
       ]
     },
     {
+      "title": "Open 24 Hours screens at Screamfest in Los Angeles",
       "slug": "open-24-hours-at-screamfest",
       "date": "2018-10-12",
-      "title": "Open 24 Hours screens at Screamfest in Los Angeles",
-      "summary": "The film's West Coast premiere follows FrightFest in London and Fantastic Fest in Austin.",
+      "summary": "The film's West Coast premiere follows FrightFest in London and Fantastic Fest in Austin. [test]",
       "image": {
         "file": "still-open-24-hours-1.jpg",
         "alt": "Still from Open 24 Hours"
