@@ -177,7 +177,7 @@ def _films(data, images, problems, site_slugs):
     for i, raw in enumerate(c.items(data, "films", "file")):
         where = f"films[{i}]"
         c.keys(raw, where, ["slug", "title", "year", "status", "tagline", "synopsis", "images"],
-               ["plain_title", "director", "runtime", "genre", "languages", "title_note", "stage", "concept_art",
+               ["director", "runtime", "genre", "languages", "title_note", "stage", "concept_art",
                 "cast", "trailer_url", "trailer_uploaded", "watch_checked", "watch", "watch_url", "accolades"])
         if not isinstance(raw, dict):
             continue
@@ -189,7 +189,7 @@ def _films(data, images, problems, site_slugs):
         film = {"slug": slug}
         for k in ("title", "year", "tagline", "synopsis"):
             film[k] = c.text(raw, k, where)
-        for k in ("plain_title", "director", "languages", "title_note", "stage", "genre"):
+        for k in ("director", "languages", "title_note", "stage", "genre"):
             if k in raw:
                 film[k] = c.text(raw, k, where)
         status = film["status"] = c.text(raw, "status", where)

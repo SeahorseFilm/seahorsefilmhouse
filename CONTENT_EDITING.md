@@ -24,7 +24,10 @@ and button label, page titles and descriptions, the Formspree forms, analytics a
 
 - Plain JSON: text in double quotes, entries separated by commas, no trailing comma. A comma or quote in the wrong place
   stops the build with the file, line and column.
-- Text fields can hold a simple entity such as `&rsquo;` (an apostrophe) and `<em>…</em>`. Copy them from an existing entry.
+- Type text as it should read, with real characters such as ’ or é, not HTML codes such as `&rsquo;`: the build
+  makes text safe for the page itself. Only film synopses and news paragraphs take markup (`<em>…</em>`, `<a>`).
+- The files are saved the way Pages CMS saves them (see CMS_EDITOR_GUIDE.md): keys in the order of the CMS form,
+  2-space indent, no empty values, no newline at the end. Keeping that style avoids noisy diffs on the next CMS save.
 - A key starting with `_` (for example `"_note"`) is ignored, so it can carry a note to the next editor.
 - Run the check below after every change. It reports **every** problem at once, for example
   `films.json: films[2] (daddys-girl).images.lead: picture "still-typo.jpg" is not defined anywhere`.
@@ -125,8 +128,7 @@ asked): a news post can use a film's poster that way.
 - `home` is the picture shown full-screen on the home page when the title is hovered; `lead` is the picture at the top
   of the film's own page. A released film normally reuses its stills; an upcoming film gets an enlarged, sharpened
   copy of its poster or artwork (`source` plus a `hero-…` file name).
-- Optional extras, as used by existing films: `plain_title` (a version of the title without entities, used in search
-  data), `director`/`runtime`/`languages` on upcoming films, `title_note`, `concept_art`, `watch_checked`.
+- Optional extras, as used by existing films: `director`/`runtime`/`languages` on upcoming films, `title_note`, `concept_art`, `watch_checked`.
 - `trailer_uploaded` is the date and time the trailer was uploaded to YouTube; Google requires it.
 
 ## Shop products, team, site-wide

@@ -7,10 +7,11 @@
       "year": "2019",
       "status": "released",
       "tagline": "Some doors should stay closed",
+      "synopsis": "A psychological thriller about a woman who takes a job at a 24-hour convenience store after being released from prison.",
       "director": "Padraig Reynolds",
       "runtime": "102 min",
       "genre": "Psychological thriller",
-      "synopsis": "A psychological thriller about a woman who takes a job at a 24-hour convenience store after being released from prison.",
+      "concept_art": false,
       "cast": [
         "Vanessa Grasse",
         "Brendan Fletcher",
@@ -69,19 +70,24 @@
           "award": true
         },
         {
-          "text": "Official Selection: FrightFest, London (2018)"
+          "text": "Official Selection: FrightFest, London (2018)",
+          "award": false
         },
         {
-          "text": "Official Selection: Sitges International Film Festival, Spain (2018)"
+          "text": "Official Selection: Sitges International Film Festival, Spain (2018)",
+          "award": false
         },
         {
-          "text": "Official Selection: Fantastic Fest, USA (2018)"
+          "text": "Official Selection: Fantastic Fest, USA (2018)",
+          "award": false
         },
         {
-          "text": "Official Selection: Telluride Horror Show, USA (2018)"
+          "text": "Official Selection: Telluride Horror Show, USA (2018)",
+          "award": false
         },
         {
-          "text": "Official Selection: BIFAN, South Korea (2019)"
+          "text": "Official Selection: BIFAN, South Korea (2019)",
+          "award": false
         }
       ],
       "images": {
@@ -117,10 +123,11 @@
       "year": "2019",
       "status": "released",
       "tagline": "What hides in the shadows?",
+      "synopsis": "A mother fights to protect her daughter from a terrifying presence she believes is in her house.",
       "director": "Padraig Reynolds",
       "runtime": "90 min",
       "genre": "Horror",
-      "synopsis": "A mother fights to protect her daughter from a terrifying presence she believes is in her house.",
+      "concept_art": false,
       "cast": [
         "Jessica Madsen",
         "Opal Littleton",
@@ -173,7 +180,8 @@
       "watch_url": "https://www.justwatch.com/us/movie/dark-light-2019",
       "accolades": [
         {
-          "text": "Premiered at FrightFest, London"
+          "text": "Premiered at FrightFest, London",
+          "award": false
         }
       ],
       "images": {
@@ -205,15 +213,15 @@
     },
     {
       "slug": "daddys-girl",
-      "title": "Daddy&rsquo;s Girl",
-      "plain_title": "Daddy's Girl",
+      "title": "Daddy’s Girl",
       "year": "2018",
       "status": "released",
       "tagline": "Family ties that bind too tight",
+      "synopsis": "A young woman held captive by her father must uncover a dark family secret.",
       "director": "Julian Richards",
       "runtime": "89 min",
       "genre": "Horror thriller",
-      "synopsis": "A young woman held captive by her father must uncover a dark family secret.",
+      "concept_art": false,
       "cast": [
         "Jemma Dallender",
         "Costas Mandylor"
@@ -255,16 +263,20 @@
           "award": true
         },
         {
-          "text": "Buffalo Dreams Fantastic Film Festival (2020): 4 nominations"
+          "text": "Buffalo Dreams Fantastic Film Festival (2020): 4 nominations",
+          "award": false
         },
         {
-          "text": "Official Selection: Raindance, London (2018)"
+          "text": "Official Selection: Raindance, London (2018)",
+          "award": false
         },
         {
-          "text": "Official Selection: BIFAN, South Korea (2019)"
+          "text": "Official Selection: BIFAN, South Korea (2019)",
+          "award": false
         },
         {
-          "text": "National Film and Television Awards, USA (2019)"
+          "text": "National Film and Television Awards, USA (2019)",
+          "award": false
         }
       ],
       "images": {
@@ -299,16 +311,16 @@
       "title": "Chasm",
       "year": "2027",
       "status": "upcoming",
-      "tagline": "The space between silence, mystery, and becoming",
       "stage": "Coming 2027",
+      "tagline": "The space between silence, mystery, and becoming",
       "synopsis": "An atmospheric portrait of Ila, a woman on the edge of quiet transformation. A soulful exploration of the space between silence, mystery, and becoming.",
+      "concept_art": false,
       "images": {
         "poster": {
           "source": "project-image4.jpg",
           "file": "poster-chasm.jpg",
           "alt": "Chasm poster"
         },
-        "stills": [],
         "home": {
           "source": "project-image4.jpg",
           "file": "hero-chasm.jpg",
@@ -321,26 +333,25 @@
       }
     },
     {
+      "_note": "Wording agreed with Raj on 2026-10-12. Publish only what is here: no further plot, character, casting or partner details (the pitch deck is confidential).",
       "slug": "tokyo",
       "title": "Tokyo",
+      "title_note": "working title",
       "year": "2027",
       "status": "upcoming",
-      "tagline": "Some destinations don&rsquo;t set you free",
+      "stage": "In development",
+      "tagline": "Some destinations don’t set you free",
+      "synopsis": "A woman hires a private driver for a long journey west out of Tokyo. They share almost no language, each carrying something they can’t bring themselves to say.",
       "director": "R P Khemanand",
       "runtime": "c. 95 min",
       "languages": "Japanese / English / Hindi",
-      "title_note": "working title",
-      "stage": "In development",
       "concept_art": true,
-      "synopsis": "A woman hires a private driver for a long journey west out of Tokyo. They share almost no language, each carrying something they can’t bring themselves to say.",
-      "_note": "Wording agreed with Raj on 2026-10-12. Publish only what is here: no further plot, character, casting or partner details (the pitch deck is confidential).",
       "images": {
         "poster": {
           "source": "tokyo-poster.png",
           "file": "poster-tokyo.jpg",
           "alt": "Tokyo poster"
         },
-        "stills": [],
         "home": {
           "source": "tokyo-skyline.png",
           "file": "hero-tokyo.jpg",
@@ -362,16 +373,16 @@
       "title": "Winter Dreams",
       "year": "In development",
       "status": "upcoming",
-      "tagline": "Chasing dreams, loving illusions, and waking up too late",
       "stage": "In development",
-      "synopsis": "A modern reimagining of F. Scott Fitzgerald&rsquo;s <em>Winter Dreams</em>, where ambition and desire blur the line between success and self-loss. Set in today&rsquo;s world, it is a story of chasing dreams, loving illusions, and waking up too late.",
+      "tagline": "Chasing dreams, loving illusions, and waking up too late",
+      "synopsis": "A modern reimagining of F. Scott Fitzgerald’s <em>Winter Dreams</em>, where ambition and desire blur the line between success and self-loss. Set in today’s world, it is a story of chasing dreams, loving illusions, and waking up too late.",
+      "concept_art": false,
       "images": {
         "poster": {
           "source": "project-image5.jpg",
           "file": "poster-winter-dreams.jpg",
           "alt": "Winter Dreams poster"
         },
-        "stills": [],
         "home": {
           "source": "project-image5.jpg",
           "file": "hero-winter-dreams.jpg",

@@ -28,6 +28,7 @@ Do not save on `main`. Saving on `main` would publish straight to the live site.
    - **Picture** and **Alt text** (see section 6).
    - **Text**: one entry per paragraph, no `<p>` tags. Use `<em>text</em>` for italics. Link to a film as `<a href="../films/chasm.html">the Chasm page</a>`; any other link must start with `https://`.
    - **Sources** (optional): label and `https://` link.
+   - Type everything as it should read, with real characters such as ’ or é. Do not type HTML codes such as `&rsquo;`.
 4. Only publish facts that have been approved. Do not invent dates, quotes or credits. Do not add any Tokyo detail beyond what is already published.
 5. Press **Save**. Red messages under a field tell you what to fix.
 

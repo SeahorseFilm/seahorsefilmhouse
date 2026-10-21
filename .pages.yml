@@ -104,11 +104,7 @@ content:
             label: Title
             type: string
             required: true
-            description: The film title. A simple entity such as &rsquo; is allowed; copy it from an existing film.
-          - name: plain_title
-            label: Title without entities
-            type: string
-            description: Only if the title contains an entity such as &rsquo;. Used in search-engine data. Leave empty otherwise.
+            description: The film title, typed as it should read, with real characters such as ’ (no HTML codes like &rsquo;).
           - name: title_note
             label: Title note
             type: string
