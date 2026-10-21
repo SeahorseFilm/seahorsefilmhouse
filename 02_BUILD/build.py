@@ -92,8 +92,15 @@ COUNTER = """<div class="cookie-note" id="cookie-note" role="region" aria-label=
 </script>"""
 
 
+def esc(text):
+    """Plain text from content/ made safe to place in page markup, in element text or a "quoted" attribute.
+    Only synopses and news paragraphs hold markup (<em>, <a>); they go into the page as they are."""
+    return html.escape(text, quote=False).replace('"', "&quot;")
+
+
 def plain(film):
-    return film.get("plain_title", film["title"])
+    """The film title for search-engine data, with straight apostrophes."""
+    return film["title"].replace("\u2019", "'")
 
 
 def text_only(markup):
@@ -109,7 +116,9 @@ def image_alt(name):
 def ld(data):
     """Structured data for search engines (not shown on the page)."""
     data = {"@context": "https://schema.org", **data}
-    return f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>'
+    # "</" written as "<\/" so no text can end the script element early
+    text = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
+    return f'<script type="application/ld+json">{text}</script>'
 
 
 ORG = {"@type": "Organization", "name": "Seahorse Filmhouse", "url": f"{SITE_URL}/"}
@@ -130,7 +139,7 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
     # two groups, so the logo can sit in the centre of the header between them
     nav = f'<span class="g">{"".join(links[:half])}</span><span class="g">{"".join(links[half:])}</span>'
     social = "".join(
-        f'<li><a href="{url}" target="_blank" rel="noopener">{name}</a></li>' for name, url in SOCIAL.items() if url
+        f'<li><a href="{esc(url)}" target="_blank" rel="noopener">{esc(name)}</a></li>' for name, url in SOCIAL.items() if url
     )
     social_block = f'<div><h2 class="foot-h">Follow</h2><ul>{social}</ul></div>' if social else (
         f'<div><h2 class="foot-h">Stay in touch</h2><ul><li><a href="{root}index.html#signup">Join the mailing list</a></li>'
@@ -141,12 +150,13 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
     counter_note, counter = (counter.split("</div>\n<script>", 1) if counter else ("", ""))
     if counter:
         counter_note, counter = counter_note + "</div>", "<script>" + counter
+    title, search_title = esc(title), esc(search_title)
     full_title = "Seahorse Filmhouse" if not title else f"{title} | Seahorse Filmhouse"
     # search_title is the longer line shown in search results and on the browser tab
     tab_title = (search_title if search_title.startswith("Seahorse Filmhouse")
                  else f"{search_title} | Seahorse Filmhouse" if search_title else full_title)
-    description = description.replace('"', "&quot;")
-    image_alt = (image_alt or full_title).replace('"', "&quot;")
+    description = esc(description)
+    image_alt = esc(image_alt) if image_alt else full_title
     size = PIC.get(image, {})
     og_size = (f'\n<meta property="og:image:width" content="{size["w"]}">\n<meta property="og:image:height" content="{size["h"]}">'
                if size else "")
@@ -196,7 +206,7 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
     <div class="footer-grid">
       <div>
         <a class="footer-stamp" href="{root}index.html">{stamp("footer")}</a>
-        <p>{"<br>".join(SITE["footer_lines"])}</p>
+        <p>{"<br>".join(esc(line) for line in SITE["footer_lines"])}</p>
       </div>
       <div>
         <h2 class="foot-h">Explore</h2>
@@ -230,10 +240,10 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
 
 
 def film_card(film, root=""):
-    line = f'Directed by {film["director"]}' if film.get("director") else film["stage"]
+    line = f'Directed by {esc(film["director"])}' if film.get("director") else esc(film["stage"])
     return f"""<a class="film-card" href="{root}films/{film['slug']}.html">
   <div class="poster">{picture(film['poster'], root, image_alt(film['poster']), SIZES_POSTER)}</div>
-  <div class="meta"><span class="year">{film['year']}</span><h3>{film['title']}</h3><p>{line}</p></div>
+  <div class="meta"><span class="year">{esc(film['year'])}</span><h3>{esc(film['title'])}</h3><p>{line}</p></div>
 </a>"""
 
 
@@ -243,7 +253,7 @@ def shop_card(pr, root=""):
     pick = next((im for im, src in zip(images, pr["photos"]) if "model" in src), images[0])
     return f"""<a class="shop-card" href="{root}shop.html#{pr['slug']}">
   <div class="shot">{picture(pick, root, pr['name'], SIZES_SHOP_ROW)}</div>
-  <div class="meta"><h3>{pr['name']}</h3><span class="soon">{pr['price'] if pr['availability'] == 'available' else 'Coming soon'}</span></div>
+  <div class="meta"><h3>{esc(pr['name'])}</h3><span class="soon">{esc(pr['price']) if pr['availability'] == 'available' else 'Coming soon'}</span></div>
 </a>"""
 
 
@@ -251,7 +261,7 @@ def news_card(post, root="", h="h3"):
     """h: heading level of the card title, one below the heading of the section the card sits in."""
     return f"""<a class="news-card" href="{root}news/{post['slug']}.html">
   <div class="thumb">{picture(post['image'], root, image_alt(post['image']), SIZES_CARD)}</div>
-  <div class="body"><time datetime="{post['date']}">{nice_date(post['date'])}</time><{h}>{post['title']}</{h}><p>{post['summary']}</p></div>
+  <div class="body"><time datetime="{post['date']}">{nice_date(post['date'])}</time><{h}>{esc(post['title'])}</{h}><p>{esc(post['summary'])}</p></div>
 </a>"""
 
 
@@ -339,7 +349,7 @@ def picture(name, root, alt, sizes, lazy=True, high=False, defer=False, phone=No
     img = (f'<img src="{BLANK}" data-src="{src}" data-srcset="{srcset(name, root, "jpg")}"' if defer
            else f'<img src="{src}" srcset="{srcset(name, root, "jpg")}"')
     return (f'<picture>{sources}{img} sizes="{sizes}" width="{info["w"]}" height="{info["h"]}" '
-            f'alt="{alt}"{load} decoding="async"></picture>')
+            f'alt="{esc(alt)}"{load} decoding="async"></picture>')
 
 
 def cover_sizes(name, extra="0px", height="100vh"):
@@ -441,16 +451,16 @@ def build_home():
         active = " active" if i == 0 else ""
         soft = " soft" if f["status"] == "upcoming" else ""
         img = f["home_image"]
-        year = f["year"] if f["year"].isdigit() else "Soon"
+        year = esc(f["year"]) if f["year"].isdigit() else "Soon"
         # only the first film's image loads with the page; site.js fetches the others once the page has loaded
         phone = (f["home_phone"], cover_sizes(f["home_phone"], "120px")) if f.get("home_phone") else None
         pic = picture(img, "", "", cover_sizes(img, "120px"), lazy=False, high=i == 0, defer=i > 0, phone=phone)
         layers += f"""<div class="hero-bg bg-{slug}{soft}{active}">{pic}</div>\n"""
         titles += (f"""<a class="hero-title{active}" href="films/{slug}.html" data-i="{i}">"""
-                   f"""<span class="t">{f['title']}</span><span class="y">{year}</span></a>\n""")
+                   f"""<span class="t">{esc(f['title'])}</span><span class="y">{year}</span></a>\n""")
         # released films show the tagline only; upcoming ones also show their status
-        action = "" if f.get("trailer") else f"""<a class="text-link" href="films/{slug}.html">{f['stage']}</a>"""
-        notes += f"""<div class="hero-note{active}"><p class="tagline">{f['tagline']}</p>{action}</div>\n"""
+        action = "" if f.get("trailer") else f"""<a class="text-link" href="films/{slug}.html">{esc(f['stage'])}</a>"""
+        notes += f"""<div class="hero-note{active}"><p class="tagline">{esc(f['tagline'])}</p>{action}</div>\n"""
 
     body = f"""<section class="hero" id="hero">
 {layers}<div class="hero-shade"></div>
@@ -551,21 +561,21 @@ def build_films():
         # the film's own page leads with a different image from the one used on the home page
         bg = f["page_hero"]
         def credit(label, value):
-            return f'<div><span>{label}</span><strong>{value}</strong></div>'
+            return f'<div><span>{label}</span><strong>{esc(value)}</strong></div>'
 
         if f["status"] == "released":
             credits = (credit("Directed by", f["director"]) + credit("Year", f["year"])
                        + credit("Running time", f["runtime"]) + credit("Genre", f["genre"]))
-            accolades = "".join(f'<li class="{c}">{t}</li>' for c, t in f["accolades"])
+            accolades = "".join(f'<li class="{c}">{esc(t)}</li>' for c, t in f["accolades"])
             watch_rows = "".join(
-                f"<div><dt>{label}</dt><dd>" + " &middot; ".join(
-                    f'<a href="{url}" target="_blank" rel="noopener">{name}</a>' for name, url in services) + "</dd></div>"
+                f"<div><dt>{esc(label)}</dt><dd>" + " &middot; ".join(
+                    f'<a href="{esc(url)}" target="_blank" rel="noopener">{esc(name)}</a>' for name, url in services) + "</dd></div>"
                 for label, services in f["watch"])
             centre = f"""<p class="synopsis">{f['synopsis']}</p>
 <div class="film-poster">{picture(f['poster'], "../", image_alt(f['poster']), SIZES_FILM_POSTER)}</div>
 <p class="sub-head">Where to watch <span class="where">United States</span></p>
 <dl class="watch">{watch_rows}</dl>
-<p class="watch-more"><a href="{f['watch_url']}" target="_blank" rel="noopener">All current options &rarr;</a></p>
+<p class="watch-more"><a href="{esc(f['watch_url'])}" target="_blank" rel="noopener">All current options &rarr;</a></p>
 <p class="sub-head">Festivals and awards</p>
 <ul class="accolades">{accolades}</ul>"""
             after = ""
@@ -583,20 +593,20 @@ def build_films():
 {'<p class="muted concept-note">Images shown are concept artwork; the film has not yet been shot.</p>' if f.get("concept_art") else ''}
 <p class="muted">Updates on this project are posted in <a href="../news.html" style="color:var(--accent)">News</a> and sent to the mailing list.</p>
 <div class="btn-row" style="margin-top:26px"><a class="btn primary" href="#signup">Get updates</a><a class="btn" href="../contact.html">Distribution and press enquiries</a></div>"""
-            after = signup_block("../", f"Follow {f['title']}", "Join the mailing list and we will tell you when there is news on this film.")
+            after = signup_block("../", f"Follow {esc(f['title'])}", "Join the mailing list and we will tell you when there is news on this film.")
             first = re.split(r"(?<=[a-z])\. ", text_only(f["synopsis"]))[0].rstrip(".") + "."
             by = f", directed by {f['director']}" if f.get("director") else ""
             desc = f"{plain(f)}, an upcoming film from Seahorse Filmhouse{by}. {f['stage']}. {first}"
             search_title = f"{plain(f)}: Upcoming Film, {f['stage'].title()}"
 
         # released films: the trailer plays from a thin play mark on the lead image, in an overlay
-        play = (f"""<a class="play" href="https://www.youtube.com/watch?v={f['trailer']}" data-trailer="{f['trailer']}" aria-label="Play the {plain(f)} trailer">
+        play = (f"""<a class="play" href="https://www.youtube.com/watch?v={f['trailer']}" data-trailer="{f['trailer']}" aria-label="Play the {esc(plain(f))} trailer">
   <svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="30,14 86,50 30,86"/></svg></a>"""
                 if f.get("trailer") else "")
         hero = picture(bg, "../", "", cover_sizes(bg, height="80vh"), lazy=False, high=True)
         body = f"""<section class="film-hero tall bg-{f['slug']}">{hero}{play}<div class="wrap">
-  <h1>{f['title']}{' <span class="title-note">(' + f['title_note'] + ')</span>' if f.get('title_note') else ''}</h1>
-  <p class="tagline">{f['tagline']}</p>
+  <h1>{esc(f['title'])}{' <span class="title-note">(' + esc(f['title_note']) + ')</span>' if f.get('title_note') else ''}</h1>
+  <p class="tagline">{esc(f['tagline'])}</p>
 </div></section>
 <section class="film-credits"><div class="wrap">{credits}</div></section>
 <section class="block tight">
@@ -628,7 +638,7 @@ def post_body(p):
     """A news post's paragraphs, then its source links, as page markup."""
     parts = [f"<p>{text}</p>" for text in p["body"]]
     if p["sources"]:
-        links = " &middot; ".join(f'<a href="{url}" target="_blank" rel="noopener">{label}</a>' for label, url in p["sources"])
+        links = " &middot; ".join(f'<a href="{esc(url)}" target="_blank" rel="noopener">{esc(label)}</a>' for label, url in p["sources"])
         parts.append(f'<p class="source">{"Source" if len(p["sources"]) == 1 else "Sources"}: {links}</p>')
     return "\n" + "\n".join(parts) + "\n"
 
@@ -649,7 +659,7 @@ def build_news():
         post_sizes = "(max-width: 408px) calc(100vw - 48px), 360px" if portrait else "(max-width: 760px) calc(100vw - 48px), 712px"
         body = f"""<section class="page-head"><div class="wrap post">
   <time datetime="{p['date']}">{nice_date(p['date'])}</time>
-  <h1 style="margin-top:12px;font-size:clamp(2rem,4.6vw,3.2rem)">{p['title']}</h1>
+  <h1 style="margin-top:12px;font-size:clamp(2rem,4.6vw,3.2rem)">{esc(p['title'])}</h1>
 </div></section>
 <section class="block tight"><div class="wrap post">
   <div class="post-image"{img_style}>{picture(p['image'], "../", image_alt(p['image']), post_sizes, lazy=False, high=True)}</div>
@@ -657,7 +667,7 @@ def build_news():
   <p style="margin-top:40px"><a class="text-link" href="../news.html">&larr; All news</a></p>
 </div></section>
 {signup_block("../")}"""
-        article = ld({"@type": "NewsArticle", "headline": text_only(p["title"]), "datePublished": p["date"],
+        article = ld({"@type": "NewsArticle", "headline": p["title"].replace("\u2019", "'"), "datePublished": p["date"],
                       "image": f"{SITE_URL}/images/{p['image']}", "description": p["summary"],
                       "author": ORG, "publisher": ORG,
                       "mainEntityOfPage": f"{SITE_URL}/news/{p['slug']}.html"})
@@ -670,11 +680,11 @@ def build_about():
     people = "".join(
         f"""<div class="person">
   <div class="photo">{picture(t["photo"], "", t["alt"], SIZES_TEAM)}</div>
-  <h3>{t["name"]}</h3><p>{t["role"]}</p>
-  <a class="text-link" href="{t["imdb"]}" target="_blank" rel="noopener">IMDb</a>
+  <h3>{esc(t["name"])}</h3><p>{esc(t["role"])}</p>
+  <a class="text-link" href="{esc(t["imdb"])}" target="_blank" rel="noopener">IMDb</a>
 </div>""" for t in TEAM
     )
-    locations = "\n".join(f"      <div><strong>{place}</strong><span>{country}</span></div>" for place, country in SITE["locations"])
+    locations = "\n".join(f"      <div><strong>{esc(place)}</strong><span>{esc(country)}</span></div>" for place, country in SITE["locations"])
     body = f"""<section class="page-head"><div class="wrap">
   <p class="eyebrow">About</p><h1>A studio of ideas</h1>
   <p class="lead">Seahorse Filmhouse is an independent production company with operations in Los Angeles, London, Mumbai and the UAE.</p>
@@ -723,9 +733,9 @@ def build_about():
 
 
 def build_contact():
-    options = "".join(f"<option>{o}</option>" for o in SITE["enquiry_subjects"])
+    options = "".join(f"<option>{esc(o)}</option>" for o in SITE["enquiry_subjects"])
     follow = " &nbsp;&middot;&nbsp; ".join(
-        f'<a class="text-link" href="{url}" target="_blank" rel="noopener">{name}</a>' for name, url in SOCIAL.items() if url)
+        f'<a class="text-link" href="{esc(url)}" target="_blank" rel="noopener">{esc(name)}</a>' for name, url in SOCIAL.items() if url)
     body = f"""<section class="page-head"><div class="wrap">
   <p class="eyebrow">Contact</p><h1>Get in touch</h1>
   <p class="lead">Have a question or a project idea, or want to talk about one of our films? We would love to hear from you.</p>
@@ -734,7 +744,7 @@ def build_contact():
   <div class="wrap contact-layout">
     <div>
       <p class="sub-head">Operating in</p>
-      <p>{SITE["operating_in"]}</p>
+      <p>{esc(SITE["operating_in"])}</p>
       <p class="sub-head" style="margin-top:26px">Follow</p>
       <p>{follow}</p>
       <p class="sub-head" style="margin-top:26px">Updates</p>
@@ -784,20 +794,20 @@ def build_shop():
     cards = ""
     for n, pr in enumerate(PRODUCTS):
         if pr["availability"] == "available":
-            action = f'<span class="price">{pr["price"]}</span><a class="btn primary" href="{pr["url"]}" target="_blank" rel="noopener">Buy</a>'
+            action = f'<span class="price">{esc(pr["price"])}</span><a class="btn primary" href="{esc(pr["url"])}" target="_blank" rel="noopener">Buy</a>'
         else:
             action = '<span class="soon">Coming soon</span><a class="text-link" href="#signup">Notify me &rarr;</a>'
         images = pr.get("images") or [pr["image"]]
         thumbs = ""
         if len(images) > 1:
             thumbs = '<div class="thumbs">' + "".join(
-                f'<button type="button" class="{"on" if i == 0 else ""}" aria-pressed="{"true" if i == 0 else "false"}" aria-label="{pr["name"]}, view {i + 1}">'
+                f'<button type="button" class="{"on" if i == 0 else ""}" aria-pressed="{"true" if i == 0 else "false"}" aria-label="{esc(pr["name"])}, view {i + 1}">'
                 f'{picture(im, "", "", "46px")}</button>' for i, im in enumerate(images)) + "</div>"
         cards += f"""<div class="product" id="{pr['slug']}">
   <div class="shot">{picture(images[0], "", pr['name'], SIZES_CARD, lazy=n > 0, high=n == 0)}</div>
   {thumbs}
-  <h2 class="product-name">{pr['name']}</h2>
-  <p>{pr['text']}</p>
+  <h2 class="product-name">{esc(pr['name'])}</h2>
+  <p>{esc(pr['text'])}</p>
   <div class="buy">{action}</div>
 </div>"""
     notify = signup_block("", "Be first in line",

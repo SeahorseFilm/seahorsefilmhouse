@@ -1,0 +1,563 @@
+# Pages CMS configuration for seahorsefilmhouse.com  (https://pagescms.org)
+#
+# Editors sign in at https://app.pagescms.org with GitHub, pick this repository, then create a branch named
+# cms/<short-description> (Pages CMS "Branch" menu) and save there. Pages CMS cannot open pull requests itself:
+# the editor opens one on GitHub, checks the Netlify deploy preview, and Raj merges. Merging to main publishes.
+# See CMS_EDITOR_GUIDE.md.
+#
+# Only the five content files and the two source-image folders are exposed. Everything else in the repository
+# (02_BUILD/build.py, site.css, site.js, netlify.toml, requirements.txt, CLAUDE.md, 01_SITE/ ...) is not listed
+# here, so Pages CMS offers no way to open or edit it. This file is not editable from the CMS either (settings.config).
+#
+# Keep this file free of secrets: the repository is public.
+
+settings:
+  config: false          # hide the "Configuration" editor so editors cannot change this file
+  cache: false
+  content:
+    merge: true          # keep keys the form does not show (for example the "_note" lines) when saving
+  commit:
+    identity: user       # commits carry the editor's own GitHub name
+    templates:
+      create: "CMS: create {path}"
+      update: "CMS: update {path}"
+      delete: "CMS: delete {path}"
+      rename: "CMS: rename {oldPath} to {newPath}"
+
+media:
+  - name: source_images
+    label: Pictures (posters, stills, team, news)
+    input: 02_BUILD/source_images
+    output: /images
+    extensions: [jpg, jpeg, png]
+    rename: safe
+  - name: shop_photos
+    label: Shop product photos
+    input: 02_BUILD/shop_photos
+    output: /images
+    extensions: [jpg, jpeg, png]
+    rename: safe
+
+components:
+  # A new picture: the original file you uploaded plus the name the website will give it.
+  picture:
+    type: object
+    label: Picture
+    fields:
+      - name: source
+        label: Original file name
+        type: string
+        required: true
+        pattern:
+          regex: '^[A-Za-z0-9_][A-Za-z0-9_.-]*\.(jpg|jpeg|png)$'
+          message: Use the exact file name of a .jpg or .png you uploaded under Media, with no folder and no spaces.
+        description: The file you uploaded under Media > Pictures, for example poster-my-film-original.jpg. Type the name exactly.
+      - name: file
+        label: Website file name
+        type: string
+        required: true
+        pattern:
+          regex: '^[a-z0-9]+(-[a-z0-9]+)*\.jpg$'
+          message: Lower-case letters, numbers and hyphens only, ending in .jpg (for example poster-my-film.jpg).
+        description: The name the website gives the picture. Lower-case, hyphens, ends in .jpg. Examples are poster-my-film.jpg, still-my-film-1.jpg, team-first-last.jpg. Never reuse a name.
+      - name: alt
+        label: Alt text
+        type: string
+        required: true
+        options:
+          maxlength: 200
+        description: Describe what the picture shows, for people using screen readers and for image search. Plain words, no "image of". Example "Still from Open 24 Hours".
+
+content:
+  - name: films
+    label: Films
+    type: file
+    path: content/films.json
+    format: json
+    description: Every film. The order here is the order of the home-page film list, so reorder with care.
+    operations:
+      rename: false
+      delete: false
+    fields:
+      - name: films
+        label: Films
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{fields.title}"
+        fields:
+          - name: _note
+            label: Note to editors (read only)
+            type: text
+            readonly: true
+            description: A note left in the file for editors. It cannot be changed here.
+          - name: slug
+            label: Page address (slug)
+            type: string
+            required: true
+            pattern:
+              regex: '^[a-z0-9]+(-[a-z0-9]+)*$'
+              message: Lower-case letters, numbers and single hyphens only.
+            description: Becomes the web address, /films/<slug>.html. Lower-case letters, numbers and hyphens. Must be unique. Do not change it on a published film.
+          - name: title
+            label: Title
+            type: string
+            required: true
+            description: The film title, typed as it should read, with real characters such as ’ (no HTML codes like &rsquo;).
+          - name: title_note
+            label: Title note
+            type: string
+            description: Optional note shown with the title, for example "working title".
+          - name: year
+            label: Year
+            type: string
+            required: true
+            description: Release year, for example 2027.
+          - name: status
+            label: Status
+            type: select
+            required: true
+            options:
+              values:
+                - { value: released, label: Released }
+                - { value: upcoming, label: Upcoming }
+            description: Released films need every field in the Released section below. Upcoming films need a stage.
+          - name: stage
+            label: Stage (upcoming films)
+            type: string
+            description: Required for upcoming films, for example "In development".
+          - name: tagline
+            label: Tagline
+            type: string
+            required: true
+          - name: synopsis
+            label: Synopsis
+            type: text
+            required: true
+            description: One or two sentences. Do not reword published text without Raj's approval. Tokyo uses only the wording already published.
+          - name: director
+            label: Director
+            type: string
+          - name: runtime
+            label: Runtime
+            type: string
+            description: Released films use whole minutes, for example "102 min".
+          - name: genre
+            label: Genre
+            type: string
+          - name: languages
+            label: Languages
+            type: string
+            description: Optional, mainly for upcoming films.
+          - name: concept_art
+            label: Hero picture is concept art
+            type: boolean
+          - name: cast
+            label: Cast
+            type: string
+            list: true
+            description: One name per entry. Required for released films.
+          - name: trailer_url
+            label: Trailer (YouTube link)
+            type: string
+            pattern:
+              regex: '^(https://(www\.)?youtube\.com/watch\?v=[A-Za-z0-9_-]{11})?$'
+              message: Use the form https://www.youtube.com/watch?v=XXXXXXXXXXX
+            description: Required for released films. Form https://www.youtube.com/watch?v=XXXXXXXXXXX
+          - name: trailer_uploaded
+            label: Trailer upload date and time
+            type: string
+            pattern:
+              regex: '^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2})?$'
+              message: Use the form 2022-08-06T10:29:17-07:00
+            description: When the trailer was uploaded to YouTube (Google requires it). Required for released films. Form 2022-08-06T10:29:17-07:00
+          - name: watch_checked
+            label: Where-to-watch last checked
+            type: date
+            options:
+              format: yyyy-MM-dd
+            description: The date the links below were last checked.
+          - name: watch
+            label: Where to watch
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{fields.label}"
+            description: Required for released films. Groups such as Stream, Rent or buy, Free with ads.
+            fields:
+              - name: label
+                label: Group name
+                type: string
+                required: true
+              - name: services
+                label: Services
+                type: object
+                list: true
+                required: true
+                fields:
+                  - name: name
+                    label: Service name
+                    type: string
+                    required: true
+                  - name: url
+                    label: Link
+                    type: string
+                    required: true
+                    pattern:
+                      regex: '^https://\S+$'
+                      message: Must start with https://
+          - name: watch_url
+            label: JustWatch link
+            type: string
+            pattern:
+              regex: '^(https://\S+)?$'
+              message: Must start with https://
+            description: Required for released films.
+          - name: accolades
+            label: Awards and selections
+            type: object
+            list: true
+            description: Required for released films.
+            fields:
+              - name: text
+                label: Text
+                type: string
+                required: true
+              - name: award
+                label: This is an award win
+                type: boolean
+          - name: images
+            label: Pictures
+            type: object
+            required: true
+            fields:
+              - name: poster
+                label: Poster
+                component: picture
+              - name: stills
+                label: Stills
+                component: picture
+                list: true
+                description: Released films normally have stills. Upcoming films have none.
+              - name: home
+                label: Home-page picture
+                type: object
+                description: Shown full-screen on the home page when the title is hovered. To reuse an already-defined picture, give only the website file name.
+                fields:
+                  - name: source
+                    label: Original file name
+                    type: string
+                    pattern:
+                      regex: '^([A-Za-z0-9_][A-Za-z0-9_.-]*\.(jpg|jpeg|png))?$'
+                      message: Exact file name of a .jpg or .png you uploaded under Media.
+                    description: Only when this is a new picture. Leave empty to reuse a picture defined above.
+                  - name: file
+                    label: Website file name
+                    type: string
+                    required: true
+                    pattern:
+                      regex: '^[a-z0-9]+(-[a-z0-9]+)*\.jpg$'
+                      message: Lower-case letters, numbers and hyphens only, ending in .jpg.
+                  - name: alt
+                    label: Alt text
+                    type: string
+                    options:
+                      maxlength: 200
+                    description: Describe what the picture shows.
+                  - name: phone
+                    label: Phone version
+                    type: object
+                    description: Optional separate picture for phones.
+                    fields:
+                      - name: source
+                        label: Original file name
+                        type: string
+                        pattern:
+                          regex: '^([A-Za-z0-9_][A-Za-z0-9_.-]*\.(jpg|jpeg|png))?$'
+                          message: Exact file name of a .jpg or .png you uploaded under Media.
+                      - name: file
+                        label: Website file name
+                        type: string
+                        pattern:
+                          regex: '^([a-z0-9]+(-[a-z0-9]+)*\.jpg)?$'
+                          message: Lower-case letters, numbers and hyphens only, ending in .jpg.
+              - name: lead
+                label: Film-page top picture
+                type: object
+                description: Shown at the top of the film's own page. To reuse an already-defined picture, give only the website file name and alt text.
+                fields:
+                  - name: source
+                    label: Original file name
+                    type: string
+                    pattern:
+                      regex: '^([A-Za-z0-9_][A-Za-z0-9_.-]*\.(jpg|jpeg|png))?$'
+                      message: Exact file name of a .jpg or .png you uploaded under Media.
+                    description: Only when this is a new picture. Leave empty to reuse a picture defined above.
+                  - name: file
+                    label: Website file name
+                    type: string
+                    required: true
+                    pattern:
+                      regex: '^[a-z0-9]+(-[a-z0-9]+)*\.jpg$'
+                      message: Lower-case letters, numbers and hyphens only, ending in .jpg.
+                  - name: alt
+                    label: Alt text
+                    type: string
+                    required: true
+                    options:
+                      maxlength: 200
+                    description: Describe what the picture shows.
+
+  - name: news
+    label: News posts
+    type: file
+    path: content/news.json
+    format: json
+    description: Every news post. The site sorts by date, newest first, so order does not matter.
+    operations:
+      rename: false
+      delete: false
+    fields:
+      - name: posts
+        label: Posts
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{fields.date} {fields.title}"
+        fields:
+          - name: title
+            label: Title
+            type: string
+            required: true
+            description: A short headline.
+          - name: slug
+            label: Page address (slug)
+            type: string
+            required: true
+            pattern:
+              regex: '^[a-z0-9]+(-[a-z0-9]+)*$'
+              message: Lower-case letters, numbers and single hyphens only.
+            description: Becomes the web address, /news/<slug>.html. Lower-case letters, numbers and hyphens. Must be unique.
+          - name: date
+            label: Date
+            type: date
+            required: true
+            options:
+              format: yyyy-MM-dd
+            description: The publication date.
+          - name: summary
+            label: Summary
+            type: text
+            required: true
+            description: One or two sentences, shown on the news cards and in search results.
+          - name: image
+            label: Picture
+            type: object
+            required: true
+            description: To reuse an existing picture (for example a film poster) give only its website file name and alt text. For a new picture also give the original file name.
+            fields:
+              - name: source
+                label: Original file name
+                type: string
+                pattern:
+                  regex: '^([A-Za-z0-9_][A-Za-z0-9_.-]*\.(jpg|jpeg|png))?$'
+                  message: Exact file name of a .jpg or .png you uploaded under Media.
+                description: Only for a new picture. Upload it under Media > Pictures first, then type its exact name. Leave empty to reuse an existing picture.
+              - name: file
+                label: Website file name
+                type: string
+                required: true
+                pattern:
+                  regex: '^[a-z0-9]+(-[a-z0-9]+)*\.jpg$'
+                  message: Lower-case letters, numbers and hyphens only, ending in .jpg.
+                description: For example poster-chasm.jpg to reuse a poster, or news-my-post.jpg for a new picture.
+              - name: alt
+                label: Alt text
+                type: string
+                required: true
+                options:
+                  maxlength: 200
+                description: Describe what the picture shows, for screen readers and image search. Example "Chasm poster".
+          - name: body
+            label: Text
+            type: text
+            list: true
+            required: true
+            description: One entry per paragraph, without <p> tags. Use <em>...</em> for italics. Link to a film as <a href="../films/film-slug.html">text</a>; any other link must start with https://. Posts must be factual and approved before they go live.
+          - name: sources
+            label: Sources
+            type: object
+            list: true
+            description: Optional links to press coverage.
+            fields:
+              - name: label
+                label: Label
+                type: string
+                required: true
+                description: For example "Publication, 2 November 2026".
+              - name: url
+                label: Link
+                type: string
+                required: true
+                pattern:
+                  regex: '^https://\S+$'
+                  message: Must start with https://
+
+  - name: team
+    label: Team members
+    type: file
+    path: content/team.json
+    format: json
+    description: The people on the About page.
+    operations:
+      rename: false
+      delete: false
+    fields:
+      - name: people
+        label: People
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{fields.name}"
+        fields:
+          - name: name
+            label: Name
+            type: string
+            required: true
+          - name: role
+            label: Role
+            type: string
+            required: true
+            description: For example "Producer / Director / Screenwriter".
+          - name: imdb
+            label: IMDb link
+            type: string
+            required: true
+            pattern:
+              regex: '^https://\S+$'
+              message: Must start with https://
+            description: The person's IMDb page, for example https://www.imdb.com/name/nm0000000/
+          - name: photo
+            label: Photo
+            component: picture
+
+  - name: shop
+    label: Shop products
+    type: file
+    path: content/shop.json
+    format: json
+    description: To switch a product on, set Availability to Available and fill in Price and Buy link. Back to Coming soon means an empty Buy link.
+    operations:
+      rename: false
+      delete: false
+    fields:
+      - name: products
+        label: Products
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{fields.name}"
+        fields:
+          - name: name
+            label: Product name
+            type: string
+            required: true
+          - name: slug
+            label: Slug
+            type: string
+            required: true
+            pattern:
+              regex: '^[a-z0-9]+(-[a-z0-9]+)*$'
+              message: Lower-case letters, numbers and single hyphens only.
+            description: Lower-case letters, numbers and hyphens. Must be unique.
+          - name: text
+            label: Description
+            type: text
+            required: true
+          - name: availability
+            label: Availability
+            type: select
+            required: true
+            options:
+              values:
+                - { value: coming-soon, label: Coming soon }
+                - { value: available, label: Available }
+            description: 'Available needs both a price and a buy link. Coming soon needs an empty buy link.'
+          - name: price
+            label: Price
+            type: string
+            pattern:
+              regex: '^(.*\d.*)?$'
+              message: Include the amount, with currency symbol, for example $35.
+            description: Required when Available, for example $35. Leave empty when Coming soon.
+          - name: url
+            label: Buy link (Fourthwall page)
+            type: string
+            pattern:
+              regex: '^(https://\S+)?$'
+              message: Must start with https://
+            description: Required when Available. Must start with https:// and be the product's own page. Leave empty when Coming soon. Never put payment details here.
+          - name: photos
+            label: Photos
+            type: string
+            list: true
+            pattern:
+              regex: '^[A-Za-z0-9_][A-Za-z0-9_.-]*\.(jpg|jpeg|png)$'
+              message: Exact file name of a .jpg or .png uploaded under Media > Shop product photos.
+            description: Exact file names of pictures uploaded under Media > Shop product photos, first one is the main photo. Use either Photos or Single picture, not both.
+          - name: image
+            label: Single picture
+            type: object
+            description: Used instead of Photos by the book. Upload under Media > Pictures.
+            fields:
+              - name: source
+                label: Original file name
+                type: string
+                required: true
+                pattern:
+                  regex: '^[A-Za-z0-9_][A-Za-z0-9_.-]*\.(jpg|jpeg|png)$'
+                  message: Exact file name of a .jpg or .png you uploaded under Media.
+              - name: file
+                label: Website file name
+                type: string
+                required: true
+                pattern:
+                  regex: '^[a-z0-9]+(-[a-z0-9]+)*\.jpg$'
+                  message: Lower-case letters, numbers and hyphens only, ending in .jpg.
+                description: Shop pictures use names like shop-book.jpg.
+
+  - name: social
+    label: Social links
+    type: file
+    path: content/site.json
+    format: json
+    description: Social profile links in the site footer. An empty link hides that profile. Other site-wide text (locations, footer lines, company description) is not editable here.
+    operations:
+      rename: false
+      delete: false
+    fields:
+      - name: social
+        label: Social links
+        type: object
+        list:
+          collapsible:
+            collapsed: false
+            summary: "{fields.name}"
+        fields:
+          - name: name
+            label: Network
+            type: string
+            required: true
+            description: For example YouTube, Instagram, IMDb, LinkedIn.
+          - name: url
+            label: Profile link
+            type: string
+            pattern:
+              regex: '^(https://\S+)?$'
+              message: Must start with https://
+            description: The full https:// address of the profile. Leave empty to hide this link.

@@ -177,7 +177,7 @@ def _films(data, images, problems, site_slugs):
     for i, raw in enumerate(c.items(data, "films", "file")):
         where = f"films[{i}]"
         c.keys(raw, where, ["slug", "title", "year", "status", "tagline", "synopsis", "images"],
-               ["plain_title", "director", "runtime", "genre", "languages", "title_note", "stage", "concept_art",
+               ["director", "runtime", "genre", "languages", "title_note", "stage", "concept_art",
                 "cast", "trailer_url", "trailer_uploaded", "watch_checked", "watch", "watch_url", "accolades"])
         if not isinstance(raw, dict):
             continue
@@ -189,7 +189,7 @@ def _films(data, images, problems, site_slugs):
         film = {"slug": slug}
         for k in ("title", "year", "tagline", "synopsis"):
             film[k] = c.text(raw, k, where)
-        for k in ("plain_title", "director", "languages", "title_note", "stage", "genre"):
+        for k in ("director", "languages", "title_note", "stage", "genre"):
             if k in raw:
                 film[k] = c.text(raw, k, where)
         status = film["status"] = c.text(raw, "status", where)
@@ -250,7 +250,7 @@ def _films(data, images, problems, site_slugs):
                         c.err(f"{w}.award", "must be true or false")
                     film["accolades"].append(("win" if a.get("award") is True else "", c.text(a, "text", w)))
         img = raw.get("images")
-        if c.keys(img, f"{where}.images", ["poster", "stills", "home", "lead"]):
+        if c.keys(img, f"{where}.images", ["poster", "home", "lead"], ["stills"]):
             w = f"{where}.images"
             film["poster"] = images.read(c, img.get("poster"), f"{w}.poster", "poster", "required", define=True)
             film["stills"] = [images.read(c, s, f"{w}.stills[{n}]", "still", "required", define=True)
@@ -348,7 +348,7 @@ def _shop(data, images, problems, shop_photos):
     out, seen = [], set()
     for i, raw in enumerate(c.items(data, "products", "file")):
         where = f"products[{i}]"
-        c.keys(raw, where, ["slug", "name", "text", "availability", "price", "url"], ["photos", "image"])
+        c.keys(raw, where, ["slug", "name", "text", "availability"], ["price", "url", "photos", "image"])
         if not isinstance(raw, dict):
             continue
         slug = c.slug(raw, where)
@@ -392,7 +392,7 @@ def _site(data, problems):
     site["social"], names = [], set()
     for i, s in enumerate(c.items(data, "social", "file")):
         w = f"social[{i}]"
-        if c.keys(s, w, ["name", "url"]):
+        if c.keys(s, w, ["name"], ["url"]):
             name = c.text(s, "name", w)
             if name in names:
                 c.err(w, f'"{name}" is listed twice')

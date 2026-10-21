@@ -2,9 +2,9 @@
   "_note": "One entry per post. The site sorts by date, newest first. See CONTENT_EDITING.md.",
   "posts": [
     {
+      "title": "Tokyo: a new film for 2027",
       "slug": "tokyo-announced-for-2027",
       "date": "2026-10-11",
-      "title": "Tokyo: a new film for 2027",
       "summary": "A woman, the driver she has hired, and a long road west out of Tokyo. A new film from Seahorse Filmhouse.",
       "image": {
         "file": "hero-tokyo.jpg",
@@ -18,9 +18,9 @@
       ]
     },
     {
+      "title": "Chasm is coming in 2027",
       "slug": "chasm-coming-2027",
       "date": "2026-10-10",
-      "title": "Chasm is coming in 2027",
       "summary": "An atmospheric portrait of Ila, a woman on the edge of quiet transformation.",
       "image": {
         "file": "poster-chasm.jpg",
@@ -33,31 +33,31 @@
       ]
     },
     {
+      "title": "Winter Dreams: a Fitzgerald story for today",
       "slug": "winter-dreams-in-development",
       "date": "2026-10-10",
-      "title": "Winter Dreams: a Fitzgerald story for today",
       "summary": "In development: a modern reimagining of F. Scott Fitzgerald's Winter Dreams.",
       "image": {
         "file": "poster-winter-dreams.jpg",
         "alt": "Winter Dreams poster"
       },
       "body": [
-        "Seahorse Filmhouse is developing <em>Winter Dreams</em>, a modern reimagining of F. Scott Fitzgerald&rsquo;s short story.",
-        "Set in today&rsquo;s world, it follows ambition and desire as they blur the line between success and self-loss: a story of chasing dreams, loving illusions, and waking up too late.",
+        "Seahorse Filmhouse is developing <em>Winter Dreams</em>, a modern reimagining of F. Scott Fitzgerald’s short story.",
+        "Set in today’s world, it follows ambition and desire as they blur the line between success and self-loss: a story of chasing dreams, loving illusions, and waking up too late.",
         "Follow the project on the <a href=\"../films/winter-dreams.html\">Winter Dreams page</a>."
       ]
     },
     {
+      "title": "Daddy’s Girl arrives on DVD and on demand",
       "slug": "daddys-girl-dvd-and-vod-release",
       "date": "2020-09-23",
-      "title": "Daddy&rsquo;s Girl arrives on DVD and on demand",
       "summary": "Rue Morgue reports the North American release of Julian Richards' award-winning thriller.",
       "image": {
         "file": "still-daddys-girl-2.jpg",
         "alt": "Still from Daddy's Girl"
       },
       "body": [
-        "Rue Morgue has announced the North American home release of <em><a href=\"../films/daddys-girl.html\">Daddy&rsquo;s Girl</a></em>, with the DVD out on 29 September 2020 and video on demand following on 2 October, through Cleopatra Entertainment.",
+        "Rue Morgue has announced the North American home release of <em><a href=\"../films/daddys-girl.html\">Daddy’s Girl</a></em>, with the DVD out on 29 September 2020 and video on demand following on 2 October, through Cleopatra Entertainment.",
         "The magazine notes that director Julian Richards won the Best Director prize at the Fantasporto International Film Festival for the film. The cast is led by Jemma Dallender and Costas Mandylor, from a screenplay by Timothy Hill and Sean Hogan."
       ],
       "sources": [
@@ -68,9 +68,9 @@
       ]
     },
     {
+      "title": "Open 24 Hours: new trailer and an August release",
       "slug": "open-24-hours-trailer-and-release-date",
       "date": "2020-07-21",
-      "title": "Open 24 Hours: new trailer and an August release",
       "summary": "Dread Central shares the official trailer and poster, with the film out on 18 August 2020.",
       "image": {
         "file": "still-open-24-hours-2.jpg",
@@ -78,7 +78,7 @@
       },
       "body": [
         "Dread Central has published the official trailer and poster for <em><a href=\"../films/open-24-hours.html\">Open 24 Hours</a></em>, released by 4Digital Media, and reports that the film is available on video on demand and DVD from 18 August 2020.",
-        "Written and directed by Padraig Reynolds, the film stars Vanessa Grasse as Mary, alongside Brendan Fletcher, Emily Tennant, Cole Vigue and Daniel O&rsquo;Meara."
+        "Written and directed by Padraig Reynolds, the film stars Vanessa Grasse as Mary, alongside Brendan Fletcher, Emily Tennant, Cole Vigue and Daniel O’Meara."
       ],
       "sources": [
         {
@@ -88,17 +88,17 @@
       ]
     },
     {
+      "title": "Dark Light released in the United States",
       "slug": "dark-light-us-release",
       "date": "2019-12-06",
-      "title": "Dark Light released in the United States",
       "summary": "Vertical Entertainment releases Padraig Reynolds' creature feature in the US.",
       "image": {
         "file": "still-dark-light-1.jpg",
         "alt": "Still from Dark Light"
       },
       "body": [
-        "<em><a href=\"../films/dark-light.html\">Dark Light</a></em> was released in the United States on 6 December 2019, distributed by Vertical Entertainment, according to Box Office Mojo&rsquo;s listing for the film.",
-        "The release followed the film&rsquo;s world premiere at Arrow Video FrightFest in London that August."
+        "<em><a href=\"../films/dark-light.html\">Dark Light</a></em> was released in the United States on 6 December 2019, distributed by Vertical Entertainment, according to Box Office Mojo’s listing for the film.",
+        "The release followed the film’s world premiere at Arrow Video FrightFest in London that August."
       ],
       "sources": [
         {
@@ -108,9 +108,9 @@
       ]
     },
     {
+      "title": "Dark Light has its world premiere at FrightFest",
       "slug": "dark-light-world-premiere-frightfest",
       "date": "2019-08-25",
-      "title": "Dark Light has its world premiere at FrightFest",
       "summary": "Padraig Reynolds' sci-fi horror premieres at Arrow Video FrightFest 2019 in London.",
       "image": {
         "file": "still-dark-light-2.jpg",
@@ -118,7 +118,7 @@
       },
       "body": [
         "<em><a href=\"../films/dark-light.html\">Dark Light</a></em> had its world premiere at Arrow Video FrightFest 2019 in London.",
-        "Written and directed by Padraig Reynolds, the film stars Jessica Madsen as Annie Knox, a mother whose daughter disappears from the family&rsquo;s rural home, with Opal Littleton, Ed Brody and Kristina Clifford. SciFiNow covered the film from the festival, and Britflicks spoke to Reynolds ahead of the premiere."
+        "Written and directed by Padraig Reynolds, the film stars Jessica Madsen as Annie Knox, a mother whose daughter disappears from the family’s rural home, with Opal Littleton, Ed Brody and Kristina Clifford. SciFiNow covered the film from the festival, and Britflicks spoke to Reynolds ahead of the premiere."
       ],
       "sources": [
         {
@@ -132,9 +132,9 @@
       ]
     },
     {
+      "title": "Open 24 Hours screens at Screamfest in Los Angeles",
       "slug": "open-24-hours-at-screamfest",
       "date": "2018-10-12",
-      "title": "Open 24 Hours screens at Screamfest in Los Angeles",
       "summary": "The film's West Coast premiere follows FrightFest in London and Fantastic Fest in Austin.",
       "image": {
         "file": "still-open-24-hours-1.jpg",
@@ -142,7 +142,7 @@
       },
       "body": [
         "<em><a href=\"../films/open-24-hours.html\">Open 24 Hours</a></em> screened at the Screamfest Horror Film Festival in Los Angeles on 12 October 2018, its West Coast premiere.",
-        "The festival&rsquo;s programme notes that the film had already had its European premiere at FrightFest in London and its North American premiere at Fantastic Fest in Austin. Screamfest lists Seahorse Filmhouse as producer, and credits Josh and Sierra Russell for Best Makeup."
+        "The festival’s programme notes that the film had already had its European premiere at FrightFest in London and its North American premiere at Fantastic Fest in Austin. Screamfest lists Seahorse Filmhouse as producer, and credits Josh and Sierra Russell for Best Makeup."
       ],
       "sources": [
         {
