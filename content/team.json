@@ -1,13 +1,14 @@
 {
   "people": [
     {
-      "name": "R P Khemanand",
+      "name": "Mahesh Purohit",
+      "aka": "R P Khemanand",
       "role": "Producer / Director / Screenwriter",
       "imdb": "https://www.imdb.com/name/nm11359091/",
       "photo": {
         "source": "team-image1.jpg",
         "file": "team-rp-khemanand.jpg",
-        "alt": "R P Khemanand"
+        "alt": "Mahesh Purohit (R P Khemanand)"
       }
     },
     {
