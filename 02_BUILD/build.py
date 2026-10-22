@@ -676,11 +676,19 @@ def build_news():
              image_alt=image_alt(p["image"]))
 
 
+def aka_line(aka):
+    """About page: "a.k.a. ..." under a person's name; each name kept on one line."""
+    if not aka:
+        return ""
+    names = ", ".join(f'<span>{esc(n.strip())}</span>' for n in aka.split(",") if n.strip())
+    return f'<p class="aka">a.k.a. {names}</p>'
+
+
 def build_about():
     people = "".join(
         f"""<div class="person">
   <div class="photo">{picture(t["photo"], "", t["alt"], SIZES_TEAM)}</div>
-  <h3>{esc(t["name"])}</h3><p>{esc(t["role"])}</p>
+  <h3>{esc(t["name"])}</h3>{aka_line(t.get("aka"))}<p>{esc(t["role"])}</p>
   <a class="text-link" href="{esc(t["imdb"])}" target="_blank" rel="noopener">IMDb</a>
 </div>""" for t in TEAM
     )

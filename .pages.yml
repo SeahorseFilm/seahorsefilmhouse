@@ -428,6 +428,10 @@ content:
             label: Name
             type: string
             required: true
+          - name: aka
+            label: Also known as (optional)
+            type: string
+            description: Other names, shown under the name as "a.k.a. ...", for example "Raj Purohit, R P Khemanand".
           - name: role
             label: Role
             type: string

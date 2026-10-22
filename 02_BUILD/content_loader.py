@@ -327,7 +327,7 @@ def _team(data, images, problems):
     out, seen = [], set()
     for i, raw in enumerate(c.items(data, "people", "file")):
         where = f"people[{i}]"
-        c.keys(raw, where, ["name", "role", "imdb", "photo"])
+        c.keys(raw, where, ["name", "role", "imdb", "photo"], ["aka"])
         if not isinstance(raw, dict):
             continue
         name = c.text(raw, "name", where)
@@ -335,7 +335,8 @@ def _team(data, images, problems):
         if name in seen:
             c.err(where, f'"{name}" is listed twice')
         seen.add(name)
-        out.append({"name": name, "role": c.text(raw, "role", where), "imdb": c.url(raw, "imdb", where),
+        out.append({"name": name, "aka": c.text(raw, "aka", where, required=False, empty=True) or "",
+                    "role": c.text(raw, "role", where), "imdb": c.url(raw, "imdb", where),
                     "photo": images.read(c, raw.get("photo"), f"{where}.photo", "portrait", "required", define=True),
                     "alt": (raw.get("photo") or {}).get("alt") if isinstance(raw.get("photo"), dict) else None})
     return out
