@@ -8,6 +8,7 @@ import json
 import re
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlsplit
 from types import SimpleNamespace
 
 
@@ -22,6 +23,7 @@ SOURCE_FILE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]*\.(?:jpg|jpeg|png)$")
 OUTPUT_FILE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.jpg$")
 UPLOAD_TIME = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$")
 YOUTUBE = re.compile(r"^https://(?:www\.)?youtube\.com/watch\?v=([A-Za-z0-9_-]{11})$")
+DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 # names build.py writes itself, so content may not use them
 RESERVED_FILES = {"share.jpg"}
 
@@ -76,9 +78,20 @@ class _Check:
 
     def url(self, data, key, where, required=True):
         v = self.text(data, key, where, required, empty=not required)
-        if v and not v.startswith("https://"):
-            self.err(f"{where}.{key}", f'must start with "https://" (got "{v}")')
+        if v:
+            self.check_url(v, f"{where}.{key}")
         return v
+
+    def check_url(self, v, where):
+        """A web address: https://, a real-looking site name, no spaces."""
+        if not v.startswith("https://"):
+            self.err(where, f'must start with "https://" (got "{v}")')
+        elif re.search(r"\s", v):
+            self.err(where, f'has a space in it, which breaks the link (got "{v}")')
+        else:
+            host = urlsplit(v).hostname or ""
+            if "." not in host.strip("."):
+                self.err(where, f'is not a full web address: it needs a site name such as example.com (got "{v}")')
 
     def slug(self, data, where):
         v = self.text(data, "slug", where)
@@ -268,6 +281,8 @@ def _films(data, images, problems, site_slugs):
 
 def _iso(c, value, where):
     try:
+        if not DATE.match(value):  # date.fromisoformat also accepts 20261105 and 2026-W45-1
+            raise ValueError
         return date.fromisoformat(value)
     except (TypeError, ValueError):
         c.err(where, f'must be a real date written YYYY-MM-DD (got "{value}")')
@@ -342,6 +357,19 @@ def _team(data, images, problems):
     return out
 
 
+def _strings(value, path=""):
+    """Every piece of text inside value, with its field name. Notes starting "_" are skipped."""
+    if isinstance(value, str):
+        yield path, value
+    elif isinstance(value, dict):
+        for k, v in value.items():
+            if not k.startswith("_"):
+                yield from _strings(v, f"{path}.{k}" if path else k)
+    elif isinstance(value, list):
+        for n, v in enumerate(value):
+            yield from _strings(v, f"{path}[{n}]")
+
+
 def _shop(data, images, problems, shop_photos):
     c = _Check("shop.json", problems)
     if not c.keys(data, "file", ["products"]):
@@ -364,12 +392,15 @@ def _shop(data, images, problems, shop_photos):
             c.err(f"{where}.availability", 'must be "coming-soon" or "available"')
         elif avail == "available" and not (pr["url"] and pr["price"]):
             c.err(where, 'an "available" product needs both "price" and "url"')
-        elif avail == "available" and any("TODO-RAJ" in str(v) for v in raw.values()):
-            c.err(where, 'still contains "TODO-RAJ": replace it before switching the product to "available"')
         elif avail == "coming-soon" and pr["url"]:
             c.err(where, 'a "coming-soon" product must have an empty "url" (or set availability to "available")')
-        if pr["url"] and not pr["url"].startswith("https://"):
-            c.err(f"{where}.url", f'must start with "https://" (got "{pr["url"]}")')
+        if pr["url"]:
+            c.check_url(pr["url"], f"{where}.url")
+        if avail == "available":
+            for field, value in _strings(raw):
+                if "TODO-RAJ" in value:
+                    c.err(f"{where}.{field}", 'still contains "TODO-RAJ" (text waiting for Raj). '
+                          'Replace it, or set availability back to "coming-soon"')
         if ("photos" in raw) == ("image" in raw):
             c.err(where, 'give either "photos" (files in 02_BUILD/shop_photos) or "image" (one file in 02_BUILD/source_images)')
         if "photos" in raw:
