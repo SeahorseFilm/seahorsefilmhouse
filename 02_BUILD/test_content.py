@@ -107,6 +107,78 @@ class BadContent(unittest.TestCase):
         self.edit("shop", lambda d: d["products"][0].update(availability="available"))
         self.expect('needs both "price" and "url"')
 
+    def test_duplicate_product_slug(self):
+        self.edit("shop", lambda d: d["products"][1].update(slug=d["products"][0]["slug"]))
+        self.expect("is used by another product")
+
+    def test_shop_photo_missing(self):
+        self.edit("shop", lambda d: d["products"][0]["photos"].append("not-there.png"))
+        self.expect('"not-there.png" is not in 02_BUILD/shop_photos/')
+
+    def test_buy_link_must_be_https(self):
+        self.edit("shop", lambda d: d["products"][0].update(
+            availability="available", price="$35", url="http://example.com/tee"))
+        self.expect('must start with "https://"')
+
+    def test_available_product_with_todo_raj(self):
+        self.edit("shop", lambda d: d["products"][0].update(
+            availability="available", price="$35", url="https://example.com/tee", text="TODO-RAJ: description"))
+        self.expect('still contains "TODO-RAJ"')
+        self.edit("shop", lambda d: d["products"][1].update(slug="tee-black"))
+        self.expect('slug "tee-black" is used by another product')
+
+    def test_duplicate_person(self):
+        self.edit("team", lambda d: d["people"][1].update(name=d["people"][0]["name"]))
+        self.expect("is listed twice")
+
+    def test_dates_must_be_written_exactly(self):
+        for bad in ("2026-1-5", "20261105", "2026-W45-1", "5 November 2026", ""):
+            with self.subTest(date=bad):
+                self.edit("news", lambda d: d["posts"][0].update(date=bad))
+                with self.assertRaises(ContentError):
+                    load_content(self.dir / "content", SOURCE_IMAGES, SHOP_PHOTOS)
+
+    def test_news_picture_missing(self):
+        self.edit("news", lambda d: d["posts"][0]["image"].update(file="never-defined.jpg"))
+        self.expect('picture "never-defined.jpg" is not defined anywhere')
+
+    def test_phone_picture_missing(self):
+        def change(d):
+            home = next(f["images"]["home"] for f in d["films"] if "phone" in f["images"].get("home", {}))
+            home["phone"]["source"] = "no-phone-image.jpg"
+        self.edit("films", change)
+        self.expect('"no-phone-image.jpg" is not in 02_BUILD/source_images/')
+
+    def test_bad_web_addresses(self):
+        cases = {"http://example.com/x": 'must start with "https://"',
+                 "https://exa mple.com/x": "has a space in it",
+                 "https://localhost/x": "is not a full web address",
+                 "https://": "is not a full web address"}
+        for url, message in cases.items():
+            with self.subTest(url=url):
+                self.edit("news", lambda d: d["posts"][0].update(sources=[{"label": "x", "url": url}]))
+                self.expect(message)
+                self.edit("shop", lambda d: d["products"][0].update(availability="available", price="£1", url=url))
+                self.expect("products[0] (tee-black).url", message)
+
+    def test_available_product_with_no_price(self):
+        self.edit("shop", lambda d: d["products"][0].update(availability="available", url="https://example.com/tee"))
+        self.expect('needs both "price" and "url"')
+
+    def test_available_product_with_no_url(self):
+        self.edit("shop", lambda d: d["products"][0].update(availability="available", price="£25"))
+        self.expect('needs both "price" and "url"')
+
+    def test_todo_left_in_available_product(self):
+        self.edit("shop", lambda d: d["products"][0].update(
+            availability="available", price="£25", url="https://example.com/tee",
+            text="TODO-RAJ: product description"))
+        self.expect("products[0] (tee-black).text", "TODO-RAJ", 'set availability back to "coming-soon"')
+
+    def test_todo_is_fine_while_coming_soon(self):
+        self.edit("shop", lambda d: d["products"][0].update(text="TODO-RAJ: product description"))
+        load_content(self.dir / "content", SOURCE_IMAGES, SHOP_PHOTOS)
+
     def test_unknown_field_is_a_typo(self):
         self.edit("films", lambda d: d["films"][0].update(taglin="x"))
         self.expect('unknown field "taglin"')
