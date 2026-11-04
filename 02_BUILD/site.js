@@ -97,7 +97,12 @@
     var targets = document.querySelectorAll('.section-head, .grid > *, .statement, .signup > *, .page-head .wrap > *, .film-credits .wrap > *, .film-centre > *, .locations, .contact-layout > *, .about-stamp');
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+        if (en.isIntersecting) {
+          var el = en.target;
+          el.classList.add('in'); io.unobserve(el);
+          // when the blur has resolved, hand the element back to normal drawing (frees the extra layer)
+          el.addEventListener('transitionend', function (e) { if (e.target === el && e.propertyName === 'filter') el.classList.add('done'); });
+        }
       });
     }, { threshold: 0.12 });
     targets.forEach(function (el) {

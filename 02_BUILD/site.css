@@ -419,6 +419,8 @@ body::before {
 /* Arrival: elements resolve out of blur as they enter the screen */
 .reveal { filter: blur(16px); transition: filter 1s var(--focus); will-change: filter; }
 .reveal.in { filter: blur(0); }
+/* once it has resolved, the element is drawn as a normal one again (no filter, no extra layer) */
+.reveal.done { filter: none; will-change: auto; transition: none; }
 @media (prefers-reduced-motion: reduce) {
   .reveal, .hero-bg, .hero-title, .hero-note { transition: none; }
   .reveal { filter: none; }
