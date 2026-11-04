@@ -364,6 +364,8 @@ def _shop(data, images, problems, shop_photos):
             c.err(f"{where}.availability", 'must be "coming-soon" or "available"')
         elif avail == "available" and not (pr["url"] and pr["price"]):
             c.err(where, 'an "available" product needs both "price" and "url"')
+        elif avail == "available" and any("TODO-RAJ" in str(v) for v in raw.values()):
+            c.err(where, 'still contains "TODO-RAJ": replace it before switching the product to "available"')
         elif avail == "coming-soon" and pr["url"]:
             c.err(where, 'a "coming-soon" product must have an empty "url" (or set availability to "available")')
         if pr["url"] and not pr["url"].startswith("https://"):

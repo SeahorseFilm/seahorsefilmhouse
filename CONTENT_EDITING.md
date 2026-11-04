@@ -134,7 +134,8 @@ asked): a news post can use a film's poster that way.
 ## Shop products, team, site-wide
 
 - **Switch a product on:** in `content/shop.json` set `"availability": "available"` and fill in `"price"` and `"url"`
-  (its Fourthwall page). Back to `"coming-soon"` means an empty `"url"`.
+  (its Fourthwall page). Back to `"coming-soon"` means an empty `"url"`. The build refuses an `"available"`
+  product that still has `TODO-RAJ` in any field.
 - **Team:** one entry per person in `content/team.json`; the photo is defined like any other picture.
 - **Social links:** `content/site.json` → `social`. An empty `"url"` hides that link.
 

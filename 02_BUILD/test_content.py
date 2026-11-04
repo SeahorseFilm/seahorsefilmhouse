@@ -107,6 +107,24 @@ class BadContent(unittest.TestCase):
         self.edit("shop", lambda d: d["products"][0].update(availability="available"))
         self.expect('needs both "price" and "url"')
 
+    def test_duplicate_product_slug(self):
+        self.edit("shop", lambda d: d["products"][1].update(slug=d["products"][0]["slug"]))
+        self.expect("is used by another product")
+
+    def test_shop_photo_missing(self):
+        self.edit("shop", lambda d: d["products"][0]["photos"].append("not-there.png"))
+        self.expect('"not-there.png" is not in 02_BUILD/shop_photos/')
+
+    def test_buy_link_must_be_https(self):
+        self.edit("shop", lambda d: d["products"][0].update(
+            availability="available", price="$35", url="http://example.com/tee"))
+        self.expect('must start with "https://"')
+
+    def test_available_product_with_todo_raj(self):
+        self.edit("shop", lambda d: d["products"][0].update(
+            availability="available", price="$35", url="https://example.com/tee", text="TODO-RAJ: description"))
+        self.expect('still contains "TODO-RAJ"')
+
     def test_unknown_field_is_a_typo(self):
         self.edit("films", lambda d: d["films"][0].update(taglin="x"))
         self.expect('unknown field "taglin"')
