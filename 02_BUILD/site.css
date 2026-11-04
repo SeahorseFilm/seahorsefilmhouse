@@ -529,6 +529,9 @@ body::before {
 .product .thumbs button.on, .product .thumbs button:hover { opacity: 1; border-color: var(--text); }
 .product .thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .shop-grid { row-gap: 54px; }
+/* category headings on the Shop page, shown only once it has more than 9 products */
+.shop-group { margin: 88px 0 32px; font-size: 1.6rem; letter-spacing: -0.02em; }
+.shop-group:first-child { margin-top: 0; }
 .product .thumbs button { width: 46px; }
 
 /* ================= Accessibility ================= */

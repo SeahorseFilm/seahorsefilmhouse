@@ -342,6 +342,10 @@ def _team(data, images, problems):
     return out
 
 
+# Shop page groups products under these headings, in this order, once there are more than 9 products.
+SHOP_CATEGORIES = ("Clothing", "Prints", "Books", "Accessories")
+
+
 def _shop(data, images, problems, shop_photos):
     c = _Check("shop.json", problems)
     if not c.keys(data, "file", ["products"]):
@@ -349,7 +353,7 @@ def _shop(data, images, problems, shop_photos):
     out, seen = [], set()
     for i, raw in enumerate(c.items(data, "products", "file")):
         where = f"products[{i}]"
-        c.keys(raw, where, ["slug", "name", "text", "availability"], ["price", "url", "photos", "image"])
+        c.keys(raw, where, ["slug", "name", "text", "availability"], ["price", "url", "photos", "image", "featured", "category"])
         if not isinstance(raw, dict):
             continue
         slug = c.slug(raw, where)
@@ -359,6 +363,13 @@ def _shop(data, images, problems, shop_photos):
         seen.add(slug)
         pr = {"slug": slug, "name": c.text(raw, "name", where), "text": c.text(raw, "text", where),
               "price": c.text(raw, "price", where, empty=True) or "", "url": c.text(raw, "url", where, empty=True) or ""}
+        pr["featured"] = raw.get("featured", False)
+        if not isinstance(pr["featured"], bool):
+            c.err(f"{where}.featured", "must be true or false (no quotes)")
+        if "category" in raw:
+            pr["category"] = c.text(raw, "category", where)
+            if pr["category"] and pr["category"] not in SHOP_CATEGORIES:
+                c.err(f"{where}.category", "must be one of: " + ", ".join(f'"{x}"' for x in SHOP_CATEGORIES))
         avail = pr["availability"] = c.text(raw, "availability", where)
         if avail not in ("coming-soon", "available"):
             c.err(f"{where}.availability", 'must be "coming-soon" or "available"')

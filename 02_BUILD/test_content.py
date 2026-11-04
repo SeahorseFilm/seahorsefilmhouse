@@ -107,6 +107,18 @@ class BadContent(unittest.TestCase):
         self.edit("shop", lambda d: d["products"][0].update(availability="available"))
         self.expect('needs both "price" and "url"')
 
+    def test_featured_must_be_true_or_false(self):
+        self.edit("shop", lambda d: d["products"][0].update(featured="yes"))
+        self.expect("featured", "must be true or false")
+
+    def test_unknown_shop_category(self):
+        self.edit("shop", lambda d: d["products"][0].update(category="Hats"))
+        self.expect("category", '"Clothing"')
+
+    def test_featured_and_category_are_accepted(self):
+        self.edit("shop", lambda d: d["products"][0].update(featured=True, category="Clothing"))
+        load_content(self.dir / "content", SOURCE_IMAGES, SHOP_PHOTOS)
+
     def test_unknown_field_is_a_typo(self):
         self.edit("films", lambda d: d["films"][0].update(taglin="x"))
         self.expect('unknown field "taglin"')

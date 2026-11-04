@@ -17,7 +17,7 @@ from pathlib import Path
 
 from PIL import Image, features
 
-from content_loader import ContentError, load_content
+from content_loader import SHOP_CATEGORIES, ContentError, load_content
 
 HERE = Path(__file__).parent
 OUT = HERE.parent / "01_SITE"
@@ -245,6 +245,12 @@ def film_card(film, root=""):
   <div class="poster">{picture(film['poster'], root, image_alt(film['poster']), SIZES_POSTER)}</div>
   <div class="meta"><span class="year">{esc(film['year'])}</span><h3>{esc(film['title'])}</h3><p>{line}</p></div>
 </a>"""
+
+
+def home_shop_row():
+    """Up to four products for the home page: those marked "featured": true, else the first four (photo products only)."""
+    with_photos = [pr for pr in PRODUCTS if pr.get("images")]
+    return ([pr for pr in with_photos if pr.get("featured")] or with_photos)[:4]
 
 
 def shop_card(pr, root=""):
@@ -517,7 +523,7 @@ def build_home():
       <div><p class="eyebrow">Shop</p><h2>Objects from the filmhouse</h2></div>
       <a class="text-link" href="shop.html">Visit the shop &rarr;</a>
     </div>
-    <div class="grid four home-shop">{''.join(shop_card(pr) for pr in PRODUCTS if pr.get('images'))}</div>
+    <div class="grid four home-shop">{''.join(shop_card(pr) for pr in home_shop_row())}</div>
   </div>
 </section>
 
@@ -798,9 +804,13 @@ def build_shop_photos():
             pr["images"] = names
 
 
-def build_shop():
+def shop_section(category, products, first):
+    """One grid of product cards; with a category, a heading above it and product names one level down.
+    first: index of the first product on the page (only the first picture on the page loads eagerly)."""
+    h = "h3" if category else "h2"
     cards = ""
-    for n, pr in enumerate(PRODUCTS):
+    for k, pr in enumerate(products):
+        n = first + k
         if pr["availability"] == "available":
             action = f'<span class="price">{esc(pr["price"])}</span><a class="btn primary" href="{esc(pr["url"])}" target="_blank" rel="noopener">Buy</a>'
         else:
@@ -814,10 +824,25 @@ def build_shop():
         cards += f"""<div class="product" id="{pr['slug']}">
   <div class="shot">{picture(images[0], "", pr['name'], SIZES_CARD, lazy=n > 0, high=n == 0)}</div>
   {thumbs}
-  <h2 class="product-name">{esc(pr['name'])}</h2>
+  <{h} class="product-name">{esc(pr['name'])}</{h}>
   <p>{esc(pr['text'])}</p>
   <div class="buy">{action}</div>
 </div>"""
+    head = f'<h2 class="shop-group">{esc(category)}</h2>' if category else ""
+    return f"""{head}<div class="grid three shop-grid">{cards}</div>"""
+
+
+SHOP_GROUP_AFTER = 9  # more products than this, and the Shop page groups them by "category"
+
+
+def build_shop():
+    grouped = len(PRODUCTS) > SHOP_GROUP_AFTER and all(pr.get("category") for pr in PRODUCTS)
+    order = [c for c in SHOP_CATEGORIES if any(pr.get("category") == c for pr in PRODUCTS)] if grouped else [None]
+    sections = ""
+    n = 0
+    for cat in order:
+        sections += shop_section(cat, [pr for pr in PRODUCTS if cat is None or pr.get("category") == cat], n)
+        n += sum(1 for pr in PRODUCTS if cat is None or pr.get("category") == cat)
     notify = signup_block("", "Be first in line",
                           "Leave your email and we will tell you the day the shop opens.").replace(
         'value="Mailing list sign-up"', 'value="Shop: notify me"').replace(
@@ -827,7 +852,7 @@ def build_shop():
   <p class="eyebrow">Shop</p><h1>Objects from the filmhouse</h1>
   <p class="lead">Clothing, books and prints from Seahorse Filmhouse. The shop is opening soon.</p>
 </div></section>
-<section class="block"><div class="wrap"><div class="grid three shop-grid">{cards}</div></div></section>
+<section class="block"><div class="wrap">{sections}</div></section>
 {notify}"""
     page("shop.html", "Shop", "The Seahorse Filmhouse shop: sfh tees, crop top, cap and the Open 24 Hours book. Opening soon.",
          body, current="shop.html")
