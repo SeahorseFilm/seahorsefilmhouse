@@ -120,9 +120,89 @@ class BadContent(unittest.TestCase):
         self.edit("news", lambda d: d["posts"][0].update(date="yesterday"))
         self.expect('missing "tagline"', '"released" or "upcoming"', "YYYY-MM-DD")
 
+    def test_featured_must_be_true_or_false(self):
+        self.edit("shop", lambda d: d["products"][0].update(featured="yes"))
+        self.expect("products[0] (tee-black).featured", "must be true or false")
+
+    def test_at_most_four_featured(self):
+        def change(d):
+            for p in d["products"]:
+                p["featured"] = True
+        self.edit("shop", change)
+        self.expect("5 products are featured", "room for 4")
+
+    def test_unknown_category(self):
+        self.edit("shop", lambda d: d["products"][0].update(category="Hats"))
+        self.expect("products[0] (tee-black).category", "Clothing, Prints, Accessories", '"Hats"')
+
+    def test_featured_and_category_are_optional(self):
+        def change(d):
+            d["products"][0].update(featured=True, category="Clothing")
+            d["products"][1].update(featured=False, category="")  # as a CMS form may save an unticked box / empty select
+        self.edit("shop", change)
+        products = load_content(self.dir / "content", SOURCE_IMAGES, SHOP_PHOTOS).products
+        self.assertEqual([(p["featured"], p["category"]) for p in products[:3]],
+                         [(True, "Clothing"), (False, None), (False, None)])
+
+    def test_grouped_shop_needs_every_category(self):
+        def change(d):
+            base = d["products"][0]
+            d["products"] += [dict(base, slug=f"extra-{n}", category="Clothing") for n in range(5)]
+        self.edit("shop", change)
+        self.expect('products[1] (tee-grey): missing "category"', "more than 9 products")
+
     def test_underscore_notes_are_allowed(self):
         self.edit("films", lambda d: d["films"][0].update(_note="a note for editors"))
         load_content(self.dir / "content", SOURCE_IMAGES, SHOP_PHOTOS)
+
+
+class ShopLayout(unittest.TestCase):
+    """The home-page shop row and the grouping of the Shop page (build.py), with pictures stubbed out."""
+
+    def setUp(self):
+        import build  # needs Pillow, which the build needs anyway
+
+        self.build = build
+        for name, value in (("picture", lambda name, *a, **k: f"[{name}]"), ("PRODUCTS", [])):
+            self.addCleanup(setattr, build, name, getattr(build, name))
+            setattr(build, name, value)
+
+    def products(self, n, **extra):
+        return [dict({"slug": f"p{i}", "name": f"P{i}", "text": "t", "availability": "coming-soon", "price": "",
+                      "url": "", "featured": False, "category": None, "image": f"shop-p{i}.jpg"}, **extra)
+                for i in range(n)]
+
+    def test_home_row_falls_back_to_first_four(self):
+        self.build.PRODUCTS = self.products(6)
+        self.assertEqual([p["slug"] for p in self.build.home_products()], ["p0", "p1", "p2", "p3"])
+
+    def test_home_row_shows_only_featured(self):
+        self.build.PRODUCTS = self.products(6)
+        for i in (5, 2):
+            self.build.PRODUCTS[i]["featured"] = True
+        self.assertEqual([p["slug"] for p in self.build.home_products()], ["p2", "p5"])
+        # a product with a single picture (like the book) can be featured too
+        self.assertIn("[shop-p5.jpg]", self.build.shop_card(self.build.PRODUCTS[5]))
+
+    def test_shop_not_grouped_up_to_nine(self):
+        self.build.PRODUCTS = self.products(9, category="Prints")
+        html = self.build.shop_sections()
+        self.assertEqual(html.count('class="grid three shop-grid"'), 1)
+        self.assertNotIn("Prints</h2>", html)
+        self.assertEqual(html.count('<h2 class="product-name">'), 9)
+
+    def test_shop_grouped_above_nine(self):
+        self.build.PRODUCTS = self.products(10)
+        for p, cat in zip(self.build.PRODUCTS, ["Accessories", "Clothing"] * 5):
+            p["category"] = cat
+        html = self.build.shop_sections()
+        # categories in fixed order, empty ones (Prints) left out, products as h3 under each h2
+        self.assertLess(html.index(">Clothing</h2>"), html.index(">Accessories</h2>"))
+        self.assertNotIn("Prints", html)
+        self.assertEqual(html.count('class="grid three shop-grid"'), 2)
+        self.assertEqual(html.count('<h3 class="product-name">'), 10)
+        self.assertLess(html.index('id="p1"'), html.index('id="p3"'))  # file order inside a group
+        self.assertEqual(html.count('class="product"'), 10)
 
 
 class BuildStopsOnBadContent(unittest.TestCase):

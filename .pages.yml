@@ -534,6 +534,19 @@ content:
                   regex: '^[a-z0-9]+(-[a-z0-9]+)*\.jpg$'
                   message: Lower-case letters, numbers and hyphens only, ending in .jpg.
                 description: Shop pictures use names like shop-book.jpg.
+          - name: featured
+            label: Show on home page
+            type: boolean
+            description: Tick up to four products for the shop row on the home page. If none is ticked, the first four products are shown.
+          - name: category
+            label: Category
+            type: select
+            options:
+              values:
+                - { value: Clothing, label: Clothing }
+                - { value: Prints, label: Prints }
+                - { value: Accessories, label: Accessories }
+            description: Optional. The shop page is grouped by category once there are more than 9 products, and then every product needs one.
 
   - name: social
     label: Social links

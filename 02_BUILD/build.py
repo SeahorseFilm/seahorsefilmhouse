@@ -17,7 +17,7 @@ from pathlib import Path
 
 from PIL import Image, features
 
-from content_loader import ContentError, load_content
+from content_loader import SHOP_CATEGORIES, SHOP_GROUP_ABOVE, ContentError, load_content
 
 HERE = Path(__file__).parent
 OUT = HERE.parent / "01_SITE"
@@ -249,12 +249,19 @@ def film_card(film, root=""):
 
 def shop_card(pr, root=""):
     """Home page shop row: one product, its model photo where there is one, linking to it on the Shop page."""
-    images = pr["images"]
-    pick = next((im for im, src in zip(images, pr["photos"]) if "model" in src), images[0])
+    if pr.get("images"):
+        pick = next((im for im, src in zip(pr["images"], pr["photos"]) if "model" in src), pr["images"][0])
+    else:
+        pick = pr["image"]  # a product with a single picture, like the book
     return f"""<a class="shop-card" href="{root}shop.html#{pr['slug']}">
   <div class="shot">{picture(pick, root, pr['name'], SIZES_SHOP_ROW)}</div>
   <div class="meta"><h3>{esc(pr['name'])}</h3><span class="soon">{esc(pr['price']) if pr['availability'] == 'available' else 'Coming soon'}</span></div>
 </a>"""
+
+
+def home_products():
+    """Home page shop row: the products marked "featured" in content/shop.json, else the first four."""
+    return [pr for pr in PRODUCTS if pr["featured"]] or PRODUCTS[:4]
 
 
 def news_card(post, root="", h="h3"):
@@ -517,7 +524,7 @@ def build_home():
       <div><p class="eyebrow">Shop</p><h2>Objects from the filmhouse</h2></div>
       <a class="text-link" href="shop.html">Visit the shop &rarr;</a>
     </div>
-    <div class="grid four home-shop">{''.join(shop_card(pr) for pr in PRODUCTS if pr.get('images'))}</div>
+    <div class="grid four home-shop">{''.join(shop_card(pr) for pr in home_products())}</div>
   </div>
 </section>
 
@@ -798,26 +805,49 @@ def build_shop_photos():
             pr["images"] = names
 
 
-def build_shop():
-    cards = ""
-    for n, pr in enumerate(PRODUCTS):
-        if pr["availability"] == "available":
-            action = f'<span class="price">{esc(pr["price"])}</span><a class="btn primary" href="{esc(pr["url"])}" target="_blank" rel="noopener">Buy</a>'
-        else:
-            action = '<span class="soon">Coming soon</span><a class="text-link" href="#signup">Notify me &rarr;</a>'
-        images = pr.get("images") or [pr["image"]]
-        thumbs = ""
-        if len(images) > 1:
-            thumbs = '<div class="thumbs">' + "".join(
-                f'<button type="button" class="{"on" if i == 0 else ""}" aria-pressed="{"true" if i == 0 else "false"}" aria-label="{esc(pr["name"])}, view {i + 1}">'
-                f'{picture(im, "", "", "46px")}</button>' for i, im in enumerate(images)) + "</div>"
-        cards += f"""<div class="product" id="{pr['slug']}">
+def product_card(pr, n, h):
+    """One product on the Shop page. n: position on the page (the first picture loads eagerly); h: heading level."""
+    if pr["availability"] == "available":
+        action = f'<span class="price">{esc(pr["price"])}</span><a class="btn primary" href="{esc(pr["url"])}" target="_blank" rel="noopener">Buy</a>'
+    else:
+        action = '<span class="soon">Coming soon</span><a class="text-link" href="#signup">Notify me &rarr;</a>'
+    images = pr.get("images") or [pr["image"]]
+    thumbs = ""
+    if len(images) > 1:
+        thumbs = '<div class="thumbs">' + "".join(
+            f'<button type="button" class="{"on" if i == 0 else ""}" aria-pressed="{"true" if i == 0 else "false"}" aria-label="{esc(pr["name"])}, view {i + 1}">'
+            f'{picture(im, "", "", "46px")}</button>' for i, im in enumerate(images)) + "</div>"
+    return f"""<div class="product" id="{pr['slug']}">
   <div class="shot">{picture(images[0], "", pr['name'], SIZES_CARD, lazy=n > 0, high=n == 0)}</div>
   {thumbs}
-  <h2 class="product-name">{esc(pr['name'])}</h2>
+  <{h} class="product-name">{esc(pr['name'])}</{h}>
   <p>{esc(pr['text'])}</p>
   <div class="buy">{action}</div>
 </div>"""
+
+
+def shop_sections():
+    """The Shop page's product grid. Up to SHOP_GROUP_ABOVE products: one grid, as before. More than that: one
+    section per category (content_loader makes sure every product then has one), in SHOP_CATEGORIES order."""
+    if len(PRODUCTS) <= SHOP_GROUP_ABOVE:
+        cards = "".join(product_card(pr, n, "h2") for n, pr in enumerate(PRODUCTS))
+        return f'<section class="block"><div class="wrap"><div class="grid three shop-grid">{cards}</div></div></section>'
+    out, n = "", 0
+    for cat in SHOP_CATEGORIES:
+        group = [pr for pr in PRODUCTS if pr["category"] == cat]
+        if not group:
+            continue
+        cards = "".join(product_card(pr, n + i, "h3") for i, pr in enumerate(group))
+        n += len(group)
+        out += f"""<section class="block" id="cat-{cat.lower()}" aria-labelledby="cat-{cat.lower()}-head"><div class="wrap">
+  <div class="section-head"><div><h2 id="cat-{cat.lower()}-head">{esc(cat)}</h2></div></div>
+  <div class="grid three shop-grid">{cards}</div>
+</div></section>
+"""
+    return out.rstrip("\n")
+
+
+def build_shop():
     notify = signup_block("", "Be first in line",
                           "Leave your email and we will tell you the day the shop opens.").replace(
         'value="Mailing list sign-up"', 'value="Shop: notify me"').replace(
@@ -827,7 +857,7 @@ def build_shop():
   <p class="eyebrow">Shop</p><h1>Objects from the filmhouse</h1>
   <p class="lead">Clothing, books and prints from Seahorse Filmhouse. The shop is opening soon.</p>
 </div></section>
-<section class="block"><div class="wrap"><div class="grid three shop-grid">{cards}</div></div></section>
+{shop_sections()}
 {notify}"""
     page("shop.html", "Shop", "The Seahorse Filmhouse shop: sfh tees, crop top, cap and the Open 24 Hours book. Opening soon.",
          body, current="shop.html")

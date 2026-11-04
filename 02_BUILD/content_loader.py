@@ -22,6 +22,10 @@ SOURCE_FILE = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]*\.(?:jpg|jpeg|png)$")
 OUTPUT_FILE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.jpg$")
 UPLOAD_TIME = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$")
 YOUTUBE = re.compile(r"^https://(?:www\.)?youtube\.com/watch\?v=([A-Za-z0-9_-]{11})$")
+# shop page groups, in the order the page shows them (used only when there are more than SHOP_GROUP_ABOVE products)
+SHOP_CATEGORIES = ("Clothing", "Prints", "Accessories")
+SHOP_GROUP_ABOVE = 9
+SHOP_FEATURED_MAX = 4  # the home-page shop row is one row of four
 # names build.py writes itself, so content may not use them
 RESERVED_FILES = {"share.jpg"}
 
@@ -349,7 +353,7 @@ def _shop(data, images, problems, shop_photos):
     out, seen = [], set()
     for i, raw in enumerate(c.items(data, "products", "file")):
         where = f"products[{i}]"
-        c.keys(raw, where, ["slug", "name", "text", "availability"], ["price", "url", "photos", "image"])
+        c.keys(raw, where, ["slug", "name", "text", "availability"], ["price", "url", "photos", "image", "featured", "category"])
         if not isinstance(raw, dict):
             continue
         slug = c.slug(raw, where)
@@ -381,7 +385,23 @@ def _shop(data, images, problems, shop_photos):
                     pr["photos"].append(p)
         if "image" in raw:
             pr["image"] = images.read(c, raw["image"], f"{where}.image", "shop", "none", define=True)
+        if "featured" in raw and not isinstance(raw["featured"], bool):
+            c.err(f"{where}.featured", "must be true or false")
+        pr["featured"] = raw.get("featured") is True
+        # an empty category (as a form may save it) counts as none
+        cat = pr["category"] = c.text(raw, "category", where, required=False, empty=True) or None
+        if cat is not None and cat not in SHOP_CATEGORIES:
+            c.err(f"{where}.category", f'must be one of {", ".join(SHOP_CATEGORIES)} (got "{cat}")')
         out.append(pr)
+    featured = [p["slug"] for p in out if p["featured"]]
+    if len(featured) > SHOP_FEATURED_MAX:
+        c.err("products", f"{len(featured)} products are featured ({', '.join(featured)}); "
+                          f"the home page has room for {SHOP_FEATURED_MAX}")
+    if len(out) > SHOP_GROUP_ABOVE:
+        for i, p in enumerate(out):
+            if p["category"] is None:
+                c.err(f"products[{i}] ({p['slug']})", f'missing "category": with more than {SHOP_GROUP_ABOVE} products '
+                      f'the shop page is grouped, so every product needs one ({", ".join(SHOP_CATEGORIES)})')
     return out
 
 

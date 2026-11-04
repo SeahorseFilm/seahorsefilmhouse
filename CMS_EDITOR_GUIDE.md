@@ -45,6 +45,7 @@ Do not save on `main`. Saving on `main` would publish straight to the live site.
 
 - **Team members:** name, role, IMDb link (`https://…`), photo with alt text.
 - **Shop products:** to switch a product on, set **Availability** to `Available` and fill in **Price** and **Buy link**. To switch it off, set `Coming soon` and empty the buy link. The buy link is the product's own page. Never enter payment details.
+- **Shop home-page row and categories:** tick **Show on home page** on up to four products (none ticked shows the first four). **Category** is optional until there are more than 9 products; then the shop page is grouped by category and every product needs one.
 - **Social links:** an empty link hides that profile.
 
 ## 6. Upload an image and write alt text
