@@ -539,6 +539,11 @@ main:focus { outline: none; }
 .cookie-note :focus-visible { outline-color: #F1EEE8; }
 
 /* Skip link: off screen until it has keyboard focus */
+/* text for screen readers and search engines only; takes no space on screen */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
 .skip-link {
   position: absolute; left: 16px; top: -200px; z-index: 200; padding: 12px 18px;
   background: #1a1714; color: #f1eee8; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.18em;
