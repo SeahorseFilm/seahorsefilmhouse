@@ -465,6 +465,7 @@ def build_home():
     body = f"""<section class="hero" id="hero">
 {layers}<div class="hero-shade"></div>
 <div class="hero-inner wrap">
+  <h1 class="visually-hidden">Seahorse Filmhouse</h1>
   <nav class="hero-list" aria-label="Films">
 {titles}  </nav>
   <div class="hero-notes">
