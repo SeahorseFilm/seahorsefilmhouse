@@ -25,6 +25,10 @@ SRC_IMG = HERE / "source_images"
 
 SITE_URL = "https://seahorsefilmhouse.com"
 FORM_ACTION = "https://formspree.io/f/movdyjgr"
+# Google Fonts stylesheet. It is requested without blocking the first paint (preload, then switched to a stylesheet
+# when it arrives); display=swap shows the fallback font until the real one is in.
+FONTS_CSS = ("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400"
+             "&family=Cormorant+Garamond:wght@500&family=DM+Mono:wght@400;500&display=swap")
 # Visitor counting (Google Analytics). Put the Measurement ID here, e.g. "G-ABC123XYZ"; empty = off.
 # Analytics loads only after the visitor presses Accept on the cookie notice.
 GA_ID = "G-QYHK3HQZ3T"
@@ -181,7 +185,8 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
 <meta name="twitter:image:alt" content="{image_alt}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400&family=Cormorant+Garamond:wght@500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="{FONTS_CSS}" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{FONTS_CSS}"></noscript>
 <link rel="icon" type="image/png" sizes="48x48" href="{img_url("icon-48.png", root)}">
 <link rel="icon" type="image/png" sizes="512x512" href="{img_url("icon-512.png", root)}">
 <link rel="apple-touch-icon" href="{img_url("icon-180.png", root)}">
@@ -849,7 +854,13 @@ def add_hero_gl():
     tag = f'<script src="js/site.js?v={STAMP}"></script>'
     html = home.read_text(encoding="utf-8")
     assert tag in html
-    home.write_text(html.replace(tag, tag + f'\n<script src="js/hero-gl.js?v={STAMP}"></script>'), encoding="utf-8")
+    # hero-gl.js is not needed for the first paint: it waits for the hero images anyway, which site.js fetches
+    # after the page has loaded. So it is fetched after the load event too, when the browser is idle.
+    loader = (f'<script>(function(){{function go(){{var s=document.createElement("script");'
+              f's.src="js/hero-gl.js?v={STAMP}";document.body.appendChild(s)}}'
+              f'function idle(){{(window.requestIdleCallback||function(f){{setTimeout(f,200)}})(go)}}'
+              f'if(document.readyState==="complete")idle();else addEventListener("load",idle)}})()</script>')
+    home.write_text(html.replace(tag, tag + "\n" + loader), encoding="utf-8")
 
 
 def load_site_content():
