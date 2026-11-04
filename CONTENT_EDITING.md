@@ -13,7 +13,7 @@ wording already published, and nothing goes live without a pull request that Raj
 | Films | `content/films.json` | every film's text, credits, trailer, where-to-watch links, awards and pictures |
 | News | `content/news.json` | every post: title, date, summary, text, source links, picture |
 | Team | `content/team.json` | name, role, IMDb link, photo (the About page) |
-| Shop | `content/shop.json` | products, availability, price, buy link, photos |
+| Shop | `content/shop.json` | products, availability, price, buy link, photos, home-page feature, category |
 | Site-wide | `content/site.json` | social links, "operating in" line, footer lines, About-page locations, company description for search engines, contact-form subjects |
 | Pictures | `02_BUILD/source_images/` and `02_BUILD/shop_photos/` | the original image files (see below) |
 
@@ -135,6 +135,18 @@ asked): a news post can use a film's poster that way.
 
 - **Switch a product on:** in `content/shop.json` set `"availability": "available"` and fill in `"price"` and `"url"`
   (its Fourthwall page). Back to `"coming-soon"` means an empty `"url"`.
+- **Home-page shop row:** add `"featured": true` to the products to show there, at most four, in the order of the
+  file. With no product featured, the first four products in `content/shop.json` are shown. A product with a single
+  `"image"` (the book) can be featured too.
+- **Shop categories:** `"category"` is optional and one of `"Clothing"`, `"Prints"` or `"Accessories"`. Up to 9
+  products the shop page is one grid in file order and categories are not shown. With more than 9, the page is grouped
+  under those headings (in that order, empty ones left out) and every product must have a category; the check names
+  any product without one.
+
+```json
+{ "name": "…", "slug": "…", "text": "…", "availability": "coming-soon", "photos": ["…"],
+  "featured": true, "category": "Clothing" }
+```
 - **Team:** one entry per person in `content/team.json`; the photo is defined like any other picture.
 - **Social links:** `content/site.json` → `social`. An empty `"url"` hides that link.
 
