@@ -135,6 +135,12 @@ asked): a news post can use a film's poster that way.
 
 - **Switch a product on:** in `content/shop.json` set `"availability": "available"` and fill in `"price"` and `"url"`
   (its Fourthwall page). Back to `"coming-soon"` means an empty `"url"`.
+- **Home page shop row:** shows up to four products with photos. Add `"featured": true` (no quotes) to the ones
+  you want there; with none marked, it shows the first four. Products with only a single `"image"` (the book)
+  never appear in the row.
+- **Shop categories:** optional `"category"`: one of `"Clothing"`, `"Prints"`, `"Books"`, `"Accessories"`.
+  Once there are more than 9 products *and* every product has a category, the Shop page groups them under those
+  headings, in that order. Until then the field does nothing.
 - **Team:** one entry per person in `content/team.json`; the photo is defined like any other picture.
 - **Social links:** `content/site.json` → `social`. An empty `"url"` hides that link.
 

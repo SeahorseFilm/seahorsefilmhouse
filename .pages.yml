@@ -492,6 +492,16 @@ content:
                 - { value: coming-soon, label: Coming soon }
                 - { value: available, label: Available }
             description: 'Available needs both a price and a buy link. Coming soon needs an empty buy link.'
+          - name: featured
+            label: Show on home page
+            type: boolean
+            description: Tick for up to four products. With none ticked, the home page shows the first four.
+          - name: category
+            label: Category
+            type: select
+            options:
+              values: [Clothing, Prints, Books, Accessories]
+            description: Used to group the Shop page once there are more than 9 products and all have a category.
           - name: price
             label: Price
             type: string
