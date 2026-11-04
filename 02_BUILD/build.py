@@ -29,7 +29,9 @@ FORM_ACTION = "https://formspree.io/f/movdyjgr"
 # Analytics loads only after the visitor presses Accept on the cookie notice.
 GA_ID = "G-QYHK3HQZ3T"
 YEAR = date.today().year
-STAMP = __import__('time').strftime('%Y%m%d%H%M')  # cache-buster so browsers pick up new CSS/JS
+# Cache-busters: a short fingerprint of each file's contents, so a returning visitor's browser re-downloads
+# site.css / site.js / hero-gl.js only when that file has actually changed (netlify.toml lets browsers keep them a year).
+VER = {name: hashlib.md5((HERE / name).read_bytes()).hexdigest()[:8] for name in ("site.css", "site.js", "hero-gl.js")}
 
 CONTENT = HERE.parent / "content"
 SHOP_PHOTOS = HERE / "shop_photos"
@@ -185,7 +187,7 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
 <link rel="icon" type="image/png" sizes="48x48" href="{img_url("icon-48.png", root)}">
 <link rel="icon" type="image/png" sizes="512x512" href="{img_url("icon-512.png", root)}">
 <link rel="apple-touch-icon" href="{img_url("icon-180.png", root)}">
-<link rel="stylesheet" href="{root}css/site.css?v={STAMP}">
+<link rel="stylesheet" href="{root}css/site.css?v={VER["site.css"]}">
 {head}
 </head>
 <body>
@@ -229,7 +231,7 @@ def page(path, title, description, body, current="", image="share.jpg", search_t
   <div class="frame"><iframe src="" title="Trailer" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     <a class="yt-link" href="#" target="_blank" rel="noopener">Not playing? Watch on YouTube &rarr;</a></div>
 </div>
-<script src="{root}js/site.js?v={STAMP}"></script>
+<script src="{root}js/site.js?v={VER["site.js"]}"></script>
 {counter}
 </body>
 </html>
@@ -846,10 +848,10 @@ def add_hero_gl():
     """Trial only, off unless HERO_GL=1: the WebGL home hero (hero-gl.js) on the home page."""
     shutil.copy(HERE / "hero-gl.js", OUT / "js" / "hero-gl.js")
     home = OUT / "index.html"
-    tag = f'<script src="js/site.js?v={STAMP}"></script>'
+    tag = f'<script src="js/site.js?v={VER["site.js"]}"></script>'
     html = home.read_text(encoding="utf-8")
     assert tag in html
-    home.write_text(html.replace(tag, tag + f'\n<script src="js/hero-gl.js?v={STAMP}"></script>'), encoding="utf-8")
+    home.write_text(html.replace(tag, tag + f'\n<script src="js/hero-gl.js?v={VER["hero-gl.js"]}"></script>'), encoding="utf-8")
 
 
 def load_site_content():
